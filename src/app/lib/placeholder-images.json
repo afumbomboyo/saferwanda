@@ -1,11 +1,10 @@
-
 {
   "placeholderImages": [
     {
       "id": "hero-security",
-      "description": "High-tech security operations center",
-      "imageUrl": "https://picsum.photos/seed/safe1/1200/800",
-      "imageHint": "security tech"
+      "description": "Kigali City Panorama",
+      "imageUrl": "https://www.rwandagorillatrek.com/wp-content/uploads/2014/01/Kigali-City..jpg",
+      "imageHint": "kigali city"
     },
     {
       "id": "child-protection",
