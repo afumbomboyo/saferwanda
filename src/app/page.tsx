@@ -18,11 +18,11 @@ import {
   Network, 
   Baby, 
   Database, 
-  Smartphone,
   Cpu,
   Globe,
   Bell,
-  Eye
+  Eye,
+  House
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -77,10 +77,10 @@ export default function Home() {
                 <Signal className="w-3.5 h-3.5 mr-2 animate-pulse text-primary" />
                 Next-Gen IoT Infrastructure
               </Badge>
-              <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-headline font-extrabold mb-8 leading-[1] tracking-tighter">
+              <h1 className="text-5xl sm:text-6xl md:text-5xl lg:text-8xl font-headline font-extrabold mb-8 leading-[1] tracking-tighter">
                 Building a <span className="text-gradient">Smarter, Safer Rwanda</span> From the Ground Up.
               </h1>
-              <p className="text-lg md:text-xl lg:text-2xl text-muted-foreground mb-12 max-w-3xl mx-auto leading-relaxed font-light">
+              <p className="text-lg md:text-base lg:text-2xl text-muted-foreground mb-12 max-w-3xl mx-auto leading-relaxed font-light">
                 Advanced IoT and smart monitoring solutions designed to protect your home, secure your assets, and empower your entire community.
               </p>
               <div className="flex flex-col sm:flex-row gap-6 justify-center">
@@ -108,8 +108,8 @@ export default function Home() {
           <div className="container mx-auto px-4">
             <div className="flex flex-col md:flex-row justify-between items-end mb-20 gap-8">
               <div className="max-w-2xl">
-                <h2 className="text-4xl md:text-6xl font-headline font-extrabold mb-6">Omnipresent Protection.</h2>
-                <p className="text-xl text-muted-foreground font-light">Our smart infrastructure ecosystem is categorized into three specialized safety tiers, providing granular security for every facet of life.</p>
+                <h2 className="text-4xl md:text-3xl lg:text-6xl font-headline font-extrabold mb-6">Omnipresent Protection.</h2>
+                <p className="text-xl md:text-lg text-muted-foreground font-light">Our smart infrastructure ecosystem is categorized into three specialized safety tiers, providing granular security for every facet of life.</p>
               </div>
               <div className="flex gap-4">
                 <div className="p-4 rounded-2xl bg-primary/10 border border-primary/20">
@@ -133,9 +133,9 @@ export default function Home() {
                     <div className="w-12 h-12 rounded-2xl bg-accent/20 flex items-center justify-center mb-4 text-accent">
                       <Baby className="w-6 h-6" />
                     </div>
-                    <CardTitle className="text-2xl font-bold">Protect Your Child</CardTitle>
+                    <CardTitle className="text-2xl md:text-xl font-bold">Protect Your Child</CardTitle>
                   </CardHeader>
-                  <CardContent className="text-muted-foreground leading-relaxed">
+                  <CardContent className="text-muted-foreground leading-relaxed text-sm">
                     Real-time location tracking and wearable geofencing alerts to ensure your children are safe on their way to and from school.
                   </CardContent>
                 </Card>
@@ -144,9 +144,9 @@ export default function Home() {
                     <div className="w-12 h-12 rounded-2xl bg-accent/20 flex items-center justify-center mb-4 text-accent">
                       <Users className="w-6 h-6" />
                     </div>
-                    <CardTitle className="text-2xl font-bold">Take Care of Your Elderly</CardTitle>
+                    <CardTitle className="text-2xl md:text-xl font-bold">Take Care of Your Elderly</CardTitle>
                   </CardHeader>
-                  <CardContent className="text-muted-foreground leading-relaxed">
+                  <CardContent className="text-muted-foreground leading-relaxed text-sm">
                     Smart ambient health sensors, fall-detection alerts, and automated panic buttons that notify family emergency contacts instantly.
                   </CardContent>
                 </Card>
@@ -163,20 +163,20 @@ export default function Home() {
                     <div className="w-12 h-12 rounded-2xl bg-primary/20 flex items-center justify-center mb-4 text-primary">
                       <Flame className="w-6 h-6" />
                     </div>
-                    <CardTitle className="text-2xl font-bold">Prevent Fire</CardTitle>
+                    <CardTitle className="text-2xl md:text-xl font-bold">Prevent Fire</CardTitle>
                   </CardHeader>
-                  <CardContent className="text-muted-foreground leading-relaxed">
+                  <CardContent className="text-muted-foreground leading-relaxed text-sm">
                     Smart thermal and smoke detectors linked to automated network alarms to neutralize fire hazards before they spread.
                   </CardContent>
                 </Card>
                 <Card className="glass-card group hover:-translate-y-2 transition-transform duration-500 border-primary/20">
                   <CardHeader>
                     <div className="w-12 h-12 rounded-2xl bg-primary/20 flex items-center justify-center mb-4 text-primary">
-                      <Home className="w-6 h-6" />
+                      <House className="w-6 h-6" />
                     </div>
-                    <CardTitle className="text-2xl font-bold">Secure Your Premise</CardTitle>
+                    <CardTitle className="text-2xl md:text-xl font-bold">Secure Your Premise</CardTitle>
                   </CardHeader>
-                  <CardContent className="text-muted-foreground leading-relaxed">
+                  <CardContent className="text-muted-foreground leading-relaxed text-sm">
                     Connected smart locks, perimeter breach detectors, and intelligent entry logs tailored for residential and commercial layouts.
                   </CardContent>
                 </Card>
@@ -185,9 +185,9 @@ export default function Home() {
                     <div className="w-12 h-12 rounded-2xl bg-primary/20 flex items-center justify-center mb-4 text-primary">
                       <Zap className="w-6 h-6" />
                     </div>
-                    <CardTitle className="text-2xl font-bold">Secure Your Assets</CardTitle>
+                    <CardTitle className="text-2xl md:text-xl font-bold">Secure Your Assets</CardTitle>
                   </CardHeader>
-                  <CardContent className="text-muted-foreground leading-relaxed">
+                  <CardContent className="text-muted-foreground leading-relaxed text-sm">
                     High-precision cellular and LoRaWAN hardware asset tracking nodes built to safeguard equipment, vehicles, and critical tools.
                   </CardContent>
                 </Card>
@@ -204,9 +204,9 @@ export default function Home() {
                     <div className="w-12 h-12 rounded-2xl bg-accent/20 flex items-center justify-center mb-4 text-accent">
                       <Eye className="w-6 h-6" />
                     </div>
-                    <CardTitle className="text-2xl font-bold">Neighborhood Survey</CardTitle>
+                    <CardTitle className="text-2xl md:text-xl font-bold">Neighborhood Survey</CardTitle>
                   </CardHeader>
-                  <CardContent className="text-muted-foreground leading-relaxed">
+                  <CardContent className="text-muted-foreground leading-relaxed text-sm">
                     Decentralized network gateway monitoring nodes linking neighborhood watch loops together for real-time safety updates.
                   </CardContent>
                 </Card>
@@ -215,9 +215,9 @@ export default function Home() {
                     <div className="w-12 h-12 rounded-2xl bg-accent/20 flex items-center justify-center mb-4 text-accent">
                       <Globe className="w-6 h-6" />
                     </div>
-                    <CardTitle className="text-2xl font-bold">Make Community Smart</CardTitle>
+                    <CardTitle className="text-2xl md:text-xl font-bold">Make Community Smart</CardTitle>
                   </CardHeader>
-                  <CardContent className="text-muted-foreground leading-relaxed">
+                  <CardContent className="text-muted-foreground leading-relaxed text-sm">
                     Scalable urban IoT applications, including smart lighting, waste analytics, and environmental hazard tracking dashboards.
                   </CardContent>
                 </Card>
@@ -230,8 +230,8 @@ export default function Home() {
         <section className="py-32 bg-secondary/30 relative overflow-hidden">
           <div className="container mx-auto px-4 relative z-10">
             <div className="text-center max-w-3xl mx-auto mb-20">
-              <h2 className="text-4xl md:text-5xl font-headline font-extrabold mb-6">Simplicity in Motion.</h2>
-              <p className="text-xl text-muted-foreground font-light">We handle the technical complexity so you can focus on what matters most.</p>
+              <h2 className="text-4xl md:text-3xl lg:text-5xl font-headline font-extrabold mb-6">Simplicity in Motion.</h2>
+              <p className="text-xl md:text-lg text-muted-foreground font-light">We handle the technical complexity so you can focus on what matters most.</p>
             </div>
             
             <div className="grid md:grid-cols-3 gap-12 max-w-6xl mx-auto">
@@ -256,8 +256,8 @@ export default function Home() {
                   <div className="w-24 h-24 rounded-[2.5rem] bg-gradient-to-br from-primary to-accent text-white flex items-center justify-center mb-8 shadow-2xl shadow-primary/20 group-hover:rotate-6 transition-transform">
                     {step.icon}
                   </div>
-                  <h4 className="text-2xl font-bold mb-4">{step.title}</h4>
-                  <p className="text-muted-foreground leading-relaxed">{step.desc}</p>
+                  <h4 className="text-2xl md:text-xl font-bold mb-4">{step.title}</h4>
+                  <p className="text-muted-foreground leading-relaxed text-sm">{step.desc}</p>
                 </div>
               ))}
             </div>
@@ -270,8 +270,8 @@ export default function Home() {
             <div className="grid lg:grid-cols-2 gap-20 items-center">
               <div>
                 <Badge variant="outline" className="mb-6 px-4 py-1.5 border-primary text-primary font-bold">PHYSICAL VALIDATION</Badge>
-                <h2 className="text-4xl md:text-6xl font-headline font-extrabold mb-8 tracking-tighter leading-tight">Live Capability Stream.</h2>
-                <p className="text-xl text-muted-foreground mb-12 font-light leading-relaxed">
+                <h2 className="text-4xl md:text-3xl lg:text-6xl font-headline font-extrabold mb-8 tracking-tighter leading-tight">Live Capability Stream.</h2>
+                <p className="text-xl md:text-lg text-muted-foreground mb-12 font-light leading-relaxed">
                   Our platform delivers real-world protection in real-time. This interactive showcase demonstrates our active deployments across Rwanda.
                 </p>
                 <div className="space-y-6">
@@ -279,10 +279,10 @@ export default function Home() {
                     <div key={metric.id} className="flex items-center justify-between p-6 glass-card rounded-2xl hover:border-primary/50 transition-all">
                       <div className="flex items-center gap-4">
                         <div className="w-3 h-3 rounded-full bg-green-500 animate-pulse-soft shadow-[0_0_15px_rgba(34,197,94,0.6)]" />
-                        <span className="text-lg font-medium">{metric.label}</span>
+                        <span className="text-lg md:text-base font-medium">{metric.label}</span>
                       </div>
                       <div className="flex items-center gap-6">
-                        <span className="text-lg font-bold font-mono text-primary">{metric.value}</span>
+                        <span className="text-lg md:text-base font-bold font-mono text-primary">{metric.value}</span>
                         <Badge variant="secondary" className="px-3 py-1 uppercase text-[10px] font-bold tracking-widest">{metric.status}</Badge>
                       </div>
                     </div>
@@ -354,8 +354,8 @@ export default function Home() {
           <div className="container mx-auto px-4 relative z-10">
             <div className="grid lg:grid-cols-2 gap-20 items-center">
               <div>
-                <h2 className="text-5xl md:text-7xl font-headline font-extrabold mb-8 tracking-tighter leading-tight">Ready to Secure Your Piece of Tomorrow?</h2>
-                <p className="text-xl md:text-2xl text-primary-foreground/80 mb-12 font-light leading-relaxed">
+                <h2 className="text-5xl md:text-3xl lg:text-7xl font-headline font-extrabold mb-8 tracking-tighter leading-tight">Ready to Secure Your Piece of Tomorrow?</h2>
+                <p className="text-xl md:text-lg text-primary-foreground/80 mb-12 font-light leading-relaxed">
                   Contact our technical engineering deployment team today for a tailored residential or community infrastructure security assessment.
                 </p>
                 <div className="flex items-center gap-10">
@@ -364,21 +364,21 @@ export default function Home() {
                        <div key={i} className="w-14 h-14 rounded-full border-4 border-primary bg-white/20 backdrop-blur-md" />
                      ))}
                    </div>
-                   <div className="font-bold text-xl">
+                   <div className="font-bold text-xl md:text-lg">
                      1,200+ <span className="text-primary-foreground/60 font-light block text-sm">Active Deployments</span>
                    </div>
                 </div>
               </div>
 
-              <Card className="bg-white/5 backdrop-blur-2xl p-10 rounded-[3rem] border-white/10 shadow-2xl">
+              <Card className="bg-white/5 backdrop-blur-2xl p-10 md:p-6 rounded-[3rem] border-white/10 shadow-2xl">
                 <CardHeader className="px-0 pt-0 mb-8">
-                  <CardTitle className="text-3xl font-headline font-bold">Request Assessment</CardTitle>
+                  <CardTitle className="text-3xl md:text-2xl font-headline font-bold">Request Assessment</CardTitle>
                 </CardHeader>
                 <CardContent className="px-0 space-y-6">
-                  <Input placeholder="Full Name" className="bg-white/10 border-white/10 h-16 rounded-2xl text-lg focus-visible:ring-white/20 text-white placeholder:text-white/40" />
-                  <Input placeholder="Email Address" type="email" className="bg-white/10 border-white/10 h-16 rounded-2xl text-lg focus-visible:ring-white/20 text-white placeholder:text-white/40" />
+                  <Input placeholder="Full Name" className="bg-white/10 border-white/10 h-16 rounded-2xl text-lg md:text-base focus-visible:ring-white/20 text-white placeholder:text-white/40" />
+                  <Input placeholder="Email Address" type="email" className="bg-white/10 border-white/10 h-16 rounded-2xl text-lg md:text-base focus-visible:ring-white/20 text-white placeholder:text-white/40" />
                   <Select>
-                    <SelectTrigger className="bg-white/10 border-white/10 h-16 rounded-2xl text-lg text-white/60 focus:ring-white/20">
+                    <SelectTrigger className="bg-white/10 border-white/10 h-16 rounded-2xl text-lg md:text-base text-white/60 focus:ring-white/20">
                       <SelectValue placeholder="Service Interest" />
                     </SelectTrigger>
                     <SelectContent>
@@ -388,7 +388,7 @@ export default function Home() {
                       <SelectItem value="assets">High-Value Asset Tracking</SelectItem>
                     </SelectContent>
                   </Select>
-                  <Button className="w-full bg-white text-primary hover:bg-white/90 h-16 rounded-2xl text-xl font-bold shadow-2xl transition-all hover:scale-[1.02]">
+                  <Button className="w-full bg-white text-primary hover:bg-white/90 h-16 rounded-2xl text-xl md:text-lg font-bold shadow-2xl transition-all hover:scale-[1.02]">
                     Submit Inquiry
                   </Button>
                 </CardContent>
@@ -406,7 +406,7 @@ export default function Home() {
                 <ShieldCheck className="w-10 h-10 text-primary" />
                 <span className="text-3xl font-headline font-extrabold tracking-tighter">SafeRwanda</span>
               </Link>
-              <p className="text-muted-foreground leading-relaxed font-light">
+              <p className="text-muted-foreground leading-relaxed font-light text-sm">
                 Engineering a safer future through advanced IoT, real-time analytics, and community-first security architecture.
               </p>
             </div>
