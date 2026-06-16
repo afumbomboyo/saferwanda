@@ -35,6 +35,8 @@ export default function Home() {
   const heroImg = PlaceHolderImages.find(img => img.id === 'hero-security');
   const communityImg = PlaceHolderImages.find(img => img.id === 'smart-community');
 
+  const [mounted, setMounted] = useState(false);
+  const [currentTime, setCurrentTime] = useState('--:--:--');
   const [metrics, setMetrics] = useState([
     { id: 1, label: 'Kigali Methane', value: '12 PPM', status: 'Optimal' },
     { id: 2, label: 'Asset Tracker #92', value: 'In Motion', status: 'Encrypted' },
@@ -42,12 +44,17 @@ export default function Home() {
   ]);
 
   useEffect(() => {
+    setMounted(true);
+    setCurrentTime(new Date().toLocaleTimeString());
+    
     const interval = setInterval(() => {
       setMetrics(prev => prev.map(m => {
         if (m.id === 1) return { ...m, value: `${Math.floor(Math.random() * 3) + 11} PPM` };
         return m;
       }));
+      setCurrentTime(new Date().toLocaleTimeString());
     }, 4000);
+    
     return () => clearInterval(interval);
   }, []);
 
@@ -324,17 +331,17 @@ export default function Home() {
                   <div className="bg-black/80 backdrop-blur-2xl p-6 rounded-2xl font-mono text-xs border border-white/10 overflow-hidden shadow-2xl">
                     <div className="space-y-1 text-green-400">
                       <div className="flex gap-2">
-                        <span className="opacity-40">[{new Date().toLocaleTimeString()}]</span>
+                        <span className="opacity-40">[{mounted ? currentTime : '--:--:--'}]</span>
                         <span className="text-primary font-bold">INFO:</span>
                         <span>Node_128 Handshake Success.</span>
                       </div>
                       <div className="flex gap-2">
-                        <span className="opacity-40">[{new Date().toLocaleTimeString()}]</span>
+                        <span className="opacity-40">[{mounted ? currentTime : '--:--:--'}]</span>
                         <span className="text-accent font-bold">METRIC:</span>
                         <span>Methane detection: {metrics[0].value}</span>
                       </div>
                       <div className="flex gap-2 opacity-50">
-                        <span className="opacity-40">[{new Date().toLocaleTimeString()}]</span>
+                        <span className="opacity-40">[{mounted ? currentTime : '--:--:--'}]</span>
                         <span>AES-256 Tunnel Active.</span>
                       </div>
                     </div>
