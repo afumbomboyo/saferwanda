@@ -19,7 +19,10 @@ import {
   Baby, 
   Database, 
   Smartphone,
-  Cpu
+  Cpu,
+  Globe,
+  Bell,
+  Eye
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -32,180 +35,189 @@ export default function Home() {
   const heroImg = PlaceHolderImages.find(img => img.id === 'hero-security');
   const communityImg = PlaceHolderImages.find(img => img.id === 'smart-community');
 
-  // Simulated live data
   const [metrics, setMetrics] = useState([
-    { id: 1, label: 'Methane Levels', value: '12 PPM', status: 'Normal' },
-    { id: 2, label: 'Tracker ID #92', value: 'Moving', status: 'Active' },
-    { id: 3, label: 'Gateway Node 4', value: 'Connected', status: 'Stable' },
+    { id: 1, label: 'Kigali Methane', value: '12 PPM', status: 'Optimal' },
+    { id: 2, label: 'Asset Tracker #92', value: 'In Motion', status: 'Encrypted' },
+    { id: 3, label: 'Gateway Node Alpha', value: '99.9% Uptime', status: 'Stable' },
   ]);
 
   useEffect(() => {
     const interval = setInterval(() => {
       setMetrics(prev => prev.map(m => {
-        if (m.id === 1) return { ...m, value: `${Math.floor(Math.random() * 5) + 10} PPM` };
+        if (m.id === 1) return { ...m, value: `${Math.floor(Math.random() * 3) + 11} PPM` };
         return m;
       }));
-    }, 3000);
+    }, 4000);
     return () => clearInterval(interval);
   }, []);
 
   return (
     <div className="flex flex-col min-h-screen">
-      <main className="flex-grow pt-16">
+      <main className="flex-grow">
         
-        {/* 1. The Hero Section */}
-        <section className="relative min-h-[90vh] flex items-center overflow-hidden border-b border-border/50">
+        {/* 1. The Hero Section (Cinematic First Impression) */}
+        <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
           <div className="absolute inset-0 z-0">
             {heroImg && (
               <Image
                 src={heroImg.imageUrl}
-                alt="Active smart monitoring dashboard"
+                alt="SafeRwanda Dashboard"
                 fill
-                className="object-cover opacity-15"
+                className="object-cover opacity-20 scale-105"
                 priority
-                data-ai-hint="dashboard overlay"
               />
             )}
-            <div className="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-b from-background/0 via-background/60 to-background" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent" />
           </div>
 
-          <div className="container mx-auto px-4 z-10">
-            <div className="max-w-4xl animate-fade-in">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider mb-6">
-                <Activity className="w-3 h-3" />
-                Live Monitoring Dashboard Active
-              </div>
-              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-headline font-extrabold mb-6 leading-[1.1] tracking-tight text-foreground">
-                Building a <span className="text-primary">Smarter, Safer Rwanda</span> From the Ground Up.
+          <div className="container mx-auto px-4 z-10 text-center">
+            <div className="max-w-5xl mx-auto animate-fade-in">
+              <Badge variant="outline" className="mb-6 px-4 py-1.5 border-primary/30 text-primary font-bold bg-primary/5 backdrop-blur-md">
+                <Signal className="w-3.5 h-3.5 mr-2 animate-pulse text-primary" />
+                Next-Gen IoT Infrastructure
+              </Badge>
+              <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-headline font-extrabold mb-8 leading-[1] tracking-tighter">
+                Building a <span className="text-gradient">Smarter, Safer Rwanda</span> From the Ground Up.
               </h1>
-              <p className="text-base sm:text-lg lg:text-xl text-muted-foreground mb-10 max-w-2xl leading-relaxed">
+              <p className="text-lg md:text-xl lg:text-2xl text-muted-foreground mb-12 max-w-3xl mx-auto leading-relaxed font-light">
                 Advanced IoT and smart monitoring solutions designed to protect your home, secure your assets, and empower your entire community.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Button asChild size="lg" className="bg-primary text-white hover:bg-primary/90 h-14 px-8 text-base font-bold shadow-xl shadow-primary/20 group">
+              <div className="flex flex-col sm:flex-row gap-6 justify-center">
+                <Button asChild size="lg" className="h-16 px-10 rounded-2xl text-lg font-bold shadow-2xl shadow-primary/30 bg-primary hover:bg-primary/90 transition-all hover:scale-105">
                   <Link href="/auth?signup=true" className="flex items-center gap-2">
-                    Get Started <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    Get Started <ArrowRight className="w-5 h-5" />
                   </Link>
                 </Button>
-                <Button asChild variant="outline" size="lg" className="border-border bg-background/50 backdrop-blur-sm hover:bg-secondary h-14 px-8 text-base font-semibold">
+                <Button asChild variant="outline" size="lg" className="h-16 px-10 rounded-2xl text-lg font-bold border-white/10 bg-white/5 backdrop-blur-md hover:bg-white/10 transition-all hover:scale-105">
                   <Link href="#demo">Request a Demo</Link>
                 </Button>
               </div>
             </div>
           </div>
+          
+          <div className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce opacity-40">
+            <div className="w-6 h-10 rounded-full border-2 border-muted-foreground flex justify-center p-1">
+              <div className="w-1 h-2 bg-muted-foreground rounded-full" />
+            </div>
+          </div>
         </section>
 
-        {/* 2. The Core Value Pillars */}
-        <section className="py-24 bg-background">
+        {/* 2. The Core Value Pillars (Tiered Design) */}
+        <section className="py-32 relative">
           <div className="container mx-auto px-4">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-headline font-extrabold mb-4 tracking-tight">Protect What Matters Most</h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto text-sm md:text-base">Our smart infrastructure ecosystem is categorized into three specialized safety tiers.</p>
+            <div className="flex flex-col md:flex-row justify-between items-end mb-20 gap-8">
+              <div className="max-w-2xl">
+                <h2 className="text-4xl md:text-6xl font-headline font-extrabold mb-6">Omnipresent Protection.</h2>
+                <p className="text-xl text-muted-foreground font-light">Our smart infrastructure ecosystem is categorized into three specialized safety tiers, providing granular security for every facet of life.</p>
+              </div>
+              <div className="flex gap-4">
+                <div className="p-4 rounded-2xl bg-primary/10 border border-primary/20">
+                  <Activity className="w-8 h-8 text-primary" />
+                </div>
+                <div className="p-4 rounded-2xl bg-accent/10 border border-accent/20">
+                  <Globe className="w-8 h-8 text-accent" />
+                </div>
+              </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
               {/* Pillar A: Family & Vulnerable Care */}
-              <div className="space-y-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-12 h-12 rounded-2xl bg-accent/10 flex items-center justify-center text-accent">
-                    <Heart className="w-6 h-6" />
-                  </div>
-                  <h3 className="text-xl font-headline font-bold">Family & Care</h3>
+              <div className="space-y-8 lg:mt-12">
+                <div className="inline-flex items-center gap-3 bg-accent/10 px-4 py-2 rounded-xl border border-accent/20">
+                  <Heart className="w-5 h-5 text-accent" />
+                  <span className="text-accent font-bold tracking-widest uppercase text-xs">Family & Care</span>
                 </div>
-                <Card className="bg-secondary/20 border-border group hover:border-accent/50 transition-colors">
-                  <CardHeader className="pb-2">
-                    <div className="flex items-center gap-2 text-accent font-bold mb-1">
-                      <Baby className="w-4 h-4" />
-                      <span className="text-sm">Protect Your Child</span>
+                <Card className="glass-card group hover:-translate-y-2 transition-transform duration-500">
+                  <CardHeader>
+                    <div className="w-12 h-12 rounded-2xl bg-accent/20 flex items-center justify-center mb-4 text-accent">
+                      <Baby className="w-6 h-6" />
                     </div>
+                    <CardTitle className="text-2xl font-bold">Protect Your Child</CardTitle>
                   </CardHeader>
-                  <CardContent className="text-xs md:text-sm text-muted-foreground">
+                  <CardContent className="text-muted-foreground leading-relaxed">
                     Real-time location tracking and wearable geofencing alerts to ensure your children are safe on their way to and from school.
                   </CardContent>
                 </Card>
-                <Card className="bg-secondary/20 border-border group hover:border-accent/50 transition-colors">
-                  <CardHeader className="pb-2">
-                    <div className="flex items-center gap-2 text-accent font-bold mb-1">
-                      <ShieldCheck className="w-4 h-4" />
-                      <span className="text-sm">Take Care of Your Elderly</span>
+                <Card className="glass-card group hover:-translate-y-2 transition-transform duration-500">
+                  <CardHeader>
+                    <div className="w-12 h-12 rounded-2xl bg-accent/20 flex items-center justify-center mb-4 text-accent">
+                      <Users className="w-6 h-6" />
                     </div>
+                    <CardTitle className="text-2xl font-bold">Take Care of Your Elderly</CardTitle>
                   </CardHeader>
-                  <CardContent className="text-xs md:text-sm text-muted-foreground">
+                  <CardContent className="text-muted-foreground leading-relaxed">
                     Smart ambient health sensors, fall-detection alerts, and automated panic buttons that notify family emergency contacts instantly.
                   </CardContent>
                 </Card>
               </div>
 
               {/* Pillar B: Smart Home & Asset Protection */}
-              <div className="space-y-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
-                    <Lock className="w-6 h-6" />
-                  </div>
-                  <h3 className="text-xl font-headline font-bold">Home & Assets</h3>
+              <div className="space-y-8">
+                <div className="inline-flex items-center gap-3 bg-primary/10 px-4 py-2 rounded-xl border border-primary/20">
+                  <Lock className="w-5 h-5 text-primary" />
+                  <span className="text-primary font-bold tracking-widest uppercase text-xs">Home & Assets</span>
                 </div>
-                <Card className="bg-secondary/20 border-border group hover:border-primary/50 transition-colors">
-                  <CardHeader className="pb-2">
-                    <div className="flex items-center gap-2 text-primary font-bold mb-1">
-                      <Flame className="w-4 h-4" />
-                      <span className="text-sm">Prevent Fire</span>
+                <Card className="glass-card group hover:-translate-y-2 transition-transform duration-500 border-primary/20">
+                  <CardHeader>
+                    <div className="w-12 h-12 rounded-2xl bg-primary/20 flex items-center justify-center mb-4 text-primary">
+                      <Flame className="w-6 h-6" />
                     </div>
+                    <CardTitle className="text-2xl font-bold">Prevent Fire</CardTitle>
                   </CardHeader>
-                  <CardContent className="text-xs md:text-sm text-muted-foreground">
+                  <CardContent className="text-muted-foreground leading-relaxed">
                     Smart thermal and smoke detectors linked to automated network alarms to neutralize fire hazards before they spread.
                   </CardContent>
                 </Card>
-                <Card className="bg-secondary/20 border-border group hover:border-primary/50 transition-colors">
-                  <CardHeader className="pb-2">
-                    <div className="flex items-center gap-2 text-primary font-bold mb-1">
-                      <Box className="w-4 h-4" />
-                      <span className="text-sm">Secure Your Property</span>
+                <Card className="glass-card group hover:-translate-y-2 transition-transform duration-500 border-primary/20">
+                  <CardHeader>
+                    <div className="w-12 h-12 rounded-2xl bg-primary/20 flex items-center justify-center mb-4 text-primary">
+                      <Home className="w-6 h-6" />
                     </div>
+                    <CardTitle className="text-2xl font-bold">Secure Your Premise</CardTitle>
                   </CardHeader>
-                  <CardContent className="text-xs md:text-sm text-muted-foreground">
+                  <CardContent className="text-muted-foreground leading-relaxed">
                     Connected smart locks, perimeter breach detectors, and intelligent entry logs tailored for residential and commercial layouts.
                   </CardContent>
                 </Card>
-                <Card className="bg-secondary/20 border-border group hover:border-primary/50 transition-colors">
-                  <CardHeader className="pb-2">
-                    <div className="flex items-center gap-2 text-primary font-bold mb-1">
-                      <Zap className="w-4 h-4" />
-                      <span className="text-sm">Secure Your Assets</span>
+                <Card className="glass-card group hover:-translate-y-2 transition-transform duration-500 border-primary/20">
+                  <CardHeader>
+                    <div className="w-12 h-12 rounded-2xl bg-primary/20 flex items-center justify-center mb-4 text-primary">
+                      <Zap className="w-6 h-6" />
                     </div>
+                    <CardTitle className="text-2xl font-bold">Secure Your Assets</CardTitle>
                   </CardHeader>
-                  <CardContent className="text-xs md:text-sm text-muted-foreground">
-                    High-precision cellular and LoRaWAN hardware asset tracking nodes built to safeguard equipment and vehicles.
+                  <CardContent className="text-muted-foreground leading-relaxed">
+                    High-precision cellular and LoRaWAN hardware asset tracking nodes built to safeguard equipment, vehicles, and critical tools.
                   </CardContent>
                 </Card>
               </div>
 
               {/* Pillar C: Connected Community */}
-              <div className="space-y-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-12 h-12 rounded-2xl bg-accent/10 flex items-center justify-center text-accent">
-                    <Network className="w-6 h-6" />
-                  </div>
-                  <h3 className="text-xl font-headline font-bold">Community</h3>
+              <div className="space-y-8 lg:mt-24">
+                <div className="inline-flex items-center gap-3 bg-accent/10 px-4 py-2 rounded-xl border border-accent/20">
+                  <Network className="w-5 h-5 text-accent" />
+                  <span className="text-accent font-bold tracking-widest uppercase text-xs">Community Infrastructure</span>
                 </div>
-                <Card className="bg-secondary/20 border-border group hover:border-accent/50 transition-colors">
-                  <CardHeader className="pb-2">
-                    <div className="flex items-center gap-2 text-accent font-bold mb-1">
-                      <Users className="w-4 h-4" />
-                      <span className="text-sm">Neighborhood Survey</span>
+                <Card className="glass-card group hover:-translate-y-2 transition-transform duration-500">
+                  <CardHeader>
+                    <div className="w-12 h-12 rounded-2xl bg-accent/20 flex items-center justify-center mb-4 text-accent">
+                      <Eye className="w-6 h-6" />
                     </div>
+                    <CardTitle className="text-2xl font-bold">Neighborhood Survey</CardTitle>
                   </CardHeader>
-                  <CardContent className="text-xs md:text-sm text-muted-foreground">
+                  <CardContent className="text-muted-foreground leading-relaxed">
                     Decentralized network gateway monitoring nodes linking neighborhood watch loops together for real-time safety updates.
                   </CardContent>
                 </Card>
-                <Card className="bg-secondary/20 border-border group hover:border-accent/50 transition-colors">
-                  <CardHeader className="pb-2">
-                    <div className="flex items-center gap-2 text-accent font-bold mb-1">
-                      <Cpu className="w-4 h-4" />
-                      <span className="text-sm">Smart Community</span>
+                <Card className="glass-card group hover:-translate-y-2 transition-transform duration-500">
+                  <CardHeader>
+                    <div className="w-12 h-12 rounded-2xl bg-accent/20 flex items-center justify-center mb-4 text-accent">
+                      <Globe className="w-6 h-6" />
                     </div>
+                    <CardTitle className="text-2xl font-bold">Make Community Smart</CardTitle>
                   </CardHeader>
-                  <CardContent className="text-xs md:text-sm text-muted-foreground">
+                  <CardContent className="text-muted-foreground leading-relaxed">
                     Scalable urban IoT applications, including smart lighting, waste analytics, and environmental hazard tracking dashboards.
                   </CardContent>
                 </Card>
@@ -214,39 +226,38 @@ export default function Home() {
           </div>
         </section>
 
-        {/* 3. How It Works */}
-        <section className="py-24 bg-secondary/30">
-          <div className="container mx-auto px-4 text-center">
-            <h2 className="text-3xl md:text-4xl font-headline font-extrabold mb-16 tracking-tight">Demystifying the Security Pipeline</h2>
-            <div className="grid md:grid-cols-3 gap-12 max-w-5xl mx-auto">
+        {/* 3. How It Works (The 3-Step Tech Simplicity) */}
+        <section className="py-32 bg-secondary/30 relative overflow-hidden">
+          <div className="container mx-auto px-4 relative z-10">
+            <div className="text-center max-w-3xl mx-auto mb-20">
+              <h2 className="text-4xl md:text-5xl font-headline font-extrabold mb-6">Simplicity in Motion.</h2>
+              <p className="text-xl text-muted-foreground font-light">We handle the technical complexity so you can focus on what matters most.</p>
+            </div>
+            
+            <div className="grid md:grid-cols-3 gap-12 max-w-6xl mx-auto">
               {[
                 {
-                  icon: <Cpu className="w-8 h-8" />,
+                  icon: <Cpu className="w-10 h-10" />,
                   title: "Deploy Hardware Nodes",
                   desc: "We set up plug-and-play IoT sensors, trackers, and gateway devices seamlessly across your premises."
                 },
                 {
-                  icon: <Database className="w-8 h-8" />,
+                  icon: <Database className="w-10 h-10" />,
                   title: "Monitor the Stream",
                   desc: "Data channels route securely into our centralized cloud processing system with zero downtime."
                 },
                 {
-                  icon: <Smartphone className="w-8 h-8" />,
+                  icon: <Bell className="w-10 h-10" />,
                   title: "Receive Live Alerts",
                   desc: "Get instant, actionable mobile notifications and view status metrics on your web control panel."
                 }
               ].map((step, idx) => (
-                <div key={idx} className="relative group">
-                  {idx < 2 && (
-                    <div className="hidden lg:block absolute top-12 left-[60%] w-[80%] border-t-2 border-dashed border-primary/30 z-0" />
-                  )}
-                  <div className="relative z-10 flex flex-col items-center">
-                    <div className="w-20 h-20 rounded-3xl bg-primary text-white flex items-center justify-center mb-6 shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform">
-                      {step.icon}
-                    </div>
-                    <h4 className="text-lg font-headline font-bold mb-4">{step.title}</h4>
-                    <p className="text-sm text-muted-foreground leading-relaxed px-4">{step.desc}</p>
+                <div key={idx} className="relative group text-center flex flex-col items-center">
+                  <div className="w-24 h-24 rounded-[2.5rem] bg-gradient-to-br from-primary to-accent text-white flex items-center justify-center mb-8 shadow-2xl shadow-primary/20 group-hover:rotate-6 transition-transform">
+                    {step.icon}
                   </div>
+                  <h4 className="text-2xl font-bold mb-4">{step.title}</h4>
+                  <p className="text-muted-foreground leading-relaxed">{step.desc}</p>
                 </div>
               ))}
             </div>
@@ -254,63 +265,78 @@ export default function Home() {
         </section>
 
         {/* 4. Interactive Live Metric Showcase */}
-        <section className="py-24 border-y border-border/50 overflow-hidden" id="demo">
+        <section className="py-32" id="demo">
           <div className="container mx-auto px-4">
-            <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <div className="grid lg:grid-cols-2 gap-20 items-center">
               <div>
-                <Badge variant="outline" className="mb-4 border-primary text-primary font-bold">LIVE PROOF OF CONCEPT</Badge>
-                <h2 className="text-3xl md:text-4xl lg:text-5xl font-headline font-extrabold mb-6 tracking-tight text-foreground">Immediate, Functioning Protection Capabilities.</h2>
-                <p className="text-muted-foreground text-sm md:text-base lg:text-lg mb-8 leading-relaxed">
-                  Our platform delivers real-world data in real-time. This interactive showcase demonstrates how we provide physical proof to corporate clients, community leaders, and homeowners.
+                <Badge variant="outline" className="mb-6 px-4 py-1.5 border-primary text-primary font-bold">PHYSICAL VALIDATION</Badge>
+                <h2 className="text-4xl md:text-6xl font-headline font-extrabold mb-8 tracking-tighter leading-tight">Live Capability Stream.</h2>
+                <p className="text-xl text-muted-foreground mb-12 font-light leading-relaxed">
+                  Our platform delivers real-world protection in real-time. This interactive showcase demonstrates our active deployments across Rwanda.
                 </p>
-                <div className="space-y-4">
+                <div className="space-y-6">
                   {metrics.map((metric) => (
-                    <div key={metric.id} className="flex items-center justify-between p-4 bg-card border border-border rounded-xl shadow-sm">
-                      <div className="flex items-center gap-3">
-                        <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                        <span className="text-sm font-medium">{metric.label}</span>
-                      </div>
+                    <div key={metric.id} className="flex items-center justify-between p-6 glass-card rounded-2xl hover:border-primary/50 transition-all">
                       <div className="flex items-center gap-4">
-                        <span className="text-sm font-bold font-mono">{metric.value}</span>
-                        <Badge variant="secondary" className="text-[10px] uppercase font-bold">{metric.status}</Badge>
+                        <div className="w-3 h-3 rounded-full bg-green-500 animate-pulse-soft shadow-[0_0_15px_rgba(34,197,94,0.6)]" />
+                        <span className="text-lg font-medium">{metric.label}</span>
+                      </div>
+                      <div className="flex items-center gap-6">
+                        <span className="text-lg font-bold font-mono text-primary">{metric.value}</span>
+                        <Badge variant="secondary" className="px-3 py-1 uppercase text-[10px] font-bold tracking-widest">{metric.status}</Badge>
                       </div>
                     </div>
                   ))}
                 </div>
               </div>
-              <div className="relative rounded-3xl overflow-hidden border border-border shadow-2xl aspect-video md:aspect-square lg:aspect-video">
-                <div className="absolute inset-0 bg-muted flex items-center justify-center">
+
+              <div className="relative group rounded-[3rem] overflow-hidden border border-white/5 shadow-[0_0_100px_rgba(37,99,235,0.15)] aspect-square lg:aspect-video">
+                <div className="absolute inset-0 z-0">
                   {communityImg && (
                     <Image 
                       src={communityImg.imageUrl} 
-                      alt="Smart city dashboard" 
+                      alt="Smart City Map" 
                       fill 
-                      className="object-cover opacity-40"
-                      data-ai-hint="smart city"
+                      className="object-cover opacity-30 grayscale group-hover:scale-110 transition-transform duration-1000"
                     />
                   )}
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-accent/20" />
-                  <div className="relative z-10 w-full h-full p-8 flex flex-col justify-between backdrop-blur-[2px]">
-                    <div className="flex justify-between items-start">
-                      <div className="bg-background/90 backdrop-blur-md p-4 rounded-2xl border border-white/20 shadow-xl max-w-[200px]">
-                        <div className="flex items-center gap-2 mb-2 text-xs font-bold text-primary uppercase tracking-tighter">
-                          <MapIcon className="w-3 h-3" />
-                          Kigali Node Cluster
-                        </div>
-                        <div className="h-20 w-full rounded bg-muted animate-pulse mb-2" />
-                        <p className="text-[10px] text-muted-foreground">32 Active Sensors detected in Zone B-4</p>
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/30 to-background" />
+                </div>
+                
+                <div className="relative z-10 w-full h-full p-10 flex flex-col justify-between backdrop-blur-[4px]">
+                  <div className="flex justify-between items-start">
+                    <div className="glass-card p-6 rounded-3xl border-white/20 max-w-[280px]">
+                      <div className="flex items-center gap-2 mb-4 text-xs font-bold text-primary uppercase tracking-tighter">
+                        <MapIcon className="w-4 h-4" />
+                        Active Node: Zone B-4
                       </div>
-                      <div className="flex flex-col gap-2">
-                        <Badge className="bg-green-500 border-none">System Online</Badge>
-                        <Badge variant="secondary" className="bg-white/10 text-white backdrop-blur-md border-white/20">LTE-M Signal Strong</Badge>
+                      <div className="h-32 w-full rounded-xl bg-primary/20 animate-pulse mb-4 flex items-center justify-center">
+                        <Activity className="w-12 h-12 text-primary/40" />
                       </div>
+                      <p className="text-xs text-muted-foreground leading-relaxed">Precision GPS Mesh active. 32 Node Handshakes verified.</p>
                     </div>
-                    <div className="bg-black/80 text-green-400 p-4 rounded-xl font-mono text-[10px] overflow-hidden">
-                      <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
-                        {`> [INFO] Node_128 reports Methane: ${metrics[0].value}`}
+                    <div className="flex flex-col gap-3">
+                      <Badge className="bg-green-500 text-white border-none shadow-lg shadow-green-500/30">System: ONLINE</Badge>
+                      <Badge variant="secondary" className="bg-white/10 text-white backdrop-blur-md border-white/20 uppercase tracking-widest text-[10px]">Signal: EXCELLENT</Badge>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-black/80 backdrop-blur-2xl p-6 rounded-2xl font-mono text-xs border border-white/10 overflow-hidden shadow-2xl">
+                    <div className="space-y-1 text-green-400">
+                      <div className="flex gap-2">
+                        <span className="opacity-40">[{new Date().toLocaleTimeString()}]</span>
+                        <span className="text-primary font-bold">INFO:</span>
+                        <span>Node_128 Handshake Success.</span>
                       </div>
-                      <div className="opacity-70">{`> [INFO] Gateway_Alpha status: Stable`}</div>
-                      <div className="opacity-50">{`> [INFO] GPS_Link encryption active`}</div>
+                      <div className="flex gap-2">
+                        <span className="opacity-40">[{new Date().toLocaleTimeString()}]</span>
+                        <span className="text-accent font-bold">METRIC:</span>
+                        <span>Methane detection: {metrics[0].value}</span>
+                      </div>
+                      <div className="flex gap-2 opacity-50">
+                        <span className="opacity-40">[{new Date().toLocaleTimeString()}]</span>
+                        <span>AES-256 Tunnel Active.</span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -320,53 +346,49 @@ export default function Home() {
         </section>
 
         {/* 5. Final Closing CTA Section */}
-        <section className="py-24 bg-primary relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl pointer-events-none" />
+        <section className="py-32 relative overflow-hidden bg-primary text-white">
+          <div className="absolute top-0 left-0 w-full h-full">
+             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-white/10 rounded-full blur-[120px] pointer-events-none" />
+          </div>
+
           <div className="container mx-auto px-4 relative z-10">
-            <div className="grid lg:grid-cols-2 gap-16 items-center">
-              <div className="text-white max-w-xl">
-                <h2 className="text-4xl md:text-5xl lg:text-6xl font-headline font-extrabold mb-6 tracking-tight leading-tight">Ready to Secure Your Piece of Tomorrow?</h2>
-                <p className="text-primary-foreground/80 text-base md:text-lg lg:text-xl mb-10 leading-relaxed">
+            <div className="grid lg:grid-cols-2 gap-20 items-center">
+              <div>
+                <h2 className="text-5xl md:text-7xl font-headline font-extrabold mb-8 tracking-tighter leading-tight">Ready to Secure Your Piece of Tomorrow?</h2>
+                <p className="text-xl md:text-2xl text-primary-foreground/80 mb-12 font-light leading-relaxed">
                   Contact our technical engineering deployment team today for a tailored residential or community infrastructure security assessment.
                 </p>
-                <div className="flex items-center gap-6">
-                  <div className="flex -space-x-3">
-                    {[1,2,3,4].map(i => (
-                      <div key={i} className="w-12 h-12 rounded-full border-4 border-primary bg-white/10" />
-                    ))}
-                  </div>
-                  <div className="text-white/80 text-sm font-medium">
-                    <span className="block font-bold text-white">1,200+</span>
-                    Active Deployments
-                  </div>
+                <div className="flex items-center gap-10">
+                   <div className="flex -space-x-4">
+                     {[1,2,3,4,5].map(i => (
+                       <div key={i} className="w-14 h-14 rounded-full border-4 border-primary bg-white/20 backdrop-blur-md" />
+                     ))}
+                   </div>
+                   <div className="font-bold text-xl">
+                     1,200+ <span className="text-primary-foreground/60 font-light block text-sm">Active Deployments</span>
+                   </div>
                 </div>
               </div>
 
-              <Card className="bg-white p-8 rounded-3xl shadow-2xl border-none">
-                <CardHeader className="px-0 pt-0">
-                  <CardTitle className="text-2xl font-headline font-bold text-primary">Request Assessment</CardTitle>
+              <Card className="bg-white/5 backdrop-blur-2xl p-10 rounded-[3rem] border-white/10 shadow-2xl">
+                <CardHeader className="px-0 pt-0 mb-8">
+                  <CardTitle className="text-3xl font-headline font-bold">Request Assessment</CardTitle>
                 </CardHeader>
-                <CardContent className="px-0 space-y-4">
-                  <div className="space-y-2">
-                    <Input placeholder="Full Name" className="bg-secondary/30 border-none h-12 rounded-xl focus-visible:ring-primary" />
-                  </div>
-                  <div className="space-y-2">
-                    <Input placeholder="Email Address" type="email" className="bg-secondary/30 border-none h-12 rounded-xl focus-visible:ring-primary" />
-                  </div>
-                  <div className="space-y-2">
-                    <Select>
-                      <SelectTrigger className="bg-secondary/30 border-none h-12 rounded-xl text-muted-foreground">
-                        <SelectValue placeholder="Service Interest" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="child">Child Protection</SelectItem>
-                        <SelectItem value="home">Smart Home Security</SelectItem>
-                        <SelectItem value="community">Community Infrastructure</SelectItem>
-                        <SelectItem value="assets">High-Value Asset Tracking</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <Button className="w-full bg-primary hover:bg-primary/90 h-14 rounded-xl text-white font-bold text-lg shadow-xl shadow-primary/20 transition-all">
+                <CardContent className="px-0 space-y-6">
+                  <Input placeholder="Full Name" className="bg-white/10 border-white/10 h-16 rounded-2xl text-lg focus-visible:ring-white/20 text-white placeholder:text-white/40" />
+                  <Input placeholder="Email Address" type="email" className="bg-white/10 border-white/10 h-16 rounded-2xl text-lg focus-visible:ring-white/20 text-white placeholder:text-white/40" />
+                  <Select>
+                    <SelectTrigger className="bg-white/10 border-white/10 h-16 rounded-2xl text-lg text-white/60 focus:ring-white/20">
+                      <SelectValue placeholder="Service Interest" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="child">Child Protection</SelectItem>
+                      <SelectItem value="home">Smart Home Security</SelectItem>
+                      <SelectItem value="community">Community Infrastructure</SelectItem>
+                      <SelectItem value="assets">High-Value Asset Tracking</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Button className="w-full bg-white text-primary hover:bg-white/90 h-16 rounded-2xl text-xl font-bold shadow-2xl transition-all hover:scale-[1.02]">
                     Submit Inquiry
                   </Button>
                 </CardContent>
@@ -376,40 +398,53 @@ export default function Home() {
         </section>
       </main>
 
-      <footer className="py-16 border-t border-border bg-background">
+      <footer className="py-24 border-t border-border bg-background relative overflow-hidden">
         <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-12 mb-12">
-            <div className="flex items-center gap-2 group">
-              <ShieldCheck className="w-8 h-8 text-primary group-hover:text-accent transition-colors" />
-              <span className="text-2xl font-headline font-bold tracking-tight">SafeRwanda</span>
+          <div className="flex flex-col lg:flex-row justify-between items-start gap-16 mb-16">
+            <div className="max-w-sm">
+              <Link href="/" className="flex items-center gap-3 group mb-8">
+                <ShieldCheck className="w-10 h-10 text-primary" />
+                <span className="text-3xl font-headline font-extrabold tracking-tighter">SafeRwanda</span>
+              </Link>
+              <p className="text-muted-foreground leading-relaxed font-light">
+                Engineering a safer future through advanced IoT, real-time analytics, and community-first security architecture.
+              </p>
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-12 md:gap-24">
-              <div className="space-y-4">
-                <h5 className="font-bold text-sm uppercase tracking-widest text-muted-foreground">Company</h5>
-                <ul className="space-y-2 text-sm">
-                  <li><Link href="#" className="hover:text-primary transition-colors">Our Vision</Link></li>
-                  <li><Link href="/services" className="hover:text-primary transition-colors">IoT Stack</Link></li>
-                  <li><Link href="#" className="hover:text-primary transition-colors">Careers</Link></li>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-16 lg:gap-32">
+              <div className="space-y-6">
+                <h5 className="font-bold text-xs uppercase tracking-[0.2em] text-primary">Ecosystem</h5>
+                <ul className="space-y-4 text-sm font-medium">
+                  <li><Link href="#" className="text-muted-foreground hover:text-primary transition-colors">IoT Stack</Link></li>
+                  <li><Link href="/services" className="text-muted-foreground hover:text-primary transition-colors">Services</Link></li>
+                  <li><Link href="#" className="text-muted-foreground hover:text-primary transition-colors">Hardware</Link></li>
                 </ul>
               </div>
-              <div className="space-y-4">
-                <h5 className="font-bold text-sm uppercase tracking-widest text-muted-foreground">Deploy</h5>
-                <ul className="space-y-2 text-sm">
-                  <li><Link href="/auth" className="hover:text-primary transition-colors">Partner Portal</Link></li>
-                  <li><Link href="#" className="hover:text-primary transition-colors">Client Login</Link></li>
-                  <li><Link href="/concierge" className="hover:text-primary transition-colors">AI Concierge</Link></li>
+              <div className="space-y-6">
+                <h5 className="font-bold text-xs uppercase tracking-[0.2em] text-primary">Company</h5>
+                <ul className="space-y-4 text-sm font-medium">
+                  <li><Link href="#" className="text-muted-foreground hover:text-primary transition-colors">Our Vision</Link></li>
+                  <li><Link href="#" className="text-muted-foreground hover:text-primary transition-colors">Global Partners</Link></li>
+                  <li><Link href="#" className="text-muted-foreground hover:text-primary transition-colors">Careers</Link></li>
+                </ul>
+              </div>
+              <div className="space-y-6">
+                <h5 className="font-bold text-xs uppercase tracking-[0.2em] text-primary">Portal</h5>
+                <ul className="space-y-4 text-sm font-medium">
+                  <li><Link href="/auth" className="text-muted-foreground hover:text-primary transition-colors">Login</Link></li>
+                  <li><Link href="/concierge" className="text-muted-foreground hover:text-primary transition-colors">AI Concierge</Link></li>
+                  <li><Link href="#" className="text-muted-foreground hover:text-primary transition-colors">Support</Link></li>
                 </ul>
               </div>
             </div>
           </div>
-          <div className="pt-8 border-t border-border flex flex-col sm:flex-row justify-between items-center gap-6">
-            <div className="text-sm text-muted-foreground font-medium">
-              © {new Date().getFullYear()} SafeRwanda IoT Labs. All rights reserved.
+          <div className="pt-12 border-t border-border flex flex-col md:flex-row justify-between items-center gap-8">
+            <div className="text-xs text-muted-foreground font-bold tracking-widest uppercase">
+              © {new Date().getFullYear()} SafeRwanda IoT Labs. Secure by Design.
             </div>
-            <div className="flex gap-8">
-              <Link href="#" className="text-sm text-muted-foreground hover:text-primary transition-colors">Privacy</Link>
-              <Link href="#" className="text-sm text-muted-foreground hover:text-primary transition-colors">Terms</Link>
-              <Link href="#" className="text-sm text-muted-foreground hover:text-primary transition-colors">Contact Engineering</Link>
+            <div className="flex gap-10">
+              <Link href="#" className="text-xs text-muted-foreground hover:text-primary transition-colors font-bold uppercase">Privacy</Link>
+              <Link href="#" className="text-xs text-muted-foreground hover:text-primary transition-colors font-bold uppercase">Terms</Link>
+              <Link href="#" className="text-xs text-muted-foreground hover:text-primary transition-colors font-bold uppercase">Technical Assessment</Link>
             </div>
           </div>
         </div>
