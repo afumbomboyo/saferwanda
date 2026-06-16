@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useEffect } from 'react';
@@ -68,7 +69,7 @@ export default function Home() {
                 src={heroImg.imageUrl}
                 alt="SafeRwanda Vision"
                 fill
-                className="object-cover opacity-50 scale-105"
+                className="object-cover opacity-25 brightness-55 scale-105"
                 priority
               />
             )}
@@ -222,7 +223,7 @@ export default function Home() {
         </section>
 
         {/* 3. How It Works */}
-        <section className="py-24 bg-secondary/30 relative overflow-hidden">
+        <section className="py-24 bg-[#F5F5F7] dark:bg-muted/10 relative overflow-hidden">
           <div className="container mx-auto px-4 relative z-10">
             <div className="text-center max-w-2xl mx-auto mb-16">
               <h2 className="text-2xl md:text-3xl lg:text-4xl font-headline font-extrabold mb-4">Simplicity in Motion.</h2>
