@@ -1,0 +1,53 @@
+
+{
+  "placeholderImages": [
+    {
+      "id": "hero-security",
+      "description": "High-tech security operations center",
+      "imageUrl": "https://picsum.photos/seed/safe1/1200/800",
+      "imageHint": "security tech"
+    },
+    {
+      "id": "child-protection",
+      "description": "Smart watch for child tracking",
+      "imageUrl": "https://picsum.photos/seed/safe2/600/400",
+      "imageHint": "child safety"
+    },
+    {
+      "id": "elderly-care",
+      "description": "Health monitoring device for seniors",
+      "imageUrl": "https://picsum.photos/seed/safe3/600/400",
+      "imageHint": "elderly care"
+    },
+    {
+      "id": "fire-prevention",
+      "description": "Smart smoke detector",
+      "imageUrl": "https://picsum.photos/seed/safe4/600/400",
+      "imageHint": "fire safety"
+    },
+    {
+      "id": "property-security",
+      "description": "Modern home security camera",
+      "imageUrl": "https://picsum.photos/seed/safe5/600/400",
+      "imageHint": "home security"
+    },
+    {
+      "id": "asset-protection",
+      "description": "Secured vault with digital lock",
+      "imageUrl": "https://picsum.photos/seed/safe6/600/400",
+      "imageHint": "asset protection"
+    },
+    {
+      "id": "neighborhood-surveillance",
+      "description": "Aerial view of a safe neighborhood",
+      "imageUrl": "https://picsum.photos/seed/safe7/600/400",
+      "imageHint": "neighborhood security"
+    },
+    {
+      "id": "smart-community",
+      "description": "Smart city dashboard interface",
+      "imageUrl": "https://picsum.photos/seed/safe8/600/400",
+      "imageHint": "smart city"
+    }
+  ]
+}
