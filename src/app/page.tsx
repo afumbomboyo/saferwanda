@@ -113,16 +113,14 @@ export default function Home() {
         {/* 2. The Core Value Pillars (Tiered Design) */}
         <section className="py-24 relative">
           <div className="container mx-auto px-4">
-            <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
-              <div className="max-w-2xl">
-                <h2 className="text-3xl lg:text-4xl font-headline font-extrabold mb-4 text-center">Our Services</h2>
-                <p className="text-base text-muted-foreground font-light text-center">Our smart infrastructure ecosystem is categorized into three specialized safety tiers, providing granular security for every facet of life.</p>
-              </div>
+            <div className="text-center max-w-2xl mx-auto mb-16">
+              <h2 className="text-3xl lg:text-4xl font-headline font-extrabold mb-4">Our Services</h2>
+              <p className="text-base text-muted-foreground font-light">Our smart infrastructure ecosystem is categorized into three specialized safety tiers, providing granular security for every facet of life.</p>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* Pillar A: Family & Vulnerable Care */}
-              <div className="space-y-6 lg:mt-8">
+              <div className="space-y-6">
                 <div className="inline-flex items-center gap-2 bg-accent/10 px-3 py-1.5 rounded-lg border border-accent/20">
                   <Heart className="w-4 h-4 text-accent" />
                   <span className="text-accent font-bold tracking-widest uppercase text-[10px]">Family & Care</span>
@@ -193,7 +191,7 @@ export default function Home() {
               </div>
 
               {/* Pillar C: Connected Community */}
-              <div className="space-y-6 lg:mt-16">
+              <div className="space-y-6">
                 <div className="inline-flex items-center gap-2 bg-accent/10 px-3 py-1.5 rounded-lg border border-accent/20">
                   <Network className="w-4 h-4 text-accent" />
                   <span className="text-accent font-bold tracking-widest uppercase text-[10px]">Community Infrastructure</span>
