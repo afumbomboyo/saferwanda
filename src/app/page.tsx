@@ -115,16 +115,8 @@ export default function Home() {
           <div className="container mx-auto px-4">
             <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
               <div className="max-w-2xl">
-                <h2 className="text-3xl lg:text-4xl font-headline font-extrabold mb-4">Omnipresent Protection.</h2>
-                <p className="text-base text-muted-foreground font-light">Our smart infrastructure ecosystem is categorized into three specialized safety tiers, providing granular security for every facet of life.</p>
-              </div>
-              <div className="flex gap-4">
-                <div className="p-3 rounded-xl bg-primary/10 border border-primary/20">
-                  <Activity className="w-6 h-6 text-primary" />
-                </div>
-                <div className="p-3 rounded-xl bg-accent/10 border border-accent/20">
-                  <Globe className="w-6 h-6 text-accent" />
-                </div>
+                <h2 className="text-3xl lg:text-4xl font-headline font-extrabold mb-4 text-center">Our Services</h2>
+                <p className="text-base text-muted-foreground font-light text-center">Our smart infrastructure ecosystem is categorized into three specialized safety tiers, providing granular security for every facet of life.</p>
               </div>
             </div>
 

@@ -50,7 +50,10 @@ export default function Navbar() {
               <Link 
                 key={link.href} 
                 href={link.href} 
-                className="text-sm font-bold uppercase tracking-widest hover:text-primary transition-colors"
+                className={cn(
+                  "text-sm font-bold uppercase tracking-widest transition-colors",
+                  link.name === 'Login' ? "text-primary hover:text-primary/80" : "text-foreground hover:text-primary"
+                )}
               >
                 {link.name}
               </Link>
@@ -99,7 +102,10 @@ function MobileMenu({ visibleLinks, showGetStarted }: { visibleLinks: any[], sho
                   key={link.href} 
                   href={link.href} 
                   onClick={() => setIsOpen(false)}
-                  className="text-4xl font-headline font-extrabold tracking-tighter hover:text-primary"
+                  className={cn(
+                    "text-4xl font-headline font-extrabold tracking-tighter transition-colors",
+                    link.name === 'Login' ? "text-primary hover:text-primary/80" : "text-foreground hover:text-primary"
+                  )}
                 >
                   {link.name}
                 </Link>

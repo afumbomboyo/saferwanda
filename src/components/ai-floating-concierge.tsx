@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 
-export default function AIFloatingConcierge() {
+export default function AIFoatingConcierge() {
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [loading, setLoading] = useState(false);
@@ -24,8 +24,8 @@ export default function AIFloatingConcierge() {
 
   useEffect(() => {
     const margin = 32;
-    const initialX = window.innerWidth - 80 - margin;
-    const initialY = window.innerHeight - 80 - margin;
+    const initialX = window.innerWidth - 64 - margin;
+    const initialY = window.innerHeight - 64 - margin;
     setPosition({ x: initialX, y: initialY });
   }, []);
 
@@ -54,8 +54,8 @@ export default function AIFloatingConcierge() {
       const newX = dragRef.current.initialX + deltaX;
       const newY = dragRef.current.initialY + deltaY;
 
-      const maxX = window.innerWidth - 80;
-      const maxY = window.innerHeight - 80;
+      const maxX = window.innerWidth - 64;
+      const maxY = window.innerHeight - 64;
       
       setPosition({
         x: Math.max(0, Math.min(newX, maxX)),
@@ -113,12 +113,12 @@ export default function AIFloatingConcierge() {
             onMouseDown={handleMouseDown}
             onClick={handleButtonClick}
             className={cn(
-              "w-20 h-20 rounded-[2rem] bg-gradient-to-br from-primary to-accent text-white shadow-[0_0_50px_rgba(37,99,235,0.4)] flex items-center justify-center transition-all hover:scale-110 active:scale-95",
+              "w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-accent text-white shadow-[0_0_40px_rgba(37,99,235,0.4)] flex items-center justify-center transition-all hover:scale-110 active:scale-95",
               isDragging ? "cursor-grabbing scale-105 rotate-6 shadow-primary/60" : "cursor-grab animate-bounce-subtle"
             )}
           >
-            <MessageSquare className="w-10 h-10" />
-            <div className="absolute -top-1 -right-1 w-5 h-5 bg-green-500 rounded-full border-4 border-background animate-pulse" />
+            <MessageSquare className="w-8 h-8" />
+            <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-4 border-background animate-pulse" />
           </button>
         </div>
       </div>
