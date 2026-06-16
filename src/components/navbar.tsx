@@ -13,7 +13,8 @@ export default function Navbar() {
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+      // Threshold to hide nav button based on hero height approx
+      setIsScrolled(window.scrollY > 100);
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
@@ -22,7 +23,6 @@ export default function Navbar() {
   const navLinks = [
     { name: 'Home', href: '/' },
     { name: 'Services', href: '/services' },
-    { name: 'Concierge', href: '/concierge' },
     { name: 'Login', href: '/auth' },
   ];
 
@@ -56,21 +56,23 @@ export default function Navbar() {
               </Link>
             ))}
           </div>
-          <Button asChild className="h-12 px-8 rounded-xl font-bold shadow-xl shadow-primary/20 bg-primary hover:bg-primary/90">
-            <Link href="/auth?signup=true">Get Started</Link>
-          </Button>
+          {isScrolled && (
+            <Button asChild className="h-12 px-8 rounded-xl font-bold shadow-xl shadow-primary/20 bg-primary hover:bg-primary/90 animate-fade-in">
+              <Link href="/auth?signup=true">Get Started</Link>
+            </Button>
+          )}
         </div>
 
         {/* Mobile Nav Toggle */}
         <div className="md:hidden">
-          <MobileMenu visibleLinks={visibleLinks} />
+          <MobileMenu visibleLinks={visibleLinks} showGetStarted={isScrolled} />
         </div>
       </div>
     </nav>
   );
 }
 
-function MobileMenu({ visibleLinks }: { visibleLinks: any[] }) {
+function MobileMenu({ visibleLinks, showGetStarted }: { visibleLinks: any[], showGetStarted: boolean }) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -102,9 +104,11 @@ function MobileMenu({ visibleLinks }: { visibleLinks: any[] }) {
                   {link.name}
                 </Link>
               ))}
-              <Button asChild size="lg" className="h-16 px-12 rounded-2xl text-xl font-bold mt-6 shadow-2xl bg-primary">
-                <Link href="/auth?signup=true" onClick={() => setIsOpen(false)}>Get Started</Link>
-              </Button>
+              {showGetStarted && (
+                <Button asChild size="lg" className="h-16 px-12 rounded-2xl text-xl font-bold mt-6 shadow-2xl bg-primary">
+                  <Link href="/auth?signup=true" onClick={() => setIsOpen(false)}>Get Started</Link>
+                </Button>
+              )}
             </div>
           </div>
         </div>
