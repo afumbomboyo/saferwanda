@@ -1,4 +1,3 @@
-
 import Link from 'next/link';
 import {Shield, Menu} from 'lucide-react';
 import {Button} from '@/components/ui/button';
@@ -20,7 +19,6 @@ export default function Navbar() {
         {/* Desktop Nav */}
         <div className="hidden md:flex items-center gap-8">
           <Link href="/services" className="text-sm font-medium hover:text-primary transition-colors">Services</Link>
-          <Link href="/concierge" className="text-sm font-medium hover:text-primary transition-colors">AI Concierge</Link>
           <Link href="/auth" className="text-sm font-medium hover:text-primary transition-colors">Login</Link>
           <Button asChild variant="default" className="bg-primary hover:bg-primary/90">
             <Link href="/auth?signup=true">Get Started</Link>
@@ -38,7 +36,6 @@ export default function Navbar() {
             <SheetContent side="right" className="bg-background border-border">
               <div className="flex flex-col gap-6 mt-12">
                 <Link href="/services" className="text-lg font-medium hover:text-primary">Services</Link>
-                <Link href="/concierge" className="text-lg font-medium hover:text-primary">AI Concierge</Link>
                 <Link href="/auth" className="text-lg font-medium hover:text-primary">Login</Link>
                 <Button asChild className="w-full bg-accent hover:bg-accent/90">
                   <Link href="/auth?signup=true">Get Started</Link>
