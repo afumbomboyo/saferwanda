@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useEffect } from 'react';
@@ -6,26 +7,20 @@ import Link from 'next/link';
 import { 
   ArrowRight, 
   Lock, 
-  Users, 
-  Zap, 
-  Activity, 
   Signal, 
   Map as MapIcon, 
   Heart, 
-  Flame, 
   Network, 
   Database, 
   Cpu,
-  Globe,
   Bell,
-  Eye,
-  House
+  Activity
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
 import { PlaceHolderImages } from '@/app/lib/placeholder-images';
 
 export default function Home() {
@@ -124,22 +119,22 @@ export default function Home() {
                     <span className="text-accent font-bold tracking-widest uppercase text-[10px]">Family & Care</span>
                   </div>
                 </div>
-                <Card className="glass-card group hover:-translate-y-1 transition-transform duration-500">
+                <Card className="glass-card group hover:-translate-y-1 transition-transform duration-500 overflow-hidden">
+                  <div className="relative w-full h-44 border-b border-accent/10">
+                    <Image src="/images/child.png" alt="Protect Your Child" fill className="object-cover" />
+                  </div>
                   <CardHeader>
-                    <div className="relative w-12 h-12 rounded-xl overflow-hidden mb-3 border border-accent/20">
-                      <Image src="/images/child.png" alt="Protect Your Child" fill className="object-cover" />
-                    </div>
                     <CardTitle className="text-sm md:text-base font-bold">Protect Your Child</CardTitle>
                   </CardHeader>
                   <CardContent className="text-muted-foreground leading-relaxed text-[11px] md:text-xs">
                     Real-time location tracking and wearable geofencing alerts to ensure your children are safe on their way to and from school.
                   </CardContent>
                 </Card>
-                <Card className="glass-card group hover:-translate-y-1 transition-transform duration-500">
+                <Card className="glass-card group hover:-translate-y-1 transition-transform duration-500 overflow-hidden">
+                  <div className="relative w-full h-44 border-b border-accent/10">
+                    <Image src="/images/elder.png" alt="Take Care of Your Elderly" fill className="object-cover" />
+                  </div>
                   <CardHeader>
-                    <div className="relative w-12 h-12 rounded-xl overflow-hidden mb-3 border border-accent/20">
-                      <Image src="/images/elder.png" alt="Take Care of Your Elderly" fill className="object-cover" />
-                    </div>
                     <CardTitle className="text-sm md:text-base font-bold">Take Care of Your Elderly</CardTitle>
                   </CardHeader>
                   <CardContent className="text-muted-foreground leading-relaxed text-[11px] md:text-xs">
@@ -156,37 +151,37 @@ export default function Home() {
                     <span className="text-primary font-bold tracking-widest uppercase text-[10px]">Home & Assets</span>
                   </div>
                 </div>
-                <Card className="glass-card group hover:-translate-y-1 transition-transform duration-500 border-primary/20">
+                <Card className="glass-card group hover:-translate-y-1 transition-transform duration-500 border-primary/20 overflow-hidden">
+                  <div className="relative w-full h-44 border-b border-primary/10">
+                    <Image src="/images/fire.png" alt="Prevent Fire" fill className="object-cover" />
+                  </div>
                   <CardHeader>
-                    <div className="relative w-12 h-12 rounded-xl overflow-hidden mb-3 border border-primary/20">
-                      <Image src="/images/fire.png" alt="Prevent Fire" fill className="object-cover" />
-                    </div>
                     <CardTitle className="text-sm md:text-base font-bold">Prevent Fire</CardTitle>
                   </CardHeader>
                   <CardContent className="text-muted-foreground leading-relaxed text-[11px] md:text-xs">
                     Smart thermal and smoke detectors linked to automated network alarms to neutralize fire hazards early.
                   </CardContent>
                 </Card>
-                <Card className="glass-card group hover:-translate-y-1 transition-transform duration-500 border-primary/20">
+                <Card className="glass-card group hover:-translate-y-1 transition-transform duration-500 border-primary/20 overflow-hidden">
+                  <div className="relative w-full h-44 border-b border-primary/10">
+                    <Image src="https://mecsecurity.com/news/wp-content/uploads/2018/11/6.jpg" alt="Secure Your Premise" fill className="object-cover" />
+                  </div>
                   <CardHeader>
-                    <div className="relative w-12 h-12 rounded-xl overflow-hidden mb-3 border border-primary/20">
-                      <Image src="https://mecsecurity.com/news/wp-content/uploads/2018/11/6.jpg" alt="Secure Your Premise" fill className="object-cover" />
-                    </div>
                     <CardTitle className="text-sm md:text-base font-bold">Secure Your Premise</CardTitle>
                   </CardHeader>
                   <CardContent className="text-muted-foreground leading-relaxed text-[11px] md:text-xs">
                     Connected smart locks, perimeter breach detectors, and intelligent entry logs for residential layouts.
                   </CardContent>
                 </Card>
-                <Card className="glass-card group hover:-translate-y-1 transition-transform duration-500 border-primary/20">
+                <Card className="glass-card group hover:-translate-y-1 transition-transform duration-500 border-primary/20 overflow-hidden">
+                  <div className="relative w-full h-44 border-b border-primary/10">
+                    <Image src="https://i5.walmartimages.com/seo/EON-Odyssey-18-Month-Long-Life-GPS-Tracker-Vehicles-Assets-Fleet-Hidden-Magnetic-GPS-Tracking-Device-Track-Years-Single-Charge-4G-LTE-Real-Time-Track_ddc51730-ff5f-4363-afc6-70c6686ebb84.bb45370a23c0677c87767a2e8b848bf3.jpeg?odnHeight=328&odnWidth=328&odnBg=FFFFFF" alt="Secure Your Assets" fill className="object-cover" />
+                  </div>
                   <CardHeader>
-                    <div className="relative w-12 h-12 rounded-xl overflow-hidden mb-3 border border-primary/20">
-                      <Image src="https://i5.walmartimages.com/seo/EON-Odyssey-18-Month-Long-Life-GPS-Tracker-Vehicles-Assets-Fleet-Hidden-Magnetic-GPS-Tracking-Device-Track-Years-Single-Charge-4G-LTE-Real-Time-Track_ddc51730-ff5f-4363-afc6-70c6686ebb84.bb45370a23c0677c87767a2e8b848bf3.jpeg?odnHeight=328&odnWidth=328&odnBg=FFFFFF" alt="Secure Your Assets" fill className="object-cover" />
-                    </div>
                     <CardTitle className="text-sm md:text-base font-bold">Secure Your Assets</CardTitle>
                   </CardHeader>
                   <CardContent className="text-muted-foreground leading-relaxed text-[11px] md:text-xs">
-                    High-precision LoRaWAN hardware asset tracking nodes built to safeguard equipment and vehicles.
+                    High-precision hardware asset tracking nodes built to safeguard equipment and vehicles.
                   </CardContent>
                 </Card>
               </div>
@@ -199,22 +194,22 @@ export default function Home() {
                     <span className="text-accent font-bold tracking-widest uppercase text-[10px]">Community Infrastructure</span>
                   </div>
                 </div>
-                <Card className="glass-card group hover:-translate-y-1 transition-transform duration-500">
+                <Card className="glass-card group hover:-translate-y-1 transition-transform duration-500 overflow-hidden">
+                  <div className="relative w-full h-44 border-b border-accent/10">
+                    <Image src="https://images.unsplash.com/photo-1589935447067-5531094415d1?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Y2N0diUyMGNhbWVyYXxlbnwwfHwwfHx8MA%3D%3D" alt="Neighborhood Survey" fill className="object-cover" />
+                  </div>
                   <CardHeader>
-                    <div className="relative w-12 h-12 rounded-xl overflow-hidden mb-3 border border-accent/20">
-                      <Image src="https://images.unsplash.com/photo-1589935447067-5531094415d1?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Y2N0diUyMGNhbWVyYXxlbnwwfHwwfHx8MA%3D%3D" alt="Neighborhood Survey" fill className="object-cover" />
-                    </div>
                     <CardTitle className="text-sm md:text-base font-bold">Neighborhood Survey</CardTitle>
                   </CardHeader>
                   <CardContent className="text-muted-foreground leading-relaxed text-[11px] md:text-xs">
                     Decentralized network gateway monitoring nodes linking neighborhood watch loops together.
                   </CardContent>
                 </Card>
-                <Card className="glass-card group hover:-translate-y-1 transition-transform duration-500">
+                <Card className="glass-card group hover:-translate-y-1 transition-transform duration-500 overflow-hidden">
+                  <div className="relative w-full h-44 border-b border-accent/10">
+                    <Image src="/images/smart-community.png" alt="Make Community Smart" fill className="object-cover" />
+                  </div>
                   <CardHeader>
-                    <div className="relative w-12 h-12 rounded-xl overflow-hidden mb-3 border border-accent/20">
-                      <Image src="/images/smart-community.png" alt="Make Community Smart" fill className="object-cover" />
-                    </div>
                     <CardTitle className="text-sm md:text-base font-bold">Make Community Smart</CardTitle>
                   </CardHeader>
                   <CardContent className="text-muted-foreground leading-relaxed text-[11px] md:text-xs">
@@ -368,7 +363,7 @@ export default function Home() {
 
               <Card className="bg-white/5 backdrop-blur-2xl p-8 rounded-[2rem] border-white/10 shadow-2xl">
                 <CardHeader className="px-0 pt-0 mb-6">
-                  <CardTitle className="text-base md:text-lg lg:text-xl font-headline font-bold">Request Assessment</CardTitle>
+                  <CardTitle className="text-base md:text-lg lg:text-xl font-headline font-bold text-white">Request Assessment</CardTitle>
                 </CardHeader>
                 <CardContent className="px-0 space-y-4">
                   <Input placeholder="Full Name" className="bg-white/10 border-white/10 h-11 md:h-12 rounded-xl text-xs md:text-sm focus-visible:ring-white/20 text-white placeholder:text-white/40" />
