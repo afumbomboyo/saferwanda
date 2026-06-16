@@ -63,9 +63,18 @@
 
 .bento-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  grid-auto-rows: minmax(200px, auto);
+  grid-template-columns: 1fr;
+  grid-auto-rows: minmax(280px, auto);
   gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .bento-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .bento-wide, .bento-large {
+    grid-column: span 2;
+  }
 }
 
 @media (min-width: 1024px) {
@@ -78,6 +87,9 @@
   }
   .bento-wide {
     grid-column: span 2;
+  }
+  .bento-normal {
+    grid-column: span 1;
   }
 }
 
