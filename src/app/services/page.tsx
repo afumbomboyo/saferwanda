@@ -1,4 +1,3 @@
-
 import Image from 'next/image';
 import Navbar from '@/components/navbar';
 import {PlaceHolderImages} from '@/app/lib/placeholder-images';
@@ -69,9 +68,9 @@ export default function ServicesPage() {
       <Navbar />
       <main className="flex-grow pt-32 pb-24">
         <div className="container mx-auto px-4">
-          <div className="max-w-3xl mb-16 animate-fade-in">
-            <h1 className="text-4xl md:text-6xl font-headline font-extrabold mb-6">Our Core Services</h1>
-            <p className="text-lg text-muted-foreground">
+          <div className="max-w-3xl mb-12 animate-fade-in">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-headline font-extrabold mb-4">Our Core Services</h1>
+            <p className="text-base md:text-lg text-muted-foreground">
               SafeRwanda offers a specialized suite of protection services designed to integrate seamlessly into your life and community.
             </p>
           </div>
@@ -95,12 +94,12 @@ export default function ServicesPage() {
                   <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
                 </div>
                 
-                <div className="relative z-10 p-8 flex flex-col h-full justify-end">
-                  <div className="mb-4 inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-secondary/80 backdrop-blur-sm border border-border group-hover:border-primary transition-colors">
+                <div className="relative z-10 p-6 md:p-8 flex flex-col h-full justify-end">
+                  <div className="mb-4 inline-flex items-center justify-center w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-secondary/80 backdrop-blur-sm border border-border group-hover:border-primary transition-colors">
                     {service.icon}
                   </div>
-                  <h3 className="text-2xl font-headline font-bold mb-3">{service.title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
+                  <h3 className="text-xl md:text-2xl font-headline font-bold mb-2 md:mb-3">{service.title}</h3>
+                  <p className="text-xs md:text-sm text-muted-foreground leading-relaxed">
                     {service.description}
                   </p>
                 </div>

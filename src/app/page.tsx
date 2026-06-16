@@ -14,7 +14,7 @@ export default function Home() {
       
       <main className="flex-grow pt-16">
         {/* Hero Section */}
-        <section className="relative min-h-[85vh] md:h-[90vh] flex items-center overflow-hidden">
+        <section className="relative min-h-[85vh] md:min-h-[80vh] flex items-center overflow-hidden">
           <div className="absolute inset-0 z-0">
             {heroImg && (
               <Image
@@ -35,10 +35,10 @@ export default function Home() {
                 <Zap className="w-3 h-3" />
                 Intelligence-Driven Safety
               </div>
-              <h1 className="text-4xl sm:text-5xl md:text-7xl font-headline font-extrabold mb-6 leading-[1.1]">
+              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-headline font-extrabold mb-6 leading-[1.1]">
                 Empowering <span className="text-primary">Security</span>, Ensuring <span className="text-accent">Peace of Mind</span>.
               </h1>
-              <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl">
+              <p className="text-base sm:text-lg lg:text-xl text-muted-foreground mb-8 max-w-2xl">
                 SafeRwanda combines cutting-edge AI technology with specialized protection services to create a unified ecosystem of safety for families, properties, and communities.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
@@ -54,12 +54,12 @@ export default function Home() {
         </section>
 
         {/* Mission Statement */}
-        <section className="py-16 md:py-24 bg-secondary/30">
+        <section className="py-16 md:py-20 bg-secondary/30">
           <div className="container mx-auto px-4">
-            <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+            <div className="grid lg:grid-cols-2 gap-12 items-center">
               <div className="max-w-2xl">
                 <h2 className="text-3xl md:text-4xl font-headline font-bold mb-6">Our Mission</h2>
-                <p className="text-lg text-muted-foreground mb-6">
+                <p className="text-base lg:text-lg text-muted-foreground mb-6 leading-relaxed">
                   We believe that safety is the foundation of progress. SafeRwanda was born from a vision to integrate intelligence into everyday protection, moving from reactive security to proactive, smart safety.
                 </p>
                 <ul className="grid sm:grid-cols-2 lg:grid-cols-1 gap-4">
@@ -77,17 +77,17 @@ export default function Home() {
                 </ul>
               </div>
               <div className="grid grid-cols-2 gap-4">
-                <div className="bg-card border border-border p-6 md:p-8 rounded-2xl flex flex-col justify-center text-center">
-                  <div className="text-3xl md:text-4xl font-headline font-bold text-primary mb-2">24/7</div>
-                  <div className="text-[10px] md:text-xs text-muted-foreground uppercase tracking-widest">Protection</div>
+                <div className="bg-card border border-border p-6 rounded-2xl flex flex-col justify-center text-center shadow-sm">
+                  <div className="text-3xl md:text-4xl font-headline font-bold text-primary mb-1">24/7</div>
+                  <div className="text-[10px] text-muted-foreground uppercase tracking-widest">Protection</div>
                 </div>
-                <div className="bg-card border border-border p-6 md:p-8 rounded-2xl flex flex-col justify-center text-center">
-                  <div className="text-3xl md:text-4xl font-headline font-bold text-accent mb-2">100%</div>
-                  <div className="text-[10px] md:text-xs text-muted-foreground uppercase tracking-widest">Reliability</div>
+                <div className="bg-card border border-border p-6 rounded-2xl flex flex-col justify-center text-center shadow-sm">
+                  <div className="text-3xl md:text-4xl font-headline font-bold text-accent mb-1">100%</div>
+                  <div className="text-[10px] text-muted-foreground uppercase tracking-widest">Reliability</div>
                 </div>
-                <div className="bg-card border border-border p-8 rounded-2xl flex flex-col justify-center text-center col-span-2">
-                  <div className="text-2xl md:text-4xl font-headline font-bold text-foreground mb-2">Smart Safe</div>
-                  <div className="text-[10px] md:text-xs text-muted-foreground uppercase tracking-widest">AI Concierge Integration</div>
+                <div className="bg-card border border-border p-8 rounded-2xl flex flex-col justify-center text-center col-span-2 shadow-sm">
+                  <div className="text-2xl md:text-3xl lg:text-4xl font-headline font-bold text-foreground mb-1">Smart Safe</div>
+                  <div className="text-[10px] text-muted-foreground uppercase tracking-widest">AI Concierge Integration</div>
                 </div>
               </div>
             </div>
@@ -95,15 +95,15 @@ export default function Home() {
         </section>
 
         {/* Features Preview */}
-        <section className="py-16 md:py-24">
+        <section className="py-16 md:py-20">
           <div className="container mx-auto px-4">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-5xl font-headline font-bold mb-4">Why SafeRwanda?</h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-headline font-bold mb-4">Why SafeRwanda?</h2>
+              <p className="text-sm md:text-base text-muted-foreground max-w-2xl mx-auto">
                 Discover why thousands trust our technology-first approach to safety.
               </p>
             </div>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
               {[
                 {
                   icon: <Lock className="w-10 h-10 text-primary" />,
@@ -121,10 +121,10 @@ export default function Home() {
                   desc: "Specialized monitoring for children and elderly, providing care when it matters most."
                 }
               ].map((feature, idx) => (
-                <div key={idx} className="bg-card border border-border p-8 rounded-2xl hover:border-primary/50 transition-colors group">
+                <div key={idx} className="bg-card border border-border p-8 rounded-2xl hover:border-primary/50 transition-all group shadow-sm">
                   <div className="mb-6 group-hover:scale-110 transition-transform">{feature.icon}</div>
-                  <h3 className="text-xl font-headline font-bold mb-4">{feature.title}</h3>
-                  <p className="text-muted-foreground mb-6">{feature.desc}</p>
+                  <h3 className="text-xl font-headline font-bold mb-3">{feature.title}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{feature.desc}</p>
                 </div>
               ))}
             </div>
@@ -132,14 +132,14 @@ export default function Home() {
         </section>
 
         {/* CTA Section */}
-        <section className="py-16 md:py-24 bg-primary">
+        <section className="py-16 md:py-20 bg-primary">
           <div className="container mx-auto px-4 text-center">
-            <h2 className="text-3xl md:text-5xl font-headline font-bold mb-8 text-white">Ready for a Safer Tomorrow?</h2>
-            <p className="text-primary-foreground/80 text-lg mb-10 max-w-2xl mx-auto">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-headline font-bold mb-6 text-white">Ready for a Safer Tomorrow?</h2>
+            <p className="text-primary-foreground/80 text-base md:text-lg mb-10 max-w-2xl mx-auto">
               Join the SafeRwanda community today and leverage our AI Concierge to find the perfect protection plan for your needs.
             </p>
             <div className="flex justify-center">
-              <Button asChild size="lg" variant="secondary" className="h-14 px-10 text-base font-bold text-primary w-full sm:w-auto">
+              <Button asChild size="lg" variant="secondary" className="h-14 px-10 text-base font-bold text-primary w-full sm:w-auto shadow-xl">
                 <Link href="/concierge" className="flex items-center gap-2 justify-center">
                   Consult our AI Concierge <ArrowRight className="w-5 h-5" />
                 </Link>
