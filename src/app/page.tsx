@@ -69,7 +69,7 @@ export default function Home() {
                 src={heroImg.imageUrl}
                 alt="SafeRwanda Vision"
                 fill
-                className="object-cover opacity-25 brightness-55 scale-105"
+                className="object-cover opacity-50 brightness-55 scale-105"
                 priority
               />
             )}
@@ -119,10 +119,12 @@ export default function Home() {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* Pillar A: Family & Vulnerable Care */}
-              <div className="space-y-6">
-                <div className="inline-flex items-center gap-2 bg-accent/10 px-3 py-1.5 rounded-lg border border-accent/20">
-                  <Heart className="w-4 h-4 text-accent" />
-                  <span className="text-accent font-bold tracking-widest uppercase text-[10px]">Family & Care</span>
+              <div className="space-y-6 flex flex-col">
+                <div className="flex justify-center mb-2">
+                  <div className="inline-flex items-center gap-2 bg-accent/10 px-3 py-1.5 rounded-lg border border-accent/20">
+                    <Heart className="w-4 h-4 text-accent" />
+                    <span className="text-accent font-bold tracking-widest uppercase text-[10px]">Family & Care</span>
+                  </div>
                 </div>
                 <Card className="glass-card group hover:-translate-y-1 transition-transform duration-500">
                   <CardHeader>
@@ -149,10 +151,12 @@ export default function Home() {
               </div>
 
               {/* Pillar B: Smart Home & Asset Protection */}
-              <div className="space-y-6">
-                <div className="inline-flex items-center gap-2 bg-primary/10 px-3 py-1.5 rounded-lg border border-primary/20">
-                  <Lock className="w-4 h-4 text-primary" />
-                  <span className="text-primary font-bold tracking-widest uppercase text-[10px]">Home & Assets</span>
+              <div className="space-y-6 flex flex-col">
+                <div className="flex justify-center mb-2">
+                  <div className="inline-flex items-center gap-2 bg-primary/10 px-3 py-1.5 rounded-lg border border-primary/20">
+                    <Lock className="w-4 h-4 text-primary" />
+                    <span className="text-primary font-bold tracking-widest uppercase text-[10px]">Home & Assets</span>
+                  </div>
                 </div>
                 <Card className="glass-card group hover:-translate-y-1 transition-transform duration-500 border-primary/20">
                   <CardHeader>
@@ -190,10 +194,12 @@ export default function Home() {
               </div>
 
               {/* Pillar C: Connected Community */}
-              <div className="space-y-6">
-                <div className="inline-flex items-center gap-2 bg-accent/10 px-3 py-1.5 rounded-lg border border-accent/20">
-                  <Network className="w-4 h-4 text-accent" />
-                  <span className="text-accent font-bold tracking-widest uppercase text-[10px]">Community Infrastructure</span>
+              <div className="space-y-6 flex flex-col">
+                <div className="flex justify-center mb-2">
+                  <div className="inline-flex items-center gap-2 bg-accent/10 px-3 py-1.5 rounded-lg border border-accent/20">
+                    <Network className="w-4 h-4 text-accent" />
+                    <span className="text-accent font-bold tracking-widest uppercase text-[10px]">Community Infrastructure</span>
+                  </div>
                 </div>
                 <Card className="glass-card group hover:-translate-y-1 transition-transform duration-500">
                   <CardHeader>
@@ -233,23 +239,23 @@ export default function Home() {
             <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
               {[
                 {
-                  icon: <Cpu className="w-6 h-6" />,
+                  icon: <Cpu className="w-8 h-8" />,
                   title: "Deploy Hardware Nodes",
                   desc: "Plug-and-play IoT sensors, trackers, and gateway devices seamlessly installed."
                 },
                 {
-                  icon: <Database className="w-6 h-6" />,
+                  icon: <Database className="w-8 h-8" />,
                   title: "Monitor the Stream",
                   desc: "Data channels route securely into our centralized cloud system with zero downtime."
                 },
                 {
-                  icon: <Bell className="w-6 h-6" />,
+                  icon: <Bell className="w-8 h-8" />,
                   title: "Receive Live Alerts",
                   desc: "Get instant mobile notifications and view metrics on your control panel."
                 }
               ].map((step, idx) => (
                 <div key={idx} className="relative group text-center flex flex-col items-center">
-                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary to-accent text-white flex items-center justify-center mb-6 shadow-xl shadow-primary/20 group-hover:rotate-3 transition-transform">
+                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-accent text-white flex items-center justify-center mb-6 shadow-xl shadow-primary/20 group-hover:rotate-3 transition-transform">
                     {step.icon}
                   </div>
                   <h4 className="text-base font-bold mb-2">{step.title}</h4>
