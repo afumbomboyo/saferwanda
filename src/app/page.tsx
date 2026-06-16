@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState, useEffect } from 'react';
@@ -15,7 +14,6 @@ import {
   Heart, 
   Flame, 
   Network, 
-  Baby, 
   Database, 
   Cpu,
   Globe,
@@ -69,7 +67,7 @@ export default function Home() {
                 src={heroImg.imageUrl}
                 alt="SafeRwanda Vision"
                 fill
-                className="object-cover opacity-35 brightness-55 scale-105"
+                className="object-cover opacity-50 brightness-55 scale-105"
                 priority
               />
             )}
@@ -83,19 +81,19 @@ export default function Home() {
                 <Signal className="w-3.5 h-3.5 mr-2 animate-pulse text-primary" />
                 Next-Gen IoT Infrastructure
               </Badge>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-headline font-extrabold mb-6 leading-tight tracking-tighter">
+              <h1 className="text-3xl md:text-5xl lg:text-6xl font-headline font-extrabold mb-6 leading-tight tracking-tighter">
                 Building a <span className="text-gradient">Smarter, Safer Rwanda</span> From the Ground Up.
               </h1>
-              <p className="text-base md:text-lg text-muted-foreground mb-10 max-w-3xl mx-auto leading-relaxed font-light">
+              <p className="text-sm md:text-base lg:text-lg text-muted-foreground mb-10 max-w-3xl mx-auto leading-relaxed font-light">
                 Advanced IoT and smart monitoring solutions designed to protect your home, secure your assets, and empower your entire community.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button asChild size="lg" className="h-14 px-8 rounded-xl text-base font-bold shadow-xl shadow-primary/30 bg-primary hover:bg-primary/90 transition-all hover:scale-105">
+                <Button asChild size="lg" className="h-12 md:h-14 px-8 rounded-xl text-sm md:text-base font-bold shadow-xl shadow-primary/30 bg-primary hover:bg-primary/90 transition-all hover:scale-105">
                   <Link href="/auth?signup=true" className="flex items-center gap-2">
                     Get Started <ArrowRight className="w-4 h-4" />
                   </Link>
                 </Button>
-                <Button asChild variant="outline" size="lg" className="h-14 px-8 rounded-xl text-base font-bold border-white/10 bg-white/5 backdrop-blur-md hover:bg-white/10 transition-all hover:scale-105">
+                <Button asChild variant="outline" size="lg" className="h-12 md:h-14 px-8 rounded-xl text-sm md:text-base font-bold border-white/10 bg-white/5 backdrop-blur-md hover:bg-white/10 transition-all hover:scale-105">
                   <Link href="#demo">Request a Demo</Link>
                 </Button>
               </div>
@@ -114,10 +112,10 @@ export default function Home() {
           <div className="container mx-auto px-4">
             <div className="text-center max-w-2xl mx-auto mb-16">
               <h2 className="text-2xl md:text-3xl lg:text-4xl font-headline font-extrabold mb-4">Our Services</h2>
-              <p className="text-sm md:text-base text-muted-foreground font-light">Our smart infrastructure ecosystem is categorized into three specialized safety tiers, providing granular security for every facet of life.</p>
+              <p className="text-xs md:text-sm lg:text-base text-muted-foreground font-light">Our smart infrastructure ecosystem is categorized into three specialized safety tiers, providing granular security for every facet of life.</p>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
               {/* Pillar A: Family & Vulnerable Care */}
               <div className="space-y-6 flex flex-col">
                 <div className="flex justify-center mb-2">
@@ -128,23 +126,23 @@ export default function Home() {
                 </div>
                 <Card className="glass-card group hover:-translate-y-1 transition-transform duration-500">
                   <CardHeader>
-                    <div className="w-8 h-8 rounded-xl bg-accent/20 flex items-center justify-center mb-3 text-accent">
-                      <Baby className="w-4 h-4" />
+                    <div className="relative w-12 h-12 rounded-xl overflow-hidden mb-3 border border-accent/20">
+                      <Image src="/images/child.png" alt="Protect Your Child" fill className="object-cover" />
                     </div>
-                    <CardTitle className="text-base font-bold">Protect Your Child</CardTitle>
+                    <CardTitle className="text-sm md:text-base font-bold">Protect Your Child</CardTitle>
                   </CardHeader>
-                  <CardContent className="text-muted-foreground leading-relaxed text-xs">
+                  <CardContent className="text-muted-foreground leading-relaxed text-[11px] md:text-xs">
                     Real-time location tracking and wearable geofencing alerts to ensure your children are safe on their way to and from school.
                   </CardContent>
                 </Card>
                 <Card className="glass-card group hover:-translate-y-1 transition-transform duration-500">
                   <CardHeader>
-                    <div className="w-8 h-8 rounded-xl bg-accent/20 flex items-center justify-center mb-3 text-accent">
-                      <Users className="w-4 h-4" />
+                    <div className="relative w-12 h-12 rounded-xl overflow-hidden mb-3 border border-accent/20">
+                      <Image src="/images/elder.png" alt="Take Care of Your Elderly" fill className="object-cover" />
                     </div>
-                    <CardTitle className="text-base font-bold">Take Care of Your Elderly</CardTitle>
+                    <CardTitle className="text-sm md:text-base font-bold">Take Care of Your Elderly</CardTitle>
                   </CardHeader>
-                  <CardContent className="text-muted-foreground leading-relaxed text-xs">
+                  <CardContent className="text-muted-foreground leading-relaxed text-[11px] md:text-xs">
                     Smart health sensors, fall-detection alerts, and automated panic buttons that notify family contacts instantly.
                   </CardContent>
                 </Card>
@@ -160,34 +158,34 @@ export default function Home() {
                 </div>
                 <Card className="glass-card group hover:-translate-y-1 transition-transform duration-500 border-primary/20">
                   <CardHeader>
-                    <div className="w-8 h-8 rounded-xl bg-primary/20 flex items-center justify-center mb-3 text-primary">
-                      <Flame className="w-4 h-4" />
+                    <div className="relative w-12 h-12 rounded-xl overflow-hidden mb-3 border border-primary/20">
+                      <Image src="/images/fire.png" alt="Prevent Fire" fill className="object-cover" />
                     </div>
-                    <CardTitle className="text-base font-bold">Prevent Fire</CardTitle>
+                    <CardTitle className="text-sm md:text-base font-bold">Prevent Fire</CardTitle>
                   </CardHeader>
-                  <CardContent className="text-muted-foreground leading-relaxed text-xs">
+                  <CardContent className="text-muted-foreground leading-relaxed text-[11px] md:text-xs">
                     Smart thermal and smoke detectors linked to automated network alarms to neutralize fire hazards early.
                   </CardContent>
                 </Card>
                 <Card className="glass-card group hover:-translate-y-1 transition-transform duration-500 border-primary/20">
                   <CardHeader>
-                    <div className="w-8 h-8 rounded-xl bg-primary/20 flex items-center justify-center mb-3 text-primary">
-                      <House className="w-4 h-4" />
+                    <div className="relative w-12 h-12 rounded-xl overflow-hidden mb-3 border border-primary/20">
+                      <Image src="https://mecsecurity.com/news/wp-content/uploads/2018/11/6.jpg" alt="Secure Your Premise" fill className="object-cover" />
                     </div>
-                    <CardTitle className="text-base font-bold">Secure Your Premise</CardTitle>
+                    <CardTitle className="text-sm md:text-base font-bold">Secure Your Premise</CardTitle>
                   </CardHeader>
-                  <CardContent className="text-muted-foreground leading-relaxed text-xs">
+                  <CardContent className="text-muted-foreground leading-relaxed text-[11px] md:text-xs">
                     Connected smart locks, perimeter breach detectors, and intelligent entry logs for residential layouts.
                   </CardContent>
                 </Card>
                 <Card className="glass-card group hover:-translate-y-1 transition-transform duration-500 border-primary/20">
                   <CardHeader>
-                    <div className="w-8 h-8 rounded-xl bg-primary/20 flex items-center justify-center mb-3 text-primary">
-                      <Zap className="w-4 h-4" />
+                    <div className="relative w-12 h-12 rounded-xl overflow-hidden mb-3 border border-primary/20">
+                      <Image src="https://i5.walmartimages.com/seo/EON-Odyssey-18-Month-Long-Life-GPS-Tracker-Vehicles-Assets-Fleet-Hidden-Magnetic-GPS-Tracking-Device-Track-Years-Single-Charge-4G-LTE-Real-Time-Track_ddc51730-ff5f-4363-afc6-70c6686ebb84.bb45370a23c0677c87767a2e8b848bf3.jpeg?odnHeight=328&odnWidth=328&odnBg=FFFFFF" alt="Secure Your Assets" fill className="object-cover" />
                     </div>
-                    <CardTitle className="text-base font-bold">Secure Your Assets</CardTitle>
+                    <CardTitle className="text-sm md:text-base font-bold">Secure Your Assets</CardTitle>
                   </CardHeader>
-                  <CardContent className="text-muted-foreground leading-relaxed text-xs">
+                  <CardContent className="text-muted-foreground leading-relaxed text-[11px] md:text-xs">
                     High-precision LoRaWAN hardware asset tracking nodes built to safeguard equipment and vehicles.
                   </CardContent>
                 </Card>
@@ -203,23 +201,23 @@ export default function Home() {
                 </div>
                 <Card className="glass-card group hover:-translate-y-1 transition-transform duration-500">
                   <CardHeader>
-                    <div className="w-8 h-8 rounded-xl bg-accent/20 flex items-center justify-center mb-3 text-accent">
-                      <Eye className="w-4 h-4" />
+                    <div className="relative w-12 h-12 rounded-xl overflow-hidden mb-3 border border-accent/20">
+                      <Image src="https://images.unsplash.com/photo-1589935447067-5531094415d1?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Y2N0diUyMGNhbWVyYXxlbnwwfHwwfHx8MA%3D%3D" alt="Neighborhood Survey" fill className="object-cover" />
                     </div>
-                    <CardTitle className="text-base font-bold">Neighborhood Survey</CardTitle>
+                    <CardTitle className="text-sm md:text-base font-bold">Neighborhood Survey</CardTitle>
                   </CardHeader>
-                  <CardContent className="text-muted-foreground leading-relaxed text-xs">
+                  <CardContent className="text-muted-foreground leading-relaxed text-[11px] md:text-xs">
                     Decentralized network gateway monitoring nodes linking neighborhood watch loops together.
                   </CardContent>
                 </Card>
                 <Card className="glass-card group hover:-translate-y-1 transition-transform duration-500">
                   <CardHeader>
-                    <div className="w-8 h-8 rounded-xl bg-accent/20 flex items-center justify-center mb-3 text-accent">
-                      <Globe className="w-4 h-4" />
+                    <div className="relative w-12 h-12 rounded-xl overflow-hidden mb-3 border border-accent/20">
+                      <Image src="/images/smart-community.png" alt="Make Community Smart" fill className="object-cover" />
                     </div>
-                    <CardTitle className="text-base font-bold">Make Community Smart</CardTitle>
+                    <CardTitle className="text-sm md:text-base font-bold">Make Community Smart</CardTitle>
                   </CardHeader>
-                  <CardContent className="text-muted-foreground leading-relaxed text-xs">
+                  <CardContent className="text-muted-foreground leading-relaxed text-[11px] md:text-xs">
                     Scalable urban IoT applications, including smart lighting, waste analytics, and environmental hazard tracking.
                   </CardContent>
                 </Card>
@@ -233,33 +231,33 @@ export default function Home() {
           <div className="container mx-auto px-4 relative z-10">
             <div className="text-center max-w-2xl mx-auto mb-16">
               <h2 className="text-2xl md:text-3xl lg:text-4xl font-headline font-extrabold mb-4">Simplicity in Motion.</h2>
-              <p className="text-sm md:text-base text-muted-foreground font-light">We handle the technical complexity so you can focus on what matters most.</p>
+              <p className="text-xs md:text-sm lg:text-base text-muted-foreground font-light">We handle the technical complexity so you can focus on what matters most.</p>
             </div>
             
             <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
               {[
                 {
-                  icon: <Cpu className="w-8 h-8" />,
+                  icon: <Cpu className="w-6 h-6 md:w-8 md:h-8" />,
                   title: "Deploy Hardware Nodes",
                   desc: "Plug-and-play IoT sensors, trackers, and gateway devices seamlessly installed."
                 },
                 {
-                  icon: <Database className="w-8 h-8" />,
+                  icon: <Database className="w-6 h-6 md:w-8 md:h-8" />,
                   title: "Monitor the Stream",
                   desc: "Data channels route securely into our centralized cloud system with zero downtime."
                 },
                 {
-                  icon: <Bell className="w-8 h-8" />,
+                  icon: <Bell className="w-6 h-6 md:w-8 md:h-8" />,
                   title: "Receive Live Alerts",
                   desc: "Get instant mobile notifications and view metrics on your control panel."
                 }
               ].map((step, idx) => (
                 <div key={idx} className="relative group text-center flex flex-col items-center">
-                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-accent text-white flex items-center justify-center mb-6 shadow-xl shadow-primary/20 group-hover:rotate-3 transition-transform">
+                  <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-gradient-to-br from-primary to-accent text-white flex items-center justify-center mb-6 shadow-xl shadow-primary/20 group-hover:rotate-3 transition-transform">
                     {step.icon}
                   </div>
-                  <h4 className="text-base font-bold mb-2">{step.title}</h4>
-                  <p className="text-muted-foreground leading-relaxed text-xs">{step.desc}</p>
+                  <h4 className="text-sm md:text-base font-bold mb-2">{step.title}</h4>
+                  <p className="text-muted-foreground leading-relaxed text-[10px] md:text-[11px] lg:text-xs">{step.desc}</p>
                 </div>
               ))}
             </div>
@@ -273,7 +271,7 @@ export default function Home() {
               <div>
                 <Badge variant="outline" className="mb-4 px-3 py-1 border-primary text-primary font-bold text-[10px]">PHYSICAL VALIDATION</Badge>
                 <h2 className="text-2xl md:text-3xl lg:text-4xl font-headline font-extrabold mb-6 tracking-tighter leading-tight">Live Capability Stream.</h2>
-                <p className="text-sm md:text-base text-muted-foreground mb-10 font-light leading-relaxed">
+                <p className="text-xs md:text-sm lg:text-base text-muted-foreground mb-10 font-light leading-relaxed">
                   Our platform delivers real-world protection in real-time. This interactive showcase demonstrates our active deployments.
                 </p>
                 <div className="space-y-4">
@@ -353,7 +351,7 @@ export default function Home() {
             <div className="grid lg:grid-cols-2 gap-16 items-center">
               <div>
                 <h2 className="text-2xl md:text-3xl lg:text-5xl font-headline font-extrabold mb-6 tracking-tighter leading-tight">Ready to Secure Your Piece of Tomorrow?</h2>
-                <p className="text-base md:text-lg text-primary-foreground/80 mb-10 font-light leading-relaxed">
+                <p className="text-sm md:text-base lg:text-lg text-primary-foreground/80 mb-10 font-light leading-relaxed">
                   Contact our technical deployment team today for a tailored residential or community security assessment.
                 </p>
                 <div className="flex items-center gap-8">
@@ -362,7 +360,7 @@ export default function Home() {
                        <div key={i} className="w-8 h-8 rounded-full border-2 border-primary bg-white/20 backdrop-blur-md" />
                      ))}
                    </div>
-                   <div className="font-bold text-base md:text-lg">
+                   <div className="font-bold text-sm md:text-base lg:text-lg">
                      1,200+ <span className="text-primary-foreground/60 font-light block text-[10px]">Active Deployments</span>
                    </div>
                 </div>
@@ -370,7 +368,7 @@ export default function Home() {
 
               <Card className="bg-white/5 backdrop-blur-2xl p-8 rounded-[2rem] border-white/10 shadow-2xl">
                 <CardHeader className="px-0 pt-0 mb-6">
-                  <CardTitle className="text-lg md:text-xl font-headline font-bold">Request Assessment</CardTitle>
+                  <CardTitle className="text-base md:text-lg lg:text-xl font-headline font-bold">Request Assessment</CardTitle>
                 </CardHeader>
                 <CardContent className="px-0 space-y-4">
                   <Input placeholder="Full Name" className="bg-white/10 border-white/10 h-11 md:h-12 rounded-xl text-xs md:text-sm focus-visible:ring-white/20 text-white placeholder:text-white/40" />
@@ -386,7 +384,7 @@ export default function Home() {
                       <SelectItem value="assets">High-Value Asset Tracking</SelectItem>
                     </SelectContent>
                   </Select>
-                  <Button className="w-full bg-white text-primary hover:bg-white/90 h-11 md:h-12 rounded-xl text-sm md:text-base font-bold shadow-xl transition-all hover:scale-[1.02]">
+                  <Button className="w-full bg-white text-primary hover:bg-white/90 h-11 md:h-12 rounded-xl text-xs md:text-sm lg:text-base font-bold shadow-xl transition-all hover:scale-[1.02]">
                     Submit Inquiry
                   </Button>
                 </CardContent>

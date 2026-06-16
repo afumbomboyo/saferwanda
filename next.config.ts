@@ -34,6 +34,18 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'mecsecurity.com',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'i5.walmartimages.com',
+        port: '',
+        pathname: '/**',
+      },
     ],
   },
 };
