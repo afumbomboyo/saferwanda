@@ -69,7 +69,7 @@ export default function Home() {
                 src={heroImg.imageUrl}
                 alt="SafeRwanda Vision"
                 fill
-                className="object-cover opacity-50 brightness-55 scale-105"
+                className="object-cover opacity-35 brightness-55 scale-105"
                 priority
               />
             )}
