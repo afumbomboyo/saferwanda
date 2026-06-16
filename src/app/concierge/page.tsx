@@ -1,6 +1,7 @@
+"use client"
+
 import { useState } from 'react';
 import { aiChatServiceRecommendation } from '@/ai/flows/ai-chat-service-recommendation';
-import Navbar from '@/components/navbar';
 import { Shield, Sparkles, Send, Loader2, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -32,7 +33,6 @@ export default function ConciergePage() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <Navbar />
       <main className="flex-grow pt-32 pb-24">
         <div className="container mx-auto px-4 max-w-4xl">
           <div className="text-center mb-10 animate-fade-in">

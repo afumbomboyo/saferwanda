@@ -1,10 +1,7 @@
-
 "use client"
 
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
-import Link from 'next/link';
-import Navbar from '@/components/navbar';
 import { Shield, Mail, Lock, User, Github } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -22,7 +19,6 @@ export default function AuthPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
-      <Navbar />
       <main className="flex-grow flex items-center justify-center p-4 pt-24 pb-12">
         <div className="w-full max-w-md animate-fade-in">
           <Card className="bg-card border-border shadow-2xl">

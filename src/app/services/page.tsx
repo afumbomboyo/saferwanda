@@ -1,5 +1,4 @@
 import Image from 'next/image';
-import Navbar from '@/components/navbar';
 import {PlaceHolderImages} from '@/app/lib/placeholder-images';
 import {Shield, Heart, Flame, Home, Box, Eye, Network} from 'lucide-react';
 
@@ -65,7 +64,6 @@ export default function ServicesPage() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <Navbar />
       <main className="flex-grow pt-32 pb-24">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mb-12 animate-fade-in">
