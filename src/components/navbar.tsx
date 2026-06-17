@@ -13,7 +13,6 @@ export default function Navbar() {
 
   useEffect(() => {
     const handleScroll = () => {
-      // Threshold to hide nav button based on hero height approx
       setIsScrolled(window.scrollY > 100);
     };
     window.addEventListener('scroll', handleScroll);
@@ -80,41 +79,64 @@ function MobileMenu({ visibleLinks, showGetStarted }: { visibleLinks: any[], sho
 
   return (
     <>
-      <Button variant="ghost" size="icon" onClick={() => setIsOpen(true)} className="h-12 w-12 rounded-xl bg-white/5 border border-white/5">
-        <Menu className="w-6 h-6" />
+      <Button 
+        variant="ghost" 
+        size="icon" 
+        onClick={() => setIsOpen(true)} 
+        className="h-10 w-10 rounded-xl bg-white/5 border border-white/5"
+      >
+        <Menu className="w-5 h-5" />
       </Button>
 
       {isOpen && (
-        <div className="fixed inset-0 z-[200] bg-background/95 backdrop-blur-2xl animate-in fade-in slide-in-from-right duration-300">
-          <div className="container mx-auto px-4 h-full flex flex-col justify-center items-center relative">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={() => setIsOpen(false)} 
-              className="absolute top-6 right-4 h-12 w-12"
-            >
-              <X className="w-8 h-8" />
-            </Button>
+        <div className="fixed inset-0 z-[200] flex justify-end">
+          {/* Overlay */}
+          <div 
+            className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-in fade-in duration-300" 
+            onClick={() => setIsOpen(false)}
+          />
+          
+          {/* Side Menu Content */}
+          <div className="relative w-[80%] max-w-[300px] h-full bg-background border-l border-border shadow-2xl animate-in slide-in-from-right duration-300 flex flex-col overflow-hidden">
+            <div className="p-6 flex justify-end">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={() => setIsOpen(false)} 
+                className="h-10 w-10 rounded-xl"
+              >
+                <X className="w-5 h-5" />
+              </Button>
+            </div>
             
-            <div className="flex flex-col gap-10 text-center">
+            <div className="flex flex-col gap-6 px-8 py-4">
               {visibleLinks.map((link) => (
                 <Link 
                   key={link.href} 
                   href={link.href} 
                   onClick={() => setIsOpen(false)}
                   className={cn(
-                    "text-4xl font-headline font-extrabold tracking-tighter transition-colors",
+                    "text-2xl font-headline font-extrabold tracking-tight transition-colors",
                     link.name === 'Login' ? "text-primary hover:text-primary/80" : "text-foreground hover:text-primary"
                   )}
                 >
                   {link.name}
                 </Link>
               ))}
+              
               {showGetStarted && (
-                <Button asChild size="lg" className="h-16 px-12 rounded-2xl text-xl font-bold mt-6 shadow-2xl bg-primary">
-                  <Link href="/auth?signup=true" onClick={() => setIsOpen(false)}>Get Started</Link>
-                </Button>
+                <div className="pt-4">
+                  <Button asChild className="w-full h-12 rounded-xl font-bold shadow-xl shadow-primary/20 bg-primary">
+                    <Link href="/auth?signup=true" onClick={() => setIsOpen(false)}>
+                      Get Started
+                    </Link>
+                  </Button>
+                </div>
               )}
+            </div>
+            
+            <div className="mt-auto p-8 text-[10px] text-muted-foreground uppercase tracking-widest font-medium border-t border-border bg-muted/20">
+              SafeRwanda IoT Labs
             </div>
           </div>
         </div>

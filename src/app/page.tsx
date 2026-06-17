@@ -62,7 +62,7 @@ export default function Home() {
                 src={heroImg.imageUrl}
                 alt="SafeRwanda Vision"
                 fill
-                className="object-cover opacity-50 brightness-55 scale-105"
+                className="object-cover opacity-35 brightness-55 scale-105"
                 priority
               />
             )}
@@ -88,7 +88,7 @@ export default function Home() {
                     Get Started <ArrowRight className="w-4 h-4" />
                   </Link>
                 </Button>
-                <Button asChild variant="outline" size="lg" className="h-12 md:h-14 px-8 rounded-xl text-sm md:text-base font-bold border-white/10 bg-white/5 backdrop-blur-md hover:bg-white/10 transition-all hover:scale-105">
+                <Button asChild variant="outline" size="lg" className="h-12 md:h-14 px-8 rounded-xl text-sm md:text-base font-bold border-white/10 bg-white/5 backdrop-blur-md transition-all hover:scale-90">
                   <Link href="#demo">Request a Demo</Link>
                 </Button>
               </div>
@@ -120,7 +120,7 @@ export default function Home() {
                   </div>
                 </div>
                 <Card className="glass-card group hover:-translate-y-1 transition-transform duration-500 overflow-hidden">
-                  <div className="relative w-full h-44 border-b border-accent/10">
+                  <div className="relative w-full h-80 border-b border-accent/10">
                     <Image src="/images/child.png" alt="Protect Your Child" fill className="object-cover" />
                   </div>
                   <CardHeader>
@@ -131,7 +131,7 @@ export default function Home() {
                   </CardContent>
                 </Card>
                 <Card className="glass-card group hover:-translate-y-1 transition-transform duration-500 overflow-hidden">
-                  <div className="relative w-full h-44 border-b border-accent/10">
+                  <div className="relative w-full h-80 border-b border-accent/10">
                     <Image src="/images/elder.png" alt="Take Care of Your Elderly" fill className="object-cover" />
                   </div>
                   <CardHeader>
@@ -152,7 +152,7 @@ export default function Home() {
                   </div>
                 </div>
                 <Card className="glass-card group hover:-translate-y-1 transition-transform duration-500 border-primary/20 overflow-hidden">
-                  <div className="relative w-full h-44 border-b border-primary/10">
+                  <div className="relative w-full h-80 border-b border-primary/10">
                     <Image src="/images/fire.png" alt="Prevent Fire" fill className="object-cover" />
                   </div>
                   <CardHeader>
@@ -163,7 +163,7 @@ export default function Home() {
                   </CardContent>
                 </Card>
                 <Card className="glass-card group hover:-translate-y-1 transition-transform duration-500 border-primary/20 overflow-hidden">
-                  <div className="relative w-full h-44 border-b border-primary/10">
+                  <div className="relative w-full h-80 border-b border-primary/10">
                     <Image src="https://mecsecurity.com/news/wp-content/uploads/2018/11/6.jpg" alt="Secure Your Premise" fill className="object-cover" />
                   </div>
                   <CardHeader>
@@ -174,7 +174,7 @@ export default function Home() {
                   </CardContent>
                 </Card>
                 <Card className="glass-card group hover:-translate-y-1 transition-transform duration-500 border-primary/20 overflow-hidden">
-                  <div className="relative w-full h-44 border-b border-primary/10">
+                  <div className="relative w-full h-80 border-b border-primary/10">
                     <Image src="https://i5.walmartimages.com/seo/EON-Odyssey-18-Month-Long-Life-GPS-Tracker-Vehicles-Assets-Fleet-Hidden-Magnetic-GPS-Tracking-Device-Track-Years-Single-Charge-4G-LTE-Real-Time-Track_ddc51730-ff5f-4363-afc6-70c6686ebb84.bb45370a23c0677c87767a2e8b848bf3.jpeg?odnHeight=328&odnWidth=328&odnBg=FFFFFF" alt="Secure Your Assets" fill className="object-cover" />
                   </div>
                   <CardHeader>
@@ -195,7 +195,7 @@ export default function Home() {
                   </div>
                 </div>
                 <Card className="glass-card group hover:-translate-y-1 transition-transform duration-500 overflow-hidden">
-                  <div className="relative w-full h-44 border-b border-accent/10">
+                  <div className="relative w-full h-80 border-b border-accent/10">
                     <Image src="https://images.unsplash.com/photo-1589935447067-5531094415d1?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Y2N0diUyMGNhbWVyYXxlbnwwfHwwfHx8MA%3D%3D" alt="Neighborhood Survey" fill className="object-cover" />
                   </div>
                   <CardHeader>
@@ -206,7 +206,7 @@ export default function Home() {
                   </CardContent>
                 </Card>
                 <Card className="glass-card group hover:-translate-y-1 transition-transform duration-500 overflow-hidden">
-                  <div className="relative w-full h-44 border-b border-accent/10">
+                  <div className="relative w-full h-80 border-b border-accent/10">
                     <Image src="/images/smart-community.png" alt="Make Community Smart" fill className="object-cover" />
                   </div>
                   <CardHeader>
