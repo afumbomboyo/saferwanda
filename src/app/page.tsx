@@ -61,12 +61,12 @@ export default function Home() {
                 src={heroImg.imageUrl}
                 alt="SafeRwanda Vision"
                 fill
-                className="object-cover opacity-50 brightness-55 scale-105"
+                className="object-cover opacity-45 brightness-15 scale-105"
                 priority
               />
             )}
-            <div className="absolute inset-0 bg-gradient-to-b from-background/0 via-background/40 to-background" />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-b from-background/0 via-background/60 to-background" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/20 via-transparent to-transparent" />
           </div>
 
           <div className="container mx-auto px-4 z-10 text-center">
@@ -75,10 +75,10 @@ export default function Home() {
                 <Signal className="w-3.5 h-3.5 mr-2 animate-pulse text-primary" />
                 Next-Gen IoT Infrastructure
               </Badge>
-              <h1 className="text-3xl md:text-5xl lg:text-6xl font-headline font-extrabold mb-6 leading-tight tracking-tighter">
+              <h1 className="text-4xl md:text-6xl lg:text-7xl font-headline font-extrabold mb-6 leading-tight tracking-tighter">
                 Building a <span className="text-gradient">Smarter, Safer Rwanda</span> From the Ground Up.
               </h1>
-              <p className="text-sm md:text-base lg:text-lg text-muted-foreground mb-10 max-w-3xl mx-auto leading-relaxed font-light">
+              <p className="text-base md:text-lg lg:text-xl text-muted-foreground mb-10 max-w-3xl mx-auto leading-relaxed font-light">
                 Advanced IoT and smart monitoring solutions designed to protect your home, secure your assets, and empower your entire community.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -105,8 +105,8 @@ export default function Home() {
         <section className="py-24 relative">
           <div className="container mx-auto px-4">
             <div className="text-center max-w-2xl mx-auto mb-16">
-              <h2 className="text-2xl md:text-3xl lg:text-4xl font-headline font-extrabold mb-4">Our Services</h2>
-              <p className="text-xs md:text-sm lg:text-base text-muted-foreground font-light">Our smart infrastructure ecosystem is categorized into three specialized safety tiers, providing granular security for every facet of life.</p>
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-headline font-extrabold mb-4">Our Services</h2>
+              <p className="text-sm md:text-base lg:text-lg text-muted-foreground font-light">Our smart infrastructure ecosystem is categorized into three specialized safety tiers, providing granular security for every facet of life.</p>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
@@ -123,9 +123,9 @@ export default function Home() {
                     <Image src="/images/child.png" alt="Protect Your Child" fill className="object-cover" />
                   </div>
                   <CardHeader>
-                    <CardTitle className="text-sm md:text-base font-bold">Protect Your Child</CardTitle>
+                    <CardTitle className="text-xl md:text-2xl font-bold">Protect Your Child</CardTitle>
                   </CardHeader>
-                  <CardContent className="text-muted-foreground leading-relaxed text-[11px] md:text-xs">
+                  <CardContent className="text-muted-foreground leading-relaxed text-xs md:text-sm">
                   Real-time tracking and geofencing for safe school commutes. Includes a one-touch SOS panic button for immediate distress alerts and a silent audio callback to instantly hear your child’s surroundings.
                   </CardContent>
                 </Card>
@@ -134,9 +134,9 @@ export default function Home() {
                     <Image src="/images/elder.png" alt="Take Care of Your Elderly" fill className="object-cover" />
                   </div>
                   <CardHeader>
-                    <CardTitle className="text-sm md:text-base font-bold">Take Care of Your Elderly</CardTitle>
+                    <CardTitle className="text-xl md:text-2xl font-bold">Take Care of Your Elderly</CardTitle>
                   </CardHeader>
-                  <CardContent className="text-muted-foreground leading-relaxed text-[11px] md:text-xs">
+                  <CardContent className="text-muted-foreground leading-relaxed text-xs md:text-sm">
                   Smart sensors monitoring body temperature, blood pressure, and heart rate. Features automatic fall-detection alerts and instant panic buttons and notifications to family contacts the moment a health check drops.
                   </CardContent>
                 </Card>
@@ -155,9 +155,9 @@ export default function Home() {
                     <Image src="/images/fire.png" alt="Prevent Fire" fill className="object-cover" />
                   </div>
                   <CardHeader>
-                    <CardTitle className="text-sm md:text-base font-bold">Prevent Fire</CardTitle>
+                    <CardTitle className="text-xl md:text-2xl font-bold">Prevent Fire</CardTitle>
                   </CardHeader>
-                  <CardContent className="text-muted-foreground leading-relaxed text-[11px] md:text-xs">
+                  <CardContent className="text-muted-foreground leading-relaxed text-xs md:text-sm">
                   Smart gas, thermal, and humidity (all in one) sensors that continuously monitor surroundings to deliver instant feedback on gas leakage warnings, high temperatures, and potential or active fire outbreaks.
                   </CardContent>
                 </Card>
@@ -166,9 +166,9 @@ export default function Home() {
                     <Image src="https://mecsecurity.com/news/wp-content/uploads/2018/11/6.jpg" alt="Secure Your Premise" fill className="object-cover" />
                   </div>
                   <CardHeader>
-                    <CardTitle className="text-sm md:text-base font-bold">Secure Your Premise</CardTitle>
+                    <CardTitle className="text-xl md:text-2xl font-bold">Secure Your Premise</CardTitle>
                   </CardHeader>
-                  <CardContent className="text-muted-foreground leading-relaxed text-[11px] md:text-xs">
+                  <CardContent className="text-muted-foreground leading-relaxed text-xs md:text-sm">
                     Connected smart locks, perimeter breach detectors, and intelligent entry logs for residential layouts.
                   </CardContent>
                 </Card>
@@ -177,9 +177,9 @@ export default function Home() {
                     <Image src="https://i5.walmartimages.com/seo/EON-Odyssey-18-Month-Long-Life-GPS-Tracker-Vehicles-Assets-Fleet-Hidden-Magnetic-GPS-Tracking-Device-Track-Years-Single-Charge-4G-LTE-Real-Time-Track_ddc51730-ff5f-4363-afc6-70c6686ebb84.bb45370a23c0677c87767a2e8b848bf3.jpeg?odnHeight=328&odnWidth=328&odnBg=FFFFFF" alt="Secure Your Assets" fill className="object-cover" />
                   </div>
                   <CardHeader>
-                    <CardTitle className="text-sm md:text-base font-bold">Secure Your Assets</CardTitle>
+                    <CardTitle className="text-xl md:text-2xl font-bold">Secure Your Assets</CardTitle>
                   </CardHeader>
-                  <CardContent className="text-muted-foreground leading-relaxed text-[11px] md:text-xs">
+                  <CardContent className="text-muted-foreground leading-relaxed text-xs md:text-sm">
                     High-precision hardware asset tracking nodes built to safeguard equipment and vehicles.
                   </CardContent>
                 </Card>
@@ -198,9 +198,9 @@ export default function Home() {
                     <Image src="https://images.unsplash.com/photo-1589935447067-5531094415d1?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Y2N0diUyMGNhbWVyYXxlbnwwfHwwfHx8MA%3D%3D" alt="Neighborhood Survey" fill className="object-cover" />
                   </div>
                   <CardHeader>
-                    <CardTitle className="text-sm md:text-base font-bold">Neighborhood Survey</CardTitle>
+                    <CardTitle className="text-xl md:text-2xl font-bold">Neighborhood Survey</CardTitle>
                   </CardHeader>
-                  <CardContent className="text-muted-foreground leading-relaxed text-[11px] md:text-xs">
+                  <CardContent className="text-muted-foreground leading-relaxed text-xs md:text-sm">
                     Decentralized network gateway monitoring nodes linking neighborhood watch loops together.
                   </CardContent>
                 </Card>
@@ -209,9 +209,9 @@ export default function Home() {
                     <Image src="/images/smart-community.png" alt="Make Community Smart" fill className="object-cover" />
                   </div>
                   <CardHeader>
-                    <CardTitle className="text-sm md:text-base font-bold">Make Community Smart</CardTitle>
+                    <CardTitle className="text-xl md:text-2xl font-bold">Make Community Smart</CardTitle>
                   </CardHeader>
-                  <CardContent className="text-muted-foreground leading-relaxed text-[11px] md:text-xs">
+                  <CardContent className="text-muted-foreground leading-relaxed text-xs md:text-sm">
                     Scalable urban IoT applications, including smart lighting, waste analytics, and environmental hazard tracking.
                   </CardContent>
                 </Card>
@@ -224,8 +224,8 @@ export default function Home() {
         <section className="py-24 bg-[#F5F5F7] dark:bg-muted/10 relative overflow-hidden">
           <div className="container mx-auto px-4 relative z-10">
             <div className="text-center max-w-2xl mx-auto mb-16">
-              <h2 className="text-2xl md:text-3xl lg:text-4xl font-headline font-extrabold mb-4">Simplicity in Motion.</h2>
-              <p className="text-xs md:text-sm lg:text-base text-muted-foreground font-light">We handle the technical complexity so you can focus on what matters most.</p>
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-headline font-extrabold mb-4">Simplicity in Motion.</h2>
+              <p className="text-sm md:text-base lg:text-lg text-muted-foreground font-light">We handle the technical complexity so you can focus on what matters most.</p>
             </div>
             
             <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
@@ -250,8 +250,8 @@ export default function Home() {
                   <div className="w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-gradient-to-br from-primary to-accent text-white flex items-center justify-center mb-6 shadow-xl shadow-primary/20 group-hover:rotate-3 transition-transform">
                     {step.icon}
                   </div>
-                  <h4 className="text-sm md:text-base font-bold mb-2">{step.title}</h4>
-                  <p className="text-muted-foreground leading-relaxed text-[10px] md:text-[11px] lg:text-xs">{step.desc}</p>
+                  <h4 className="text-lg md:text-xl font-bold mb-2">{step.title}</h4>
+                  <p className="text-muted-foreground leading-relaxed text-xs md:text-sm">{step.desc}</p>
                 </div>
               ))}
             </div>
@@ -263,9 +263,9 @@ export default function Home() {
           <div className="container mx-auto px-4">
             <div className="grid lg:grid-cols-2 gap-16 items-center">
               <div>
-                <Badge variant="outline" className="mb-4 px-3 py-1 border-primary text-primary font-bold text-[10px]">PHYSICAL VALIDATION</Badge>
-                <h2 className="text-2xl md:text-3xl lg:text-4xl font-headline font-extrabold mb-6 tracking-tighter leading-tight">Live Capability Stream.</h2>
-                <p className="text-xs md:text-sm lg:text-base text-muted-foreground mb-10 font-light leading-relaxed">
+                <Badge variant="outline" className="mb-4 px-3 py-1 border-primary text-primary font-bold text-xs uppercase tracking-widest">PHYSICAL VALIDATION</Badge>
+                <h2 className="text-3xl md:text-4xl lg:text-5xl font-headline font-extrabold mb-6 tracking-tighter leading-tight">Live Capability Stream.</h2>
+                <p className="text-base md:text-lg text-muted-foreground mb-10 font-light leading-relaxed">
                   Our platform delivers real-world protection in real-time. This interactive showcase demonstrates our active deployments.
                 </p>
                 <div className="space-y-4">
@@ -273,11 +273,11 @@ export default function Home() {
                     <div key={metric.id} className="flex items-center justify-between p-4 glass-card rounded-xl hover:border-primary/50 transition-all">
                       <div className="flex items-center gap-3">
                         <div className="w-2 h-2 rounded-full bg-[#20603D] animate-pulse-soft shadow-[0_0_10px_rgba(32,96,61,0.6)]" />
-                        <span className="text-xs font-medium">{metric.label}</span>
+                        <span className="text-sm font-medium">{metric.label}</span>
                       </div>
                       <div className="flex items-center gap-4">
-                        <span className="text-xs font-bold font-mono text-primary">{metric.value}</span>
-                        <Badge variant="secondary" className="px-2 py-0.5 uppercase text-[8px] font-bold tracking-widest">{metric.status}</Badge>
+                        <span className="text-sm font-bold font-mono text-primary">{metric.value}</span>
+                        <Badge variant="secondary" className="px-2 py-0.5 uppercase text-[10px] font-bold tracking-widest">{metric.status}</Badge>
                       </div>
                     </div>
                   ))}
@@ -344,8 +344,8 @@ export default function Home() {
           <div className="container mx-auto px-4 relative z-10">
             <div className="grid lg:grid-cols-2 gap-16 items-center">
               <div>
-                <h2 className="text-2xl md:text-3xl lg:text-5xl font-headline font-extrabold mb-6 tracking-tighter leading-tight">Ready to Secure Your Piece of Tomorrow?</h2>
-                <p className="text-sm md:text-base lg:text-lg text-primary-foreground/80 mb-10 font-light leading-relaxed">
+                <h2 className="text-3xl md:text-5xl lg:text-6xl font-headline font-extrabold mb-6 tracking-tighter leading-tight">Ready to Secure Your Piece of Tomorrow?</h2>
+                <p className="text-lg md:text-xl text-primary-foreground/80 mb-10 font-light leading-relaxed">
                   Contact our technical deployment team today for a tailored residential or community security assessment.
                 </p>
                 <div className="flex items-center gap-8">
@@ -354,21 +354,21 @@ export default function Home() {
                        <div key={i} className="w-8 h-8 rounded-full border-2 border-primary bg-white/20 backdrop-blur-md" />
                      ))}
                    </div>
-                   <div className="font-bold text-sm md:text-base lg:text-lg">
-                     1,200+ <span className="text-primary-foreground/60 font-light block text-[10px]">Active Deployments</span>
+                   <div className="font-bold text-base md:text-lg">
+                     1,200+ <span className="text-primary-foreground/60 font-light block text-xs">Active Deployments</span>
                    </div>
                 </div>
               </div>
 
               <Card className="bg-white/5 backdrop-blur-2xl p-8 rounded-[2rem] border-white/10 shadow-2xl">
                 <CardHeader className="px-0 pt-0 mb-6">
-                  <CardTitle className="text-base md:text-lg lg:text-xl font-headline font-bold text-white">Request Assessment</CardTitle>
+                  <CardTitle className="text-xl md:text-2xl font-headline font-bold text-white">Request Assessment</CardTitle>
                 </CardHeader>
                 <CardContent className="px-0 space-y-4">
-                  <Input placeholder="Full Name" className="bg-white/10 border-white/10 h-11 md:h-12 rounded-xl text-xs md:text-sm focus-visible:ring-white/20 text-white placeholder:text-white/40" />
-                  <Input placeholder="Email Address" type="email" className="bg-white/10 border-white/10 h-11 md:h-12 rounded-xl text-xs md:text-sm focus-visible:ring-white/20 text-white placeholder:text-white/40" />
+                  <Input placeholder="Full Name" className="bg-white/10 border-white/10 h-12 rounded-xl text-sm focus-visible:ring-white/20 text-white placeholder:text-white/40" />
+                  <Input placeholder="Email Address" type="email" className="bg-white/10 border-white/10 h-12 rounded-xl text-sm focus-visible:ring-white/20 text-white placeholder:text-white/40" />
                   <Select>
-                    <SelectTrigger className="bg-white/10 border-white/10 h-11 md:h-12 rounded-xl text-xs md:text-sm text-white/60 focus:ring-white/20">
+                    <SelectTrigger className="bg-white/10 border-white/10 h-12 rounded-xl text-sm text-white focus:ring-white/20">
                       <SelectValue placeholder="Service Interest" />
                     </SelectTrigger>
                     <SelectContent>
@@ -378,7 +378,7 @@ export default function Home() {
                       <SelectItem value="assets">High-Value Asset Tracking</SelectItem>
                     </SelectContent>
                   </Select>
-                  <Button className="w-full bg-accent text-accent-foreground hover:bg-accent/90 h-11 md:h-12 rounded-xl text-xs md:text-sm lg:text-base font-bold shadow-xl transition-all hover:scale-[1.02]">
+                  <Button className="w-full bg-accent text-accent-foreground hover:bg-accent/90 h-12 rounded-xl text-base font-bold shadow-xl transition-all hover:scale-[1.02]">
                     Submit Inquiry
                   </Button>
                 </CardContent>
@@ -394,32 +394,32 @@ export default function Home() {
             <div className="max-w-xs">
               <div className="flex items-center gap-3 group mb-6">
                 <Signal className="w-6 h-6 text-primary" />
-                <span className="text-xl font-headline font-extrabold tracking-tighter">SafeRwanda</span>
+                <span className="text-2xl font-headline font-extrabold tracking-tighter">SafeRwanda</span>
               </div>
-              <p className="text-muted-foreground leading-relaxed font-light text-[10px]">
+              <p className="text-muted-foreground leading-relaxed font-light text-sm">
                 Engineering a safer future through advanced IoT, real-time analytics, and community-first architecture.
               </p>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-12 lg:gap-24">
               <div className="space-y-4">
-                <h5 className="font-bold text-[9px] uppercase tracking-[0.2em] text-primary">Ecosystem</h5>
-                <ul className="space-y-3 text-[10px] font-medium">
+                <h5 className="font-bold text-xs uppercase tracking-[0.2em] text-primary">Ecosystem</h5>
+                <ul className="space-y-3 text-sm font-medium">
                   <li><Link href="#" className="text-muted-foreground hover:text-primary transition-colors">IoT Stack</Link></li>
                   <li><Link href="/services" className="text-muted-foreground hover:text-primary transition-colors">Services</Link></li>
                   <li><Link href="#" className="text-muted-foreground hover:text-primary transition-colors">Hardware</Link></li>
                 </ul>
               </div>
               <div className="space-y-4">
-                <h5 className="font-bold text-[9px] uppercase tracking-[0.2em] text-primary">Company</h5>
-                <ul className="space-y-3 text-[10px] font-medium">
+                <h5 className="font-bold text-xs uppercase tracking-[0.2em] text-primary">Company</h5>
+                <ul className="space-y-3 text-sm font-medium">
                   <li><Link href="#" className="text-muted-foreground hover:text-primary transition-colors">Our Vision</Link></li>
                   <li><Link href="#" className="text-muted-foreground hover:text-primary transition-colors">Global Partners</Link></li>
                   <li><Link href="#" className="text-muted-foreground hover:text-primary transition-colors">Careers</Link></li>
                 </ul>
               </div>
               <div className="space-y-4">
-                <h5 className="font-bold text-[9px] uppercase tracking-[0.2em] text-primary">Portal</h5>
-                <ul className="space-y-3 text-[10px] font-medium">
+                <h5 className="font-bold text-xs uppercase tracking-[0.2em] text-primary">Portal</h5>
+                <ul className="space-y-3 text-sm font-medium">
                   <li><Link href="/auth" className="text-muted-foreground hover:text-primary transition-colors">Login</Link></li>
                   <li><Link href="#" className="text-muted-foreground hover:text-primary transition-colors">Support</Link></li>
                 </ul>
@@ -427,12 +427,12 @@ export default function Home() {
             </div>
           </div>
           <div className="pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center gap-6">
-            <div className="text-[9px] text-muted-foreground font-bold tracking-widest uppercase">
+            <div className="text-xs text-muted-foreground font-bold tracking-widest uppercase">
               © {new Date().getFullYear()} SafeRwanda IoT Labs. Secure by Design.
             </div>
             <div className="flex gap-8">
-              <Link href="#" className="text-[9px] text-muted-foreground hover:text-primary transition-colors font-bold uppercase">Privacy</Link>
-              <Link href="#" className="text-[9px] text-muted-foreground hover:text-primary transition-colors font-bold uppercase">Terms</Link>
+              <Link href="#" className="text-xs text-muted-foreground hover:text-primary transition-colors font-bold uppercase">Privacy</Link>
+              <Link href="#" className="text-xs text-muted-foreground hover:text-primary transition-colors font-bold uppercase">Terms</Link>
             </div>
           </div>
         </div>
