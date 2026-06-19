@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState, useEffect } from 'react';
@@ -62,12 +61,12 @@ export default function Home() {
                 src={heroImg.imageUrl}
                 alt="SafeRwanda Vision"
                 fill
-                className="object-cover opacity-35 brightness-55 scale-105"
+                className="object-cover opacity-50 brightness-55 scale-105"
                 priority
               />
             )}
             <div className="absolute inset-0 bg-gradient-to-b from-background/0 via-background/40 to-background" />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/5 via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent" />
           </div>
 
           <div className="container mx-auto px-4 z-10 text-center">
@@ -120,7 +119,7 @@ export default function Home() {
                   </div>
                 </div>
                 <Card className="glass-card group hover:-translate-y-1 transition-transform duration-500 overflow-hidden">
-                  <div className="relative w-full h-80 border-b border-accent/10">
+                  <div className="relative w-full h-48 border-b border-accent/10">
                     <Image src="/images/child.png" alt="Protect Your Child" fill className="object-cover" />
                   </div>
                   <CardHeader>
@@ -131,7 +130,7 @@ export default function Home() {
                   </CardContent>
                 </Card>
                 <Card className="glass-card group hover:-translate-y-1 transition-transform duration-500 overflow-hidden">
-                  <div className="relative w-full h-80 border-b border-accent/10">
+                  <div className="relative w-full h-48 border-b border-accent/10">
                     <Image src="/images/elder.png" alt="Take Care of Your Elderly" fill className="object-cover" />
                   </div>
                   <CardHeader>
@@ -152,7 +151,7 @@ export default function Home() {
                   </div>
                 </div>
                 <Card className="glass-card group hover:-translate-y-1 transition-transform duration-500 border-primary/20 overflow-hidden">
-                  <div className="relative w-full h-80 border-b border-primary/10">
+                  <div className="relative w-full h-48 border-b border-primary/10">
                     <Image src="/images/fire.png" alt="Prevent Fire" fill className="object-cover" />
                   </div>
                   <CardHeader>
@@ -163,7 +162,7 @@ export default function Home() {
                   </CardContent>
                 </Card>
                 <Card className="glass-card group hover:-translate-y-1 transition-transform duration-500 border-primary/20 overflow-hidden">
-                  <div className="relative w-full h-80 border-b border-primary/10">
+                  <div className="relative w-full h-48 border-b border-primary/10">
                     <Image src="https://mecsecurity.com/news/wp-content/uploads/2018/11/6.jpg" alt="Secure Your Premise" fill className="object-cover" />
                   </div>
                   <CardHeader>
@@ -174,7 +173,7 @@ export default function Home() {
                   </CardContent>
                 </Card>
                 <Card className="glass-card group hover:-translate-y-1 transition-transform duration-500 border-primary/20 overflow-hidden">
-                  <div className="relative w-full h-80 border-b border-primary/10">
+                  <div className="relative w-full h-48 border-b border-primary/10">
                     <Image src="https://i5.walmartimages.com/seo/EON-Odyssey-18-Month-Long-Life-GPS-Tracker-Vehicles-Assets-Fleet-Hidden-Magnetic-GPS-Tracking-Device-Track-Years-Single-Charge-4G-LTE-Real-Time-Track_ddc51730-ff5f-4363-afc6-70c6686ebb84.bb45370a23c0677c87767a2e8b848bf3.jpeg?odnHeight=328&odnWidth=328&odnBg=FFFFFF" alt="Secure Your Assets" fill className="object-cover" />
                   </div>
                   <CardHeader>
@@ -189,13 +188,13 @@ export default function Home() {
               {/* Pillar C: Connected Community */}
               <div className="space-y-6 flex flex-col">
                 <div className="flex justify-center mb-2">
-                  <div className="inline-flex items-center gap-2 bg-accent/10 px-3 py-1.5 rounded-lg border border-accent/20">
-                    <Network className="w-4 h-4 text-accent" />
-                    <span className="text-accent font-bold tracking-widest uppercase text-[10px]">Community Infrastructure</span>
+                  <div className="inline-flex items-center gap-2 bg-[#20603D]/10 px-3 py-1.5 rounded-lg border border-[#20603D]/20">
+                    <Network className="w-4 h-4 text-[#20603D]" />
+                    <span className="text-[#20603D] font-bold tracking-widest uppercase text-[10px]">Community Infrastructure</span>
                   </div>
                 </div>
                 <Card className="glass-card group hover:-translate-y-1 transition-transform duration-500 overflow-hidden">
-                  <div className="relative w-full h-80 border-b border-accent/10">
+                  <div className="relative w-full h-48 border-b border-[#20603D]/10">
                     <Image src="https://images.unsplash.com/photo-1589935447067-5531094415d1?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Y2N0diUyMGNhbWVyYXxlbnwwfHwwfHx8MA%3D%3D" alt="Neighborhood Survey" fill className="object-cover" />
                   </div>
                   <CardHeader>
@@ -206,7 +205,7 @@ export default function Home() {
                   </CardContent>
                 </Card>
                 <Card className="glass-card group hover:-translate-y-1 transition-transform duration-500 overflow-hidden">
-                  <div className="relative w-full h-80 border-b border-accent/10">
+                  <div className="relative w-full h-48 border-b border-[#20603D]/10">
                     <Image src="/images/smart-community.png" alt="Make Community Smart" fill className="object-cover" />
                   </div>
                   <CardHeader>
@@ -273,7 +272,7 @@ export default function Home() {
                   {metrics.map((metric) => (
                     <div key={metric.id} className="flex items-center justify-between p-4 glass-card rounded-xl hover:border-primary/50 transition-all">
                       <div className="flex items-center gap-3">
-                        <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse-soft shadow-[0_0_10px_rgba(34,197,94,0.6)]" />
+                        <div className="w-2 h-2 rounded-full bg-[#20603D] animate-pulse-soft shadow-[0_0_10px_rgba(32,96,61,0.6)]" />
                         <span className="text-xs font-medium">{metric.label}</span>
                       </div>
                       <div className="flex items-center gap-4">
@@ -311,22 +310,22 @@ export default function Home() {
                       <p className="text-[10px] text-muted-foreground leading-relaxed">32 Node Handshakes verified.</p>
                     </div>
                     <div className="flex flex-col gap-2">
-                      <Badge className="bg-green-500 text-white border-none text-[10px] py-0.5">ONLINE</Badge>
+                      <Badge className="bg-[#20603D] text-white border-none text-[10px] py-0.5">ONLINE</Badge>
                       <Badge variant="secondary" className="bg-white/10 text-white backdrop-blur-md border-white/20 uppercase tracking-widest text-[8px] py-0.5">EXCELLENT</Badge>
                     </div>
                   </div>
                   
                   <div className="bg-black/80 backdrop-blur-2xl p-4 rounded-xl font-mono text-[10px] border border-white/10 overflow-hidden shadow-2xl">
-                    <div className="space-y-1 text-green-400">
+                    <div className="space-y-1 text-accent font-bold">
                       <div className="flex gap-2">
                         <span className="opacity-40">[{mounted ? currentTime : '--:--:--'}]</span>
                         <span className="text-primary font-bold">INFO:</span>
-                        <span>Node_128 Handshake Success.</span>
+                        <span className="text-white font-normal">Node_128 Handshake Success.</span>
                       </div>
                       <div className="flex gap-2">
                         <span className="opacity-40">[{mounted ? currentTime : '--:--:--'}]</span>
-                        <span className="text-accent font-bold">METRIC:</span>
-                        <span>Methane detection: {metrics[0].value}</span>
+                        <span className="text-[#20603D] font-bold">METRIC:</span>
+                        <span className="text-white font-normal">Methane detection: {metrics[0].value}</span>
                       </div>
                     </div>
                   </div>
@@ -379,7 +378,7 @@ export default function Home() {
                       <SelectItem value="assets">High-Value Asset Tracking</SelectItem>
                     </SelectContent>
                   </Select>
-                  <Button className="w-full bg-white text-primary hover:bg-white/90 h-11 md:h-12 rounded-xl text-xs md:text-sm lg:text-base font-bold shadow-xl transition-all hover:scale-[1.02]">
+                  <Button className="w-full bg-accent text-accent-foreground hover:bg-accent/90 h-11 md:h-12 rounded-xl text-xs md:text-sm lg:text-base font-bold shadow-xl transition-all hover:scale-[1.02]">
                     Submit Inquiry
                   </Button>
                 </CardContent>
@@ -393,10 +392,10 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="flex flex-col lg:flex-row justify-between items-start gap-12 mb-12">
             <div className="max-w-xs">
-              <Link href="/" className="flex items-center gap-3 group mb-6">
+              <div className="flex items-center gap-3 group mb-6">
                 <Signal className="w-6 h-6 text-primary" />
                 <span className="text-xl font-headline font-extrabold tracking-tighter">SafeRwanda</span>
-              </Link>
+              </div>
               <p className="text-muted-foreground leading-relaxed font-light text-[10px]">
                 Engineering a safer future through advanced IoT, real-time analytics, and community-first architecture.
               </p>
