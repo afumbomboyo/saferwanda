@@ -127,7 +127,7 @@ export default function Home() {
                     <CardTitle className="text-sm md:text-base font-bold">Protect Your Child</CardTitle>
                   </CardHeader>
                   <CardContent className="text-muted-foreground leading-relaxed text-[11px] md:text-xs">
-                    Real-time location tracking and wearable geofencing alerts to ensure your children are safe on their way to and from school.
+                  Real-time tracking and geofencing for safe school commutes. Includes a one-touch SOS panic button for immediate distress alerts and a silent audio callback to instantly hear your child’s surroundings.
                   </CardContent>
                 </Card>
                 <Card className="glass-card group hover:-translate-y-1 transition-transform duration-500 overflow-hidden">
@@ -138,7 +138,7 @@ export default function Home() {
                     <CardTitle className="text-sm md:text-base font-bold">Take Care of Your Elderly</CardTitle>
                   </CardHeader>
                   <CardContent className="text-muted-foreground leading-relaxed text-[11px] md:text-xs">
-                    Smart health sensors, fall-detection alerts, and automated panic buttons that notify family contacts instantly.
+                  Smart sensors monitoring body temperature, blood pressure, and heart rate. Features automatic fall-detection alerts and instant panic buttons and notifications to family contacts the moment a health check drops.
                   </CardContent>
                 </Card>
               </div>
@@ -159,7 +159,7 @@ export default function Home() {
                     <CardTitle className="text-sm md:text-base font-bold">Prevent Fire</CardTitle>
                   </CardHeader>
                   <CardContent className="text-muted-foreground leading-relaxed text-[11px] md:text-xs">
-                    Smart thermal and smoke detectors linked to automated network alarms to neutralize fire hazards early.
+                  Smart gas, thermal, and humidity (all in one) sensors that continuously monitor surroundings to deliver instant feedback on gas leakage warnings, high temperatures, and potential or active fire outbreaks.
                   </CardContent>
                 </Card>
                 <Card className="glass-card group hover:-translate-y-1 transition-transform duration-500 border-primary/20 overflow-hidden">
@@ -232,23 +232,23 @@ export default function Home() {
             <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
               {[
                 {
-                  icon: <Cpu className="w-6 h-6 md:w-8 md:h-8" />,
+                  icon: <Cpu className="w-8 h-8 md:w-10 md:h-10" />,
                   title: "Deploy Hardware Nodes",
                   desc: "Plug-and-play IoT sensors, trackers, and gateway devices seamlessly installed."
                 },
                 {
-                  icon: <Database className="w-6 h-6 md:w-8 md:h-8" />,
+                  icon: <Database className="w-8 h-8 md:w-10 md:h-10" />,
                   title: "Monitor the Stream",
                   desc: "Data channels route securely into our centralized cloud system with zero downtime."
                 },
                 {
-                  icon: <Bell className="w-6 h-6 md:w-8 md:h-8" />,
+                  icon: <Bell className="w-8 h-8 md:w-10 md:h-10" />,
                   title: "Receive Live Alerts",
                   desc: "Get instant mobile notifications and view metrics on your control panel."
                 }
               ].map((step, idx) => (
                 <div key={idx} className="relative group text-center flex flex-col items-center">
-                  <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-gradient-to-br from-primary to-accent text-white flex items-center justify-center mb-6 shadow-xl shadow-primary/20 group-hover:rotate-3 transition-transform">
+                  <div className="w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-gradient-to-br from-primary to-accent text-white flex items-center justify-center mb-6 shadow-xl shadow-primary/20 group-hover:rotate-3 transition-transform">
                     {step.icon}
                   </div>
                   <h4 className="text-sm md:text-base font-bold mb-2">{step.title}</h4>
