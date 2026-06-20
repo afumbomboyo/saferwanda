@@ -28,7 +28,7 @@ export default function Navbar() {
 
   const navLinks = [
     { name: 'Home', href: '/' },
-    { name: 'Services', href: '/services' },
+    { name: 'Our Services', href: '/services' },
     { name: 'Login', href: '/auth' },
   ];
 
@@ -70,23 +70,21 @@ export default function Navbar() {
               </Link>
             ))}
           </div>
-          {isScrolled && (
-            <Button asChild className="h-12 px-8 rounded-xl font-bold shadow-xl shadow-primary/20 bg-primary hover:bg-primary/90 animate-fade-in">
-              <Link href="/auth?signup=true">Get Started</Link>
-            </Button>
-          )}
+          <Button asChild className="h-12 px-8 rounded-xl font-bold shadow-xl shadow-primary/20 bg-primary hover:bg-primary/90 animate-fade-in">
+            <Link href="/auth?signup=true">Get Started</Link>
+          </Button>
         </div>
 
         {/* Mobile Nav Toggle */}
         <div className="md:hidden">
-          <MobileMenu visibleLinks={visibleLinks} showGetStarted={isScrolled} />
+          <MobileMenu visibleLinks={visibleLinks} />
         </div>
       </div>
     </nav>
   );
 }
 
-function MobileMenu({ visibleLinks, showGetStarted }: { visibleLinks: any[], showGetStarted: boolean }) {
+function MobileMenu({ visibleLinks }: { visibleLinks: any[] }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -126,15 +124,13 @@ function MobileMenu({ visibleLinks, showGetStarted }: { visibleLinks: any[], sho
             </Link>
           ))}
           
-          {showGetStarted && (
-            <div className="mt-4 pt-8 border-t border-border">
-              <Button asChild className="w-full h-14 rounded-xl font-bold shadow-xl shadow-primary/20 bg-primary text-white">
-                <Link href="/auth?signup=true" onClick={() => setOpen(false)}>
-                  Get Started
-                </Link>
-              </Button>
-            </div>
-          )}
+          <div className="mt-4 pt-8 border-t border-border">
+            <Button asChild className="w-full h-14 rounded-xl font-bold shadow-xl shadow-primary/20 bg-primary text-white">
+              <Link href="/auth?signup=true" onClick={() => setOpen(false)}>
+                Get Started
+              </Link>
+            </Button>
+          </div>
         </div>
         
         <div className="mt-auto p-8 border-t border-border bg-secondary/10">

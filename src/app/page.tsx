@@ -83,8 +83,8 @@ export default function Home() {
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button asChild size="lg" className="h-12 md:h-14 px-8 rounded-xl text-sm md:text-base font-bold shadow-xl shadow-primary/30 bg-primary hover:bg-primary/90 transition-all hover:scale-105">
-                  <Link href="/auth?signup=true" className="flex items-center gap-2">
-                    Get Started <ArrowRight className="w-4 h-4" />
+                  <Link href="/services" className="flex items-center gap-2">
+                    Our Services <ArrowRight className="w-4 h-4" />
                   </Link>
                 </Button>
                 <Button asChild variant="outline" size="lg" className="h-12 md:h-14 px-8 rounded-xl text-sm md:text-base font-bold border-white/10 bg-white/5 backdrop-blur-md transition-all hover:scale-90">
@@ -119,7 +119,7 @@ export default function Home() {
                   </div>
                 </div>
                 <Card className="glass-card group hover:-translate-y-1 transition-transform duration-500 overflow-hidden">
-                  <div className="relative w-full h-48 border-b border-accent/10">
+                  <div className="relative w-full h-80 border-b border-accent/10">
                     <Image src="/images/child.png" alt="Protect Your Child" fill className="object-cover" />
                   </div>
                   <CardHeader>
@@ -130,7 +130,7 @@ export default function Home() {
                   </CardContent>
                 </Card>
                 <Card className="glass-card group hover:-translate-y-1 transition-transform duration-500 overflow-hidden">
-                  <div className="relative w-full h-48 border-b border-accent/10">
+                  <div className="relative w-full h-80 border-b border-accent/10">
                     <Image src="/images/elder.png" alt="Take Care of Your Elderly" fill className="object-cover" />
                   </div>
                   <CardHeader>
@@ -151,7 +151,7 @@ export default function Home() {
                   </div>
                 </div>
                 <Card className="glass-card group hover:-translate-y-1 transition-transform duration-500 border-primary/20 overflow-hidden">
-                  <div className="relative w-full h-48 border-b border-primary/10">
+                  <div className="relative w-full h-80 border-b border-primary/10">
                     <Image src="/images/fire.png" alt="Prevent Fire" fill className="object-cover" />
                   </div>
                   <CardHeader>
@@ -162,7 +162,7 @@ export default function Home() {
                   </CardContent>
                 </Card>
                 <Card className="glass-card group hover:-translate-y-1 transition-transform duration-500 border-primary/20 overflow-hidden">
-                  <div className="relative w-full h-48 border-b border-primary/10">
+                  <div className="relative w-full h-80 border-b border-primary/10">
                     <Image src="https://mecsecurity.com/news/wp-content/uploads/2018/11/6.jpg" alt="Secure Your Premise" fill className="object-cover" />
                   </div>
                   <CardHeader>
@@ -173,7 +173,7 @@ export default function Home() {
                   </CardContent>
                 </Card>
                 <Card className="glass-card group hover:-translate-y-1 transition-transform duration-500 border-primary/20 overflow-hidden">
-                  <div className="relative w-full h-48 border-b border-primary/10">
+                  <div className="relative w-full h-80 border-b border-primary/10">
                     <Image src="https://i5.walmartimages.com/seo/EON-Odyssey-18-Month-Long-Life-GPS-Tracker-Vehicles-Assets-Fleet-Hidden-Magnetic-GPS-Tracking-Device-Track-Years-Single-Charge-4G-LTE-Real-Time-Track_ddc51730-ff5f-4363-afc6-70c6686ebb84.bb45370a23c0677c87767a2e8b848bf3.jpeg?odnHeight=328&odnWidth=328&odnBg=FFFFFF" alt="Secure Your Assets" fill className="object-cover" />
                   </div>
                   <CardHeader>
@@ -194,7 +194,7 @@ export default function Home() {
                   </div>
                 </div>
                 <Card className="glass-card group hover:-translate-y-1 transition-transform duration-500 overflow-hidden">
-                  <div className="relative w-full h-48 border-b border-[#20603D]/10">
+                  <div className="relative w-full h-80 border-b border-[#20603D]/10">
                     <Image src="https://images.unsplash.com/photo-1589935447067-5531094415d1?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Y2N0diUyMGNhbWVyYXxlbnwwfHwwfHx8MA%3D%3D" alt="Neighborhood Survey" fill className="object-cover" />
                   </div>
                   <CardHeader>
@@ -205,7 +205,7 @@ export default function Home() {
                   </CardContent>
                 </Card>
                 <Card className="glass-card group hover:-translate-y-1 transition-transform duration-500 overflow-hidden">
-                  <div className="relative w-full h-48 border-b border-[#20603D]/10">
+                  <div className="relative w-full h-80 border-b border-[#20603D]/10">
                     <Image src="/images/smart-community.png" alt="Make Community Smart" fill className="object-cover" />
                   </div>
                   <CardHeader>
@@ -405,7 +405,7 @@ export default function Home() {
                 <h5 className="font-bold text-xs uppercase tracking-[0.2em] text-primary">Ecosystem</h5>
                 <ul className="space-y-3 text-sm font-medium">
                   <li><Link href="#" className="text-muted-foreground hover:text-primary transition-colors">IoT Stack</Link></li>
-                  <li><Link href="/services" className="text-muted-foreground hover:text-primary transition-colors">Services</Link></li>
+                  <li><Link href="/services" className="text-muted-foreground hover:text-primary transition-colors">Our Services</Link></li>
                   <li><Link href="#" className="text-muted-foreground hover:text-primary transition-colors">Hardware</Link></li>
                 </ul>
               </div>
