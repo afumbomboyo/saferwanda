@@ -1,3 +1,4 @@
+
 "use client"
 
 import Link from 'next/link';
@@ -17,33 +18,24 @@ import {
 export default function Navbar() {
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
-  const [mounted, setMounted] = useState(false);
+  const [activePath, setActivePath] = useState<string | null>(null);
 
   useEffect(() => {
-    setMounted(true);
+    // We set the active path after mounting to avoid hydration mismatch
+    // between server-rendered HTML and initial client-side render.
+    setActivePath(pathname);
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [pathname]);
 
   const navLinks = [
     { name: 'Home', href: '/' },
     { name: 'Our Services', href: '/services' },
     { name: 'Login', href: '/auth' },
   ];
-
-  // During SSR and initial hydration, we render a consistent set of links 
-  // to avoid hydration mismatch. Once mounted, we filter based on current pathname.
-  const visibleLinks = mounted 
-    ? navLinks.filter(link => {
-        if (link.href === '/' && pathname === '/') return false;
-        if (link.href === '/auth' && pathname === '/auth') return false;
-        if (link.href === '/services' && pathname === '/services') return false;
-        return true;
-      })
-    : navLinks;
 
   return (
     <nav className={cn(
@@ -63,18 +55,22 @@ export default function Navbar() {
         {/* Desktop Nav */}
         <div className="hidden md:flex items-center gap-10">
           <div className="flex items-center gap-8 px-6 py-2 rounded-2xl bg-white/5 border border-white/5 backdrop-blur-md">
-            {visibleLinks.map((link) => (
-              <Link 
-                key={link.href} 
-                href={link.href} 
-                className={cn(
-                  "text-sm font-bold uppercase tracking-widest transition-colors antialiased",
-                  link.name === 'Login' ? "text-primary hover:text-primary/80" : "text-foreground hover:text-primary"
-                )}
-              >
-                {link.name}
-              </Link>
-            ))}
+            {navLinks.map((link) => {
+              // During hydration, activePath is null, ensuring consistent rendering with server
+              const isActive = activePath === link.href;
+              return (
+                <Link 
+                  key={link.href} 
+                  href={link.href} 
+                  className={cn(
+                    "text-sm font-bold uppercase tracking-widest transition-colors antialiased",
+                    isActive ? "text-primary" : "text-foreground hover:text-primary"
+                  )}
+                >
+                  {link.name}
+                </Link>
+              );
+            })}
           </div>
           <Button asChild className="h-12 px-8 rounded-xl font-bold shadow-xl shadow-primary/20 bg-primary hover:bg-primary/90 transition-all active:scale-95">
             <Link href="/auth?signup=true">Get Started</Link>
@@ -86,14 +82,14 @@ export default function Navbar() {
           <Button asChild size="sm" className="h-9 px-4 rounded-lg font-bold bg-primary text-xs">
             <Link href="/auth?signup=true">Get Started</Link>
           </Button>
-          <MobileMenu visibleLinks={visibleLinks} />
+          <MobileMenu navLinks={navLinks} activePath={activePath} />
         </div>
       </div>
     </nav>
   );
 }
 
-function MobileMenu({ visibleLinks }: { visibleLinks: any[] }) {
+function MobileMenu({ navLinks, activePath }: { navLinks: any[], activePath: string | null }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -107,7 +103,8 @@ function MobileMenu({ visibleLinks }: { visibleLinks: any[] }) {
           <Menu className="w-5 h-5" />
         </Button>
       </SheetTrigger>
-      <SheetContent side="right" className="w-[85%] sm:max-w-[380px] bg-background border-l border-border p-0 flex flex-col overflow-hidden z-[150]">
+      {/* Increased z-index and ensured proper portal rendering to avoid clipping from the fixed header */}
+      <SheetContent side="right" className="w-[85%] sm:max-w-[380px] bg-background border-l border-border p-0 flex flex-col overflow-hidden z-[200]">
         <SheetHeader className="p-8 text-left relative bg-gradient-to-br from-primary via-primary to-[#20603D] text-white overflow-hidden border-b-4 border-accent">
           {/* Subtle Rwanda Color Accents */}
           <div className="absolute top-0 right-0 w-32 h-32 bg-accent/20 rounded-full blur-3xl -mr-16 -mt-16" />
@@ -124,19 +121,22 @@ function MobileMenu({ visibleLinks }: { visibleLinks: any[] }) {
         </SheetHeader>
         
         <div className="flex flex-grow flex-col gap-6 p-8">
-          {visibleLinks.map((link) => (
-            <Link 
-              key={link.href} 
-              href={link.href} 
-              onClick={() => setOpen(false)}
-              className={cn(
-                "text-3xl font-headline font-extrabold tracking-tight transition-all hover:translate-x-2 active:scale-95 antialiased",
-                link.name === 'Login' ? "text-primary" : "text-foreground/90"
-              )}
-            >
-              {link.name}
-            </Link>
-          ))}
+          {navLinks.map((link) => {
+            const isActive = activePath === link.href;
+            return (
+              <Link 
+                key={link.href} 
+                href={link.href} 
+                onClick={() => setOpen(false)}
+                className={cn(
+                  "text-3xl font-headline font-extrabold tracking-tight transition-all hover:translate-x-2 active:scale-95 antialiased",
+                  isActive ? "text-primary" : "text-foreground/90"
+                )}
+              >
+                {link.name}
+              </Link>
+            );
+          })}
           
           <div className="mt-8 pt-8 border-t border-border">
             <Button asChild className="w-full h-14 rounded-xl font-bold shadow-2xl shadow-primary/30 bg-primary text-white text-lg">
