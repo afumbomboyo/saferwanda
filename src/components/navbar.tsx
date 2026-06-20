@@ -35,6 +35,7 @@ export default function Navbar() {
   const visibleLinks = navLinks.filter(link => {
     if (link.href === '/' && pathname === '/') return false;
     if (link.href === '/auth' && pathname === '/auth') return false;
+    if (link.href === '/services' && pathname === '/services') return false;
     return true;
   });
 
