@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ShieldCheck, Menu, X, Circle } from 'lucide-react';
+import { ShieldCheck, Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
@@ -17,8 +17,10 @@ import {
 export default function Navbar() {
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
     };
@@ -32,12 +34,16 @@ export default function Navbar() {
     { name: 'Login', href: '/auth' },
   ];
 
-  const visibleLinks = navLinks.filter(link => {
-    if (link.href === '/' && pathname === '/') return false;
-    if (link.href === '/auth' && pathname === '/auth') return false;
-    if (link.href === '/services' && pathname === '/services') return false;
-    return true;
-  });
+  // During SSR and initial hydration, we render a consistent set of links 
+  // to avoid hydration mismatch. Once mounted, we filter based on current pathname.
+  const visibleLinks = mounted 
+    ? navLinks.filter(link => {
+        if (link.href === '/' && pathname === '/') return false;
+        if (link.href === '/auth' && pathname === '/auth') return false;
+        if (link.href === '/services' && pathname === '/services') return false;
+        return true;
+      })
+    : navLinks;
 
   return (
     <nav className={cn(
