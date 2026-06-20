@@ -75,7 +75,7 @@ export default function Home() {
                 <Signal className="w-3.5 h-3.5 mr-2 animate-pulse text-primary" />
                 Next-Gen IoT Infrastructure
               </Badge>
-              <h1 className="text-3xl md:text-5xl lg:text-6xl font-headline font-extrabold mb-6 leading-tight tracking-tighter">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-headline font-extrabold mb-6 leading-tight tracking-tighter">
                 Building a <span className="text-gradient">Smarter, Safer Rwanda</span> From the Ground Up.
               </h1>
               <p className="text-sm md:text-base lg:text-lg text-muted-foreground mb-10 max-w-3xl mx-auto leading-relaxed font-light">

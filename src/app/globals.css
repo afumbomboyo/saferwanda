@@ -90,3 +90,12 @@
 .animate-scroll-text {
   animation: scroll-text 20s linear infinite;
 }
+
+@keyframes bounce-subtle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.animate-bounce-subtle {
+  animation: bounce-subtle 4s infinite ease-in-out;
+}
