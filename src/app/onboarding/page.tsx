@@ -1,13 +1,13 @@
 
-"use client"
+'use client';
 
 import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Shield, Check, ArrowRight, Info, Loader2, ListChecks } from 'lucide-react';
+import { Shield, Check, ArrowRight, Loader2, ListChecks } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useUser, useFirestore } from '@/firebase';
-import { doc, setDoc, getDoc, serverTimestamp, updateDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
 
 const ALL_SERVICES = [
   { id: "child-protection", title: "Child Protection", note: "Real-time school tracking, geofencing & SOS buttons." },
@@ -34,7 +34,11 @@ function OnboardingContent() {
     
     let initialIds: string[] = [];
     if (existingSelections) {
-      initialIds = JSON.parse(existingSelections);
+      try {
+        initialIds = JSON.parse(existingSelections);
+      } catch (e) {
+        initialIds = [];
+      }
     }
     if (savedInitial && !initialIds.includes(savedInitial)) {
       initialIds.push(savedInitial);
@@ -57,7 +61,6 @@ function OnboardingContent() {
     setSubmitting(true);
     try {
       if (user && db) {
-        // If user is already logged in, update their profile
         const userDocRef = doc(db, 'users', user.uid);
         const userDoc = await getDoc(userDocRef);
         
@@ -75,7 +78,6 @@ function OnboardingContent() {
         localStorage.removeItem('temp_initial_service');
         router.replace('/dashboard');
       } else {
-        // Not logged in yet, save selection and go to auth
         localStorage.setItem('temp_selected_services', JSON.stringify(selectedIds));
         router.push('/auth?signup=true');
       }

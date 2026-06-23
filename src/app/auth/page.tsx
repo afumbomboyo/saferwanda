@@ -1,5 +1,5 @@
 
-"use client"
+'use client';
 
 import { useState, useEffect, Suspense, useRef } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
@@ -23,7 +23,7 @@ import Link from 'next/link';
 function AuthPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { auth, db } = useAuth() ? { auth: useAuth(), db: useFirestore() } : { auth: null, db: null };
+  const { auth, db } = { auth: useAuth(), db: useFirestore() };
   const { user: currentUser, loading: userLoading } = useUser();
   
   const isSignUpDefault = searchParams.get('signup') === 'true';
@@ -64,11 +64,9 @@ function AuthPageContent() {
         const userDoc = await getDoc(userDocRef);
 
         if (!userDoc.exists()) {
-          // New User via Google -> Check for temporary selection from Onboarding/Services
           const savedServices = localStorage.getItem('temp_selected_services');
           const services = savedServices ? JSON.parse(savedServices) : [];
 
-          // Create the user profile
           await setDoc(userDocRef, {
             uid: user.uid,
             fullName: user.displayName || 'Security Agent',
@@ -79,7 +77,6 @@ function AuthPageContent() {
           });
 
           localStorage.removeItem('temp_selected_services');
-          localStorage.removeItem('auth_redirect_in_progress');
           
           if (services.length > 0) {
             router.replace('/dashboard');
@@ -87,23 +84,12 @@ function AuthPageContent() {
             router.replace('/onboarding');
           }
         } else {
-          // Existing user -> Dashboard
-          localStorage.removeItem('auth_redirect_in_progress');
           const data = userDoc.data();
           router.replace(data?.isOnboarded ? '/dashboard' : '/onboarding');
         }
       } catch (err: any) {
         console.error("Redirect Error:", err);
-        // Special handling for domain authorization issues often seen in Cloud Workstations
-        if (err.code === 'auth/unauthorized-domain') {
-          setError({ 
-            message: `Domain not authorized. Please add ${window.location.hostname} to your Firebase Console Authorized Domains.`,
-            code: err.code 
-          });
-        } else {
-          setError({ message: err.message, code: err.code });
-        }
-        localStorage.removeItem('auth_redirect_in_progress');
+        setError({ message: err.message, code: err.code });
       } finally {
         setLoading(false);
         setCheckingRedirect(false);
@@ -114,10 +100,9 @@ function AuthPageContent() {
     handleRedirect();
   }, [auth, db, router]);
 
-  // Background Session Listener (Auto-redirect if already logged in)
+  // Background Session Listener
   useEffect(() => {
-    const redirectInProgress = localStorage.getItem('auth_redirect_in_progress');
-    if (checkingRedirect || userLoading || !currentUser || isPerformingManualAuth.current || redirectInProgress) return;
+    if (checkingRedirect || userLoading || !currentUser || isPerformingManualAuth.current) return;
 
     const checkUserStatus = async () => {
       if (!db) return;
@@ -125,13 +110,8 @@ function AuthPageContent() {
       const userDoc = await getDoc(userDocRef);
       if (userDoc.exists()) {
         const data = userDoc.data();
-        if (data?.isOnboarded) {
-          router.replace('/dashboard');
-        } else {
-          router.replace('/onboarding');
-        }
+        router.replace(data?.isOnboarded ? '/dashboard' : '/onboarding');
       } else {
-        // Logged in but no profile doc? Send to onboarding to pick services.
         router.replace('/onboarding');
       }
     };
@@ -168,7 +148,6 @@ function AuthPageContent() {
         router.replace(services.length > 0 ? '/dashboard' : '/onboarding');
       } else {
         await signInWithEmailAndPassword(auth, email, password);
-        // useEffect listener handles redirection for existing users
       }
     } catch (err: any) {
       setError({ message: err.message, code: err.code });
@@ -182,13 +161,10 @@ function AuthPageContent() {
     setError(null);
     setLoading(true);
     isPerformingManualAuth.current = true;
-    localStorage.setItem('auth_redirect_in_progress', 'true');
     const provider = new GoogleAuthProvider();
     try {
-      // Use Redirect instead of Popup for Cloud Workstation stability
       await signInWithRedirect(auth, provider);
     } catch (err: any) {
-      localStorage.removeItem('auth_redirect_in_progress');
       setError({ message: err.message, code: err.code });
       setLoading(false);
       isPerformingManualAuth.current = false;

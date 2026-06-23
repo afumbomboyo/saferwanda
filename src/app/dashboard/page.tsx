@@ -1,5 +1,5 @@
 
-"use client"
+'use client';
 
 import { useEffect, useState } from 'react';
 import { useUser, useFirestore } from '@/firebase';
@@ -73,7 +73,7 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 animate-fade-in" style={{ animationDelay: '0.1s' }}>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 animate-fade-in">
             <Card className="bg-primary/5 border-primary/20">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-sm font-bold uppercase tracking-widest text-primary">Active Protocols</CardTitle>
@@ -106,7 +106,7 @@ export default function DashboardPage() {
             </Card>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 animate-fade-in">
             <Card className="bg-card border-border">
               <CardHeader>
                 <CardTitle className="text-xl font-bold">Your Deployed Services</CardTitle>
@@ -124,9 +124,6 @@ export default function DashboardPage() {
                       <Badge className="bg-primary text-white">Active</Badge>
                     </div>
                   ))}
-                  {(!profile?.servicesSelected || profile.servicesSelected.length === 0) && (
-                    <p className="text-center text-muted-foreground py-8">No active protocols detected.</p>
-                  )}
                 </div>
               </CardContent>
             </Card>

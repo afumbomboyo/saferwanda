@@ -1,11 +1,12 @@
 
-"use client"
+'use client';
 
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Shield, Heart, Flame, Home, Box, Eye, ArrowRight } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { PlaceHolderImages } from '@/app/lib/placeholder-images';
 
 export default function ServicesPage() {
   const router = useRouter();
@@ -13,11 +14,11 @@ export default function ServicesPage() {
   const services = [
     {
       id: "child-protection",
-      title: "Protect Your Child",
+      title: "Child Protection",
       shortNote: "Real-time school tracking & SOS alerts.",
       description: "Our child safety infrastructure integrates high-precision GPS wearables with a centralized monitoring node. Parents receive instant geofencing alerts, safe-commute tracking, and one-touch SOS distress signals.",
       icon: <Shield className="w-10 h-10 text-accent" />,
-      imageUrl: "https://picsum.photos/seed/safe2/600/400",
+      imageUrl: PlaceHolderImages.find(img => img.id === 'child-protection')?.imageUrl || "https://picsum.photos/seed/child/600/400",
       imageHint: "child safety tracker",
       theme: "bg-primary/5 border-primary/20",
     },
@@ -27,7 +28,7 @@ export default function ServicesPage() {
       shortNote: "Health vitals & fall detection mesh.",
       description: "Advanced monitoring systems for seniors that track heart rate, blood pressure, and movement. Our AI-driven fall detection automatically notifies designated family nodes the moment an incident is detected.",
       icon: <Heart className="w-10 h-10 text-primary" />,
-      imageUrl: "https://picsum.photos/seed/safe3/600/400",
+      imageUrl: PlaceHolderImages.find(img => img.id === 'elderly-care')?.imageUrl || "https://picsum.photos/seed/elder/600/400",
       imageHint: "elderly health monitor",
       theme: "bg-accent/5 border-accent/20",
     },
@@ -37,7 +38,7 @@ export default function ServicesPage() {
       shortNote: "Thermal leak & gas detection protocols.",
       description: "Industrial-grade thermal sensors and gas leak detectors providing 24/7 protection. Our IoT mesh sends instant thermal warnings to prevent outbreaks before they escalate into dangerous fires.",
       icon: <Flame className="w-10 h-10 text-destructive" />,
-      imageUrl: "https://picsum.photos/seed/safe4/600/400",
+      imageUrl: PlaceHolderImages.find(img => img.id === 'fire-prevention')?.imageUrl || "https://picsum.photos/seed/fire/600/400",
       imageHint: "fire safety system",
       theme: "bg-destructive/5 border-destructive/20",
     },
@@ -47,7 +48,7 @@ export default function ServicesPage() {
       shortNote: "Smart locks & perimeter breach audit.",
       description: "Comprehensive residential security including connected smart locks, perimeter breach sensors, and an intelligent entry log. Control access to your premise from anywhere in the world.",
       icon: <Home className="w-10 h-10 text-primary" />,
-      imageUrl: "https://picsum.photos/seed/safe5/600/400",
+      imageUrl: PlaceHolderImages.find(img => img.id === 'property-security')?.imageUrl || "https://picsum.photos/seed/home/600/400",
       imageHint: "home security cameras",
       theme: "bg-primary/5 border-primary/20",
     },
@@ -57,7 +58,7 @@ export default function ServicesPage() {
       shortNote: "Hardware tracking for high-value nodes.",
       description: "Securing your equipment and vehicles with ruggedized, long-life tracking hardware. Monitor transit paths and set digital perimeters for high-value assets across the national network.",
       icon: <Box className="w-10 h-10 text-accent" />,
-      imageUrl: "https://picsum.photos/seed/safe6/600/400",
+      imageUrl: PlaceHolderImages.find(img => img.id === 'asset-protection')?.imageUrl || "https://picsum.photos/seed/asset/600/400",
       imageHint: "gps asset tracker",
       theme: "bg-accent/5 border-accent/20",
     },
@@ -67,14 +68,13 @@ export default function ServicesPage() {
       shortNote: "Collaborative pattern detection network.",
       description: "Join a decentralized community safety net. We deploy neighborhood-wide monitoring nodes that use AI pattern detection to flag suspicious activity to shared community watch groups.",
       icon: <Eye className="w-10 h-10 text-rwanda-green" />,
-      imageUrl: "https://picsum.photos/seed/safe7/600/400",
+      imageUrl: PlaceHolderImages.find(img => img.id === 'neighborhood-surveillance')?.imageUrl || "https://picsum.photos/seed/neighborhood/600/400",
       imageHint: "neighborhood security camera",
       theme: "bg-rwanda-green/5 border-rwanda-green/20",
     }
   ];
 
   const handleGetStarted = (serviceId: string) => {
-    // Save current service and move to personalized onboarding to pick more
     localStorage.setItem('temp_initial_service', serviceId);
     router.push(`/onboarding?id=${serviceId}`);
   };
