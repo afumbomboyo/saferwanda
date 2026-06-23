@@ -133,7 +133,7 @@ export default function Home() {
                     <CardTitle className="text-xl md:text-2xl font-bold">Protect Your Child</CardTitle>
                   </CardHeader>
                   <CardContent className="text-muted-foreground leading-relaxed text-xs md:text-sm flex-grow">
-                  Real-time tracking and geofencing for safe school commutes. Includes a one-touch SOS panic button for immediate distress alerts and a silent audio callback to instantly hear your child’s surroundings.
+                    Real-time tracking and geofencing for safe school commutes. Includes a one-touch SOS panic button for immediate distress alerts and a silent audio callback to instantly hear your child’s surroundings.
                   </CardContent>
                   <div className="p-6 pt-0">
                     <Button onClick={() => handleGetStarted('child-protection')} className="w-full rounded-xl bg-accent text-accent-foreground hover:bg-accent/90">Get Started</Button>
@@ -147,7 +147,7 @@ export default function Home() {
                     <CardTitle className="text-xl md:text-2xl font-bold">Take Care of Your Elderly</CardTitle>
                   </CardHeader>
                   <CardContent className="text-muted-foreground leading-relaxed text-xs md:text-sm flex-grow">
-                  Smart sensors monitoring body temperature, blood pressure, and heart rate. Features automatic fall-detection alerts and instant panic buttons and notifications to family contacts the moment a health check drops.
+                    Smart sensors monitoring body temperature, blood pressure, and heart rate. Features automatic fall-detection alerts and instant panic buttons and notifications to family contacts the moment a health check drops.
                   </CardContent>
                   <div className="p-6 pt-0">
                     <Button onClick={() => handleGetStarted('elderly-care')} className="w-full rounded-xl bg-accent text-accent-foreground hover:bg-accent/90">Get Started</Button>
@@ -171,7 +171,7 @@ export default function Home() {
                     <CardTitle className="text-xl md:text-2xl font-bold">Prevent Fire</CardTitle>
                   </CardHeader>
                   <CardContent className="text-muted-foreground leading-relaxed text-xs md:text-sm flex-grow">
-                  Smart gas, thermal, and humidity (all in one) sensors that continuously monitor surroundings to deliver instant feedback on gas leakage warnings, high temperatures, and potential or active fire outbreaks.
+                    Smart gas, thermal, and humidity (all in one) sensors that continuously monitor surroundings to deliver instant feedback on gas leakage warnings, high temperatures, and potential or active fire outbreaks.
                   </CardContent>
                   <div className="p-6 pt-0">
                     <Button onClick={() => handleGetStarted('fire-prevention')} className="w-full rounded-xl">Get Started</Button>
