@@ -1,0 +1,32 @@
+
+{
+  "entities": {
+    "UserProfile": {
+      "title": "User Profile",
+      "description": "Stores user account information and selected security services.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Unique Firebase Auth ID" },
+        "fullName": { "type": "string", "description": "User's full name" },
+        "email": { "type": "string", "format": "email" },
+        "servicesSelected": { 
+          "type": "array", 
+          "items": { "type": "string" },
+          "description": "List of SafeRwanda service IDs user has opted into."
+        },
+        "isOnboarded": { "type": "boolean", "description": "Flag indicating if user finished initial setup." },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email", "isOnboarded"]
+    }
+  },
+  "auth": {
+    "providers": ["google.com", "password"]
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "#/backend/entities/UserProfile",
+      "description": "User profile document containing account settings and chosen services."
+    }
+  }
+}

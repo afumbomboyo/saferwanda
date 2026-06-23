@@ -1,134 +1,140 @@
+
+"use client"
+
 import Image from 'next/image';
-import { Shield, Heart, Flame, Home, Box, Eye, Network, ArrowUpRight } from 'lucide-react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { Shield, Heart, Flame, Home, Box, Eye, Network, ArrowRight } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 
 export default function ServicesPage() {
+  const router = useRouter();
+
   const services = [
     {
       id: "child-protection",
       title: "Protect Your Child",
-      description: "Smart wearables and geo-fencing solutions to ensure your children are always within reach and safe. Real-time tracking for safe school commutes.",
+      shortNote: "Smart wearables for school safety.",
+      description: "Real-time tracking and geo-fencing for safe school commutes. Includes a one-touch SOS panic button for immediate distress alerts and silent audio callback to ensure your child's environment is safe.",
       icon: <Shield className="w-10 h-10 text-accent" />,
       imageUrl: "/images/child.png",
       imageHint: "child safety tracker",
-      className: "md:col-span-2 md:row-span-2",
-      theme: "bg-primary/5 border-primary/20"
+      theme: "bg-primary/5 border-primary/20",
+      accentColor: "text-accent"
     },
     {
       id: "elderly-care",
       title: "Elderly Care",
-      description: "Dedicated fall detection and health monitoring for your loved ones with instant family alerts.",
+      shortNote: "Fall detection & health monitors.",
+      description: "Dedicated fall detection and health monitoring for seniors. Features automatic alerts for body temperature, blood pressure, and heart rate irregularities, instantly notifying family contacts.",
       icon: <Heart className="w-10 h-10 text-primary" />,
       imageUrl: "/images/elder.png",
       imageHint: "elderly health monitor",
-      className: "md:col-span-1 md:row-span-1",
-      theme: "bg-accent/5 border-accent/20"
+      theme: "bg-accent/5 border-accent/20",
+      accentColor: "text-primary"
     },
     {
       id: "fire-prevention",
       title: "Fire Prevention",
-      description: "Advanced thermal sensors and autonomous suppression systems for rapid response.",
+      shortNote: "Smart thermal & gas sensors.",
+      description: "Advanced gas, thermal, and humidity sensors that continuously monitor surroundings to deliver instant feedback on leakage warnings, high temperatures, and active fire outbreaks.",
       icon: <Flame className="w-10 h-10 text-red-500" />,
       imageUrl: "/images/fire.png",
       imageHint: "fire safety system",
-      className: "md:col-span-1 md:row-span-1",
-      theme: "bg-red-500/5 border-red-500/20"
+      theme: "bg-red-500/5 border-red-500/20",
+      accentColor: "text-red-500"
     },
     {
       id: "property-security",
       title: "Property Security",
-      description: "Comprehensive home intrusion detection and response coordination for your residence.",
+      shortNote: "Connected smart locks & sensors.",
+      description: "Comprehensive home intrusion detection featuring smart locks, perimeter breach detectors, and intelligent entry logs for residences and secure compounds.",
       icon: <Home className="w-10 h-10 text-primary" />,
       imageUrl: "https://mecsecurity.com/news/wp-content/uploads/2018/11/6.jpg",
       imageHint: "home security cameras",
-      className: "md:col-span-1 md:row-span-1",
-      theme: "bg-primary/5 border-primary/20"
+      theme: "bg-primary/5 border-primary/20",
+      accentColor: "text-primary"
     },
     {
       id: "asset-protection",
       title: "Asset Protection",
-      description: "High-precision hardware asset tracking nodes built to safeguard equipment and vehicles.",
+      shortNote: "High-precision hardware tracking.",
+      description: "Robust tracking nodes built to safeguard high-value equipment and vehicles with real-time GPS precision and movement history analytics.",
       icon: <Box className="w-10 h-10 text-accent" />,
       imageUrl: "https://i5.walmartimages.com/seo/EON-Odyssey-18-Month-Long-Life-GPS-Tracker-Vehicles-Assets-Fleet-Hidden-Magnetic-GPS-Tracking-Device-Track-Years-Single-Charge-4G-LTE-Real-Time-Track_ddc51730-ff5f-4363-afc6-70c6686ebb84.bb45370a23c0677c87767a2e8b848bf3.jpeg?odnHeight=328&odnWidth=328&odnBg=FFFFFF",
       imageHint: "gps asset tracker",
-      className: "md:col-span-1 md:row-span-1",
-      theme: "bg-accent/5 border-accent/20"
+      theme: "bg-accent/5 border-accent/20",
+      accentColor: "text-accent"
     },
     {
       id: "neighborhood-surveillance",
       title: "Neighborhood Surveillance",
-      description: "AI-powered cameras that detect suspicious patterns and alert community safety officers across wide areas.",
+      shortNote: "AI-powered community watch.",
+      description: "Decentralized network gateway monitoring nodes linking neighborhood watch loops together, using AI to detect suspicious patterns and alert officers.",
       icon: <Eye className="w-10 h-10 text-[#20603D]" />,
       imageUrl: "https://images.unsplash.com/photo-1589935447067-5531094415d1?w=800&auto=format&fit=crop&q=80",
       imageHint: "neighborhood security camera",
-      className: "md:col-span-2 md:row-span-1",
-      theme: "bg-[#20603D]/5 border-[#20603D]/20"
-    },
-    {
-      id: "smart-community",
-      title: "Smart Community Integration",
-      description: "Unifying various security protocols into a single, cohesive dashboard for scalable urban IoT.",
-      icon: <Network className="w-10 h-10 text-[#20603D]" />,
-      imageUrl: "/images/smart-community.png",
-      imageHint: "smart city infrastructure",
-      className: "md:col-span-1 md:row-span-1",
-      theme: "bg-[#20603D]/5 border-[#20603D]/20"
+      theme: "bg-[#20603D]/5 border-[#20603D]/20",
+      accentColor: "text-[#20603D]"
     }
   ];
+
+  const handleGetStarted = (serviceId: string) => {
+    // Store initial selection in localStorage so onboarding knows where to start
+    localStorage.setItem('temp_initial_service', serviceId);
+    router.push(`/onboarding?id=${serviceId}`);
+  };
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
       <main className="flex-grow pt-32 pb-24">
         <div className="container mx-auto px-4">
-          <div className="max-w-4xl mb-16 animate-fade-in">
+          <div className="max-w-4xl mb-16 animate-fade-in text-center mx-auto">
             <Badge variant="outline" className="mb-4 px-3 py-1 border-primary text-primary font-bold text-xs uppercase tracking-widest bg-primary/5">
-              Strategic Security
+              Secure Your Piece of Tomorrow
             </Badge>
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-headline font-extrabold mb-6 tracking-tighter leading-tight">
               Our <span className="text-gradient">Core Services</span>
             </h1>
-            <p className="text-lg md:text-xl text-muted-foreground font-light max-w-2xl leading-relaxed">
+            <p className="text-lg md:text-xl text-muted-foreground font-light max-w-2xl mx-auto leading-relaxed">
               SafeRwanda offers a specialized suite of protection services designed to integrate seamlessly into your life and community.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 auto-rows-[300px] gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {services.map((service) => (
               <div 
                 key={service.id} 
-                className={`group relative overflow-hidden rounded-[2.5rem] border transition-all duration-500 hover:shadow-2xl hover:-translate-y-1 ${service.className} ${service.theme}`}
+                className={`group relative flex flex-col overflow-hidden rounded-[2rem] border transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 ${service.theme}`}
               >
-                {/* Background Image Container */}
-                <div className="absolute inset-0 z-0 overflow-hidden">
+                <div className="relative h-64 w-full overflow-hidden">
                   <Image
                     src={service.imageUrl}
                     alt={service.title}
                     fill
-                    className="object-cover opacity-40 saturate-[0.8] brightness-[0.4] group-hover:scale-105 group-hover:opacity-50 transition-all duration-1000"
+                    className="object-cover group-hover:scale-110 transition-transform duration-1000 brightness-[0.7] saturate-[0.8]"
                     data-ai-hint={service.imageHint}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
+                  <div className="absolute top-6 left-6 p-4 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20">
+                    {service.icon}
+                  </div>
                 </div>
-                
-                {/* Content */}
-                <div className="relative z-10 p-8 flex flex-col h-full justify-between">
-                  <div className="flex justify-between items-start">
-                    <div className="p-4 rounded-2xl bg-background/50 backdrop-blur-md border border-white/10 group-hover:border-primary/50 transition-colors duration-300">
-                      {service.icon}
-                    </div>
-                    <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity translate-x-4 group-hover:translate-x-0">
-                      <ArrowUpRight className="w-5 h-5 text-white" />
-                    </div>
-                  </div>
 
-                  <div>
-                    <h3 className="text-2xl md:text-3xl lg:text-4xl font-headline font-extrabold mb-4 leading-none tracking-tighter text-white drop-shadow-sm">
-                      {service.title}
-                    </h3>
-                    <p className="text-sm md:text-base text-white/80 font-light leading-relaxed max-w-sm">
-                      {service.description}
-                    </p>
-                  </div>
+                <div className="p-8 flex flex-col flex-grow">
+                  <h3 className="text-2xl font-headline font-extrabold mb-3 tracking-tight">
+                    {service.title}
+                  </h3>
+                  <p className="text-sm text-muted-foreground mb-6 font-light leading-relaxed flex-grow">
+                    {service.description}
+                  </p>
+                  <Button 
+                    onClick={() => handleGetStarted(service.id)}
+                    className="w-full h-12 rounded-xl font-bold bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20 transition-all active:scale-95 group"
+                  >
+                    Get Started <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                  </Button>
                 </div>
               </div>
             ))}
