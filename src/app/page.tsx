@@ -95,7 +95,7 @@ export default function Home() {
                   </Link>
                 </Button>
                 <Button asChild variant="outline" size="lg" className="h-12 md:h-14 px-8 rounded-xl text-sm md:text-base font-bold border-white/10 bg-white/5 backdrop-blur-md transition-all hover:scale-90">
-                  <Link href="#demo">Request a Demo</Link>
+                  <Link href="#demo">How it Works</Link>
                 </Button>
               </div>
             </div>
