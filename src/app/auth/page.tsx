@@ -69,19 +69,21 @@ function AuthPageContent() {
           const savedServices = localStorage.getItem('temp_selected_services');
           const services = savedServices ? JSON.parse(savedServices) : [];
 
+          // Create the user profile immediately if we have services
+          await setDoc(userDocRef, {
+            uid: user.uid,
+            fullName: user.displayName || 'Security Agent',
+            email: user.email || '',
+            servicesSelected: services,
+            isOnboarded: services.length > 0,
+            createdAt: serverTimestamp(),
+          });
+
+          localStorage.removeItem('temp_selected_services');
+          
           if (services.length > 0) {
-            await setDoc(userDocRef, {
-              uid: user.uid,
-              fullName: user.displayName || 'Security Agent',
-              email: user.email || '',
-              servicesSelected: services,
-              isOnboarded: true,
-              createdAt: serverTimestamp(),
-            });
-            localStorage.removeItem('temp_selected_services');
             router.replace('/dashboard');
           } else {
-            // New user but no services selected? Send to onboarding
             router.replace('/onboarding');
           }
         } else {
@@ -91,7 +93,15 @@ function AuthPageContent() {
         }
       } catch (err: any) {
         console.error("Redirect Error:", err);
-        setError({ message: err.message, code: err.code });
+        // Special handling for domain authorization issues often seen in Cloud Workstations
+        if (err.code === 'auth/unauthorized-domain') {
+          setError({ 
+            message: `Domain not authorized. Please add ${window.location.hostname} to your Firebase Console Authorized Domains.`,
+            code: err.code 
+          });
+        } else {
+          setError({ message: err.message, code: err.code });
+        }
       } finally {
         setLoading(false);
         setCheckingRedirect(false);
@@ -102,7 +112,7 @@ function AuthPageContent() {
     handleRedirect();
   }, [auth, db, router]);
 
-  // Background Session Listener
+  // Background Session Listener (Auto-redirect if already logged in)
   useEffect(() => {
     if (checkingRedirect || userLoading || !currentUser || isPerformingManualAuth.current) return;
 
@@ -118,7 +128,7 @@ function AuthPageContent() {
           router.replace('/onboarding');
         }
       } else {
-        // No document exists, but they are logged in. Send to onboarding to pick services.
+        // Logged in but no doc? Send to onboarding to pick services.
         router.replace('/onboarding');
       }
     };
@@ -155,7 +165,7 @@ function AuthPageContent() {
         router.replace(services.length > 0 ? '/dashboard' : '/onboarding');
       } else {
         await signInWithEmailAndPassword(auth, email, password);
-        // useEffect handles redirection
+        // useEffect listener handles redirection for existing users
       }
     } catch (err: any) {
       setError({ message: err.message, code: err.code });
@@ -171,6 +181,7 @@ function AuthPageContent() {
     isPerformingManualAuth.current = true;
     const provider = new GoogleAuthProvider();
     try {
+      // Use Redirect instead of Popup for Cloud Workstation stability
       await signInWithRedirect(auth, provider);
     } catch (err: any) {
       setError({ message: err.message, code: err.code });
@@ -179,17 +190,11 @@ function AuthPageContent() {
     }
   };
 
-  const handleSignOut = async () => {
-    if (!auth) return;
-    await signOut(auth);
-    window.location.reload();
-  };
-
   if (checkingRedirect) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center p-4">
+      <div className="flex min-h-screen flex-col items-center justify-center p-4 bg-background">
         <Loader2 className="w-10 h-10 animate-spin text-primary mb-4" />
-        <p className="text-sm font-bold uppercase tracking-widest text-muted-foreground">Authenticating Protocol...</p>
+        <p className="text-sm font-bold uppercase tracking-widest text-muted-foreground animate-pulse">Synchronizing Security Protocols...</p>
       </div>
     );
   }
@@ -213,21 +218,21 @@ function AuthPageContent() {
                 </div>
               </div>
               <CardTitle className="text-2xl font-headline font-bold">
-                {isSignUp ? 'Secure Your Piece of Tomorrow' : 'Agent Login'}
+                {isSignUp ? 'Secure Your Piece of Tomorrow' : 'Agent Access'}
               </CardTitle>
               <CardDescription>
                 {isSignUp 
-                  ? 'Join the SafeRwanda smart infrastructure network.' 
-                  : 'Access your security node and AI concierge.'}
+                  ? 'Initialize your SafeRwanda security node.' 
+                  : 'Access your monitoring dashboard and AI concierge.'}
               </CardDescription>
             </CardHeader>
 
             <CardContent className="space-y-4 pt-4">
               {error && (
-                <div className="p-4 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-xs font-medium flex items-start gap-3">
+                <div className="p-4 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-xs font-medium flex items-start gap-3 animate-in slide-in-from-top-2">
                   <AlertTriangle className="w-4 h-4 shrink-0" />
                   <div>
-                    <p className="font-bold mb-1">Authorization Failed</p>
+                    <p className="font-bold mb-1">Authorization Conflict</p>
                     <p className="opacity-80">{error.message}</p>
                   </div>
                 </div>
@@ -241,7 +246,7 @@ function AuthPageContent() {
                       <User className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
                       <Input 
                         id="name" 
-                        placeholder="John Doe" 
+                        placeholder="Agent Name" 
                         className="pl-10 h-12 rounded-xl" 
                         required 
                         value={fullName}
@@ -258,7 +263,7 @@ function AuthPageContent() {
                     <Input 
                       id="email" 
                       type="email" 
-                      placeholder="john@example.com" 
+                      placeholder="agent@saferwanda.io" 
                       className="pl-10 h-12 rounded-xl" 
                       required 
                       value={email}
@@ -285,7 +290,7 @@ function AuthPageContent() {
                 </div>
                 
                 <Button className="w-full bg-primary hover:bg-primary/90 h-12 rounded-xl font-bold shadow-lg shadow-primary/20 active:scale-[0.98] transition-all" disabled={loading}>
-                  {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : (isSignUp ? 'Create Account' : 'Log In')}
+                  {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : (isSignUp ? 'Create Node Account' : 'Authenticate')}
                 </Button>
               </form>
 
@@ -294,7 +299,7 @@ function AuthPageContent() {
                   <span className="w-full border-t border-border" />
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-card px-2 text-muted-foreground font-bold tracking-widest">Or continue with</span>
+                  <span className="bg-card px-2 text-muted-foreground font-bold tracking-widest">Or utilize external provider</span>
                 </div>
               </div>
 
@@ -304,9 +309,9 @@ function AuthPageContent() {
                   variant="outline" 
                   onClick={handleGoogleSignIn}
                   disabled={loading}
-                  className="border-border hover:bg-white/5 h-12 rounded-xl font-bold transition-colors"
+                  className="border-border hover:bg-primary/5 h-12 rounded-xl font-bold transition-all group"
                 >
-                  <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5 mr-3 group-hover:scale-110 transition-transform" viewBox="0 0 24 24">
                     <path fill="#EA4335" d="M23.49 12.27c0-.79-.07-1.54-.19-2.27h-11.3v4.51h6.47c-.29 1.48-1.14 2.73-2.4 3.58v3h3.86c2.26-2.09 3.56-5.17 3.56-8.82z"/>
                     <path fill="#FBBC05" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.86-3c-1.08.72-2.45 1.16-4.07 1.16-3.13 0-5.78-2.11-6.73-4.96h-3.98v3.09c1.97 3.92 6.02 6.62 10.71 6.62z"/>
                     <path fill="#34A853" d="M5.27 14.29c-.24-.72-.38-1.49-.38-2.29s.14-1.57.38-2.29v-3.09h-3.98c-.81 1.61-1.27 3.44-1.27 5.38s.46 3.77 1.27 5.38l3.98-3.09z"/>
@@ -318,7 +323,7 @@ function AuthPageContent() {
             </CardContent>
             <CardFooter className="flex flex-col gap-4">
               <p className="text-sm text-center text-muted-foreground">
-                {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
+                {isSignUp ? 'Already registered?' : "New to the network?"}{' '}
                 <button 
                   onClick={() => setIsSignUp(!isSignUp)}
                   className="text-primary hover:underline font-bold"
@@ -326,11 +331,6 @@ function AuthPageContent() {
                   {isSignUp ? 'Log In' : 'Sign Up'}
                 </button>
               </p>
-              {currentUser && !loading && (
-                <button onClick={handleSignOut} className="text-xs text-muted-foreground hover:text-destructive underline font-medium">
-                  Switch Account / Sign Out
-                </button>
-              )}
             </CardFooter>
           </Card>
         </div>
@@ -342,7 +342,7 @@ function AuthPageContent() {
 export default function AuthPage() {
   return (
     <Suspense fallback={
-      <div className="flex min-h-screen items-center justify-center">
+      <div className="flex min-h-screen items-center justify-center bg-background">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     }>

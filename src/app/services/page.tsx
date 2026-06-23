@@ -14,8 +14,8 @@ export default function ServicesPage() {
     {
       id: "child-protection",
       title: "Protect Your Child",
-      shortNote: "Smart wearables for school safety.",
-      description: "Comprehensive school-safety infrastructure featuring real-time tracking, safe-zone geofencing, and a dedicated SOS button for emergency response.",
+      shortNote: "Real-time school tracking & SOS alerts.",
+      description: "Our child safety infrastructure integrates high-precision GPS wearables with a centralized monitoring node. Parents receive instant geofencing alerts, safe-commute tracking, and one-touch SOS distress signals.",
       icon: <Shield className="w-10 h-10 text-accent" />,
       imageUrl: "https://picsum.photos/seed/safe2/600/400",
       imageHint: "child safety tracker",
@@ -24,8 +24,8 @@ export default function ServicesPage() {
     {
       id: "elderly-care",
       title: "Elderly Care",
-      shortNote: "Fall detection & health monitors.",
-      description: "Advanced health-monitoring mesh network for seniors, incorporating fall detection, vitals tracking, and automated emergency alerts for caretakers.",
+      shortNote: "Health vitals & fall detection mesh.",
+      description: "Advanced monitoring systems for seniors that track heart rate, blood pressure, and movement. Our AI-driven fall detection automatically notifies designated family nodes the moment an incident is detected.",
       icon: <Heart className="w-10 h-10 text-primary" />,
       imageUrl: "https://picsum.photos/seed/safe3/600/400",
       imageHint: "elderly health monitor",
@@ -34,18 +34,18 @@ export default function ServicesPage() {
     {
       id: "fire-prevention",
       title: "Fire Prevention",
-      shortNote: "Smart thermal & gas sensors.",
-      description: "Intelligent thermal and gas leak detection systems that provide instant mobile alerts and community-wide fire outbreak warnings in real-time.",
-      icon: <Flame className="w-10 h-10 text-red-500" />,
+      shortNote: "Thermal leak & gas detection protocols.",
+      description: "Industrial-grade thermal sensors and gas leak detectors providing 24/7 protection. Our IoT mesh sends instant thermal warnings to prevent outbreaks before they escalate into dangerous fires.",
+      icon: <Flame className="w-10 h-10 text-destructive" />,
       imageUrl: "https://picsum.photos/seed/safe4/600/400",
       imageHint: "fire safety system",
-      theme: "bg-red-500/5 border-red-500/20",
+      theme: "bg-destructive/5 border-destructive/20",
     },
     {
       id: "property-security",
       title: "Property Security",
-      shortNote: "Connected smart locks & sensors.",
-      description: "A complete residential perimeter security solution with connected smart locks, entry logs, and high-frequency breach detection sensors.",
+      shortNote: "Smart locks & perimeter breach audit.",
+      description: "Comprehensive residential security including connected smart locks, perimeter breach sensors, and an intelligent entry log. Control access to your premise from anywhere in the world.",
       icon: <Home className="w-10 h-10 text-primary" />,
       imageUrl: "https://picsum.photos/seed/safe5/600/400",
       imageHint: "home security cameras",
@@ -54,8 +54,8 @@ export default function ServicesPage() {
     {
       id: "asset-protection",
       title: "Asset Protection",
-      shortNote: "High-precision hardware tracking.",
-      description: "Precision-engineered GPS nodes designed for high-value asset protection, offering real-time transit history and theft-recovery assistance.",
+      shortNote: "Hardware tracking for high-value nodes.",
+      description: "Securing your equipment and vehicles with ruggedized, long-life tracking hardware. Monitor transit paths and set digital perimeters for high-value assets across the national network.",
       icon: <Box className="w-10 h-10 text-accent" />,
       imageUrl: "https://picsum.photos/seed/safe6/600/400",
       imageHint: "gps asset tracker",
@@ -64,16 +64,17 @@ export default function ServicesPage() {
     {
       id: "neighborhood-surveillance",
       title: "Neighborhood Surveillance",
-      shortNote: "AI-powered community watch.",
-      description: "Integrated community surveillance network that uses AI to detect suspicious activities and foster collaborative neighborhood safety protocols.",
-      icon: <Eye className="w-10 h-10 text-[#20603D]" />,
+      shortNote: "Collaborative pattern detection network.",
+      description: "Join a decentralized community safety net. We deploy neighborhood-wide monitoring nodes that use AI pattern detection to flag suspicious activity to shared community watch groups.",
+      icon: <Eye className="w-10 h-10 text-rwanda-green" />,
       imageUrl: "https://picsum.photos/seed/safe7/600/400",
       imageHint: "neighborhood security camera",
-      theme: "bg-[#20603D]/5 border-[#20603D]/20",
+      theme: "bg-rwanda-green/5 border-rwanda-green/20",
     }
   ];
 
   const handleGetStarted = (serviceId: string) => {
+    // Save current service and move to personalized onboarding to pick more
     localStorage.setItem('temp_initial_service', serviceId);
     router.push(`/onboarding?id=${serviceId}`);
   };
@@ -90,7 +91,7 @@ export default function ServicesPage() {
               Our <span className="text-gradient">Core Services</span>
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground font-light max-w-2xl mx-auto leading-relaxed">
-              SafeRwanda offers a specialized suite of protection services designed to integrate seamlessly into your life and community infrastructure.
+              SafeRwanda offers specialized protection tiers engineered for modern safety needs. Select a primary service to begin your onboarding.
             </p>
           </div>
 
@@ -108,7 +109,7 @@ export default function ServicesPage() {
                     className="object-cover group-hover:scale-110 transition-transform duration-1000 brightness-[0.7] saturate-[0.8]"
                     data-ai-hint={service.imageHint}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-transparent to-transparent" />
                   <div className="absolute top-6 left-6 p-4 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20">
                     {service.icon}
                   </div>
