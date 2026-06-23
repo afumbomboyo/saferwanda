@@ -15,8 +15,7 @@ import {
   GoogleAuthProvider, 
   signInWithRedirect, 
   getRedirectResult,
-  updateProfile,
-  signOut
+  updateProfile
 } from 'firebase/auth';
 import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
 import Link from 'next/link';
@@ -65,11 +64,11 @@ function AuthPageContent() {
         const userDoc = await getDoc(userDocRef);
 
         if (!userDoc.exists()) {
-          // New User via Google -> Check for temporary selection
+          // New User via Google -> Check for temporary selection from Onboarding/Services
           const savedServices = localStorage.getItem('temp_selected_services');
           const services = savedServices ? JSON.parse(savedServices) : [];
 
-          // Create the user profile immediately if we have services
+          // Create the user profile
           await setDoc(userDocRef, {
             uid: user.uid,
             fullName: user.displayName || 'Security Agent',
@@ -80,6 +79,7 @@ function AuthPageContent() {
           });
 
           localStorage.removeItem('temp_selected_services');
+          localStorage.removeItem('auth_redirect_in_progress');
           
           if (services.length > 0) {
             router.replace('/dashboard');
@@ -88,6 +88,7 @@ function AuthPageContent() {
           }
         } else {
           // Existing user -> Dashboard
+          localStorage.removeItem('auth_redirect_in_progress');
           const data = userDoc.data();
           router.replace(data?.isOnboarded ? '/dashboard' : '/onboarding');
         }
@@ -102,6 +103,7 @@ function AuthPageContent() {
         } else {
           setError({ message: err.message, code: err.code });
         }
+        localStorage.removeItem('auth_redirect_in_progress');
       } finally {
         setLoading(false);
         setCheckingRedirect(false);
@@ -114,7 +116,8 @@ function AuthPageContent() {
 
   // Background Session Listener (Auto-redirect if already logged in)
   useEffect(() => {
-    if (checkingRedirect || userLoading || !currentUser || isPerformingManualAuth.current) return;
+    const redirectInProgress = localStorage.getItem('auth_redirect_in_progress');
+    if (checkingRedirect || userLoading || !currentUser || isPerformingManualAuth.current || redirectInProgress) return;
 
     const checkUserStatus = async () => {
       if (!db) return;
@@ -128,7 +131,7 @@ function AuthPageContent() {
           router.replace('/onboarding');
         }
       } else {
-        // Logged in but no doc? Send to onboarding to pick services.
+        // Logged in but no profile doc? Send to onboarding to pick services.
         router.replace('/onboarding');
       }
     };
@@ -179,11 +182,13 @@ function AuthPageContent() {
     setError(null);
     setLoading(true);
     isPerformingManualAuth.current = true;
+    localStorage.setItem('auth_redirect_in_progress', 'true');
     const provider = new GoogleAuthProvider();
     try {
       // Use Redirect instead of Popup for Cloud Workstation stability
       await signInWithRedirect(auth, provider);
     } catch (err: any) {
+      localStorage.removeItem('auth_redirect_in_progress');
       setError({ message: err.message, code: err.code });
       setLoading(false);
       isPerformingManualAuth.current = false;
