@@ -4,9 +4,9 @@
 import { useEffect, useState } from 'react';
 import { useUser, useFirestore, useAuth } from '@/firebase';
 import { useRouter } from 'next/navigation';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { signOut } from 'firebase/auth';
-import { Shield, Loader2, LayoutDashboard, Settings, LogOut, Bell, Activity } from 'lucide-react';
+import { Shield, Loader2, LayoutDashboard, Settings, LogOut, Bell, Activity, Power, PowerOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -18,6 +18,7 @@ export default function DashboardPage() {
   const db = useFirestore();
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [deactivatingId, setDeactivatingId] = useState<string | null>(null);
 
   useEffect(() => {
     if (userLoading) return;
@@ -60,6 +61,26 @@ export default function DashboardPage() {
     }
   };
 
+  const handleDeactivateNode = async (serviceId: string) => {
+    if (!user || !db || !profile) return;
+    setDeactivatingId(serviceId);
+    
+    try {
+      const updatedServices = profile.servicesSelected.filter((id: string) => id !== serviceId);
+      const userDocRef = doc(db, 'users', user.uid);
+      
+      await updateDoc(userDocRef, {
+        servicesSelected: updatedServices
+      });
+      
+      setProfile({ ...profile, servicesSelected: updatedServices });
+    } catch (err) {
+      console.error("Node deactivation error:", err);
+    } finally {
+      setDeactivatingId(null);
+    }
+  };
+
   if (loading || userLoading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-4">
@@ -81,7 +102,7 @@ export default function DashboardPage() {
             <div className="flex gap-4">
               <Button variant="outline" size="icon" className="rounded-xl border-border"><Bell className="w-5 h-5" /></Button>
               <Button variant="outline" size="icon" className="rounded-xl border-border"><Settings className="w-5 h-5" /></Button>
-              <Button variant="destructive" size="icon" className="rounded-xl" onClick={handleLogout} title="Sign Out">
+              <Button variant="destructive" size="icon" className="rounded-xl" onClick={handleLogout} title="Log Out">
                 <LogOut className="w-5 h-5" />
               </Button>
             </div>
@@ -128,14 +149,29 @@ export default function DashboardPage() {
               <CardContent>
                 <div className="space-y-4">
                   {profile?.servicesSelected?.map((service: string, idx: number) => (
-                    <div key={idx} className="flex items-center justify-between p-4 rounded-xl bg-secondary/30 border border-border">
+                    <div key={idx} className="flex items-center justify-between p-4 rounded-xl bg-secondary/30 border border-border group">
                       <div className="flex items-center gap-4">
                         <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
                           <Shield className="w-5 h-5 text-primary" />
                         </div>
-                        <span className="font-bold capitalize">{service.replace('-', ' ')}</span>
+                        <div className="flex flex-col">
+                          <span className="font-bold capitalize">{service.replace('-', ' ')}</span>
+                          <span className="text-[10px] text-muted-foreground uppercase font-black tracking-widest">Node active</span>
+                        </div>
                       </div>
-                      <Badge className="bg-primary text-white">Active</Badge>
+                      <div className="flex items-center gap-2">
+                        <Badge className="bg-primary text-white">Active</Badge>
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10 opacity-0 group-hover:opacity-100 transition-all"
+                          disabled={deactivatingId === service}
+                          onClick={() => handleDeactivateNode(service)}
+                          title="Deactivate Node"
+                        >
+                          {deactivatingId === service ? <Loader2 className="w-4 h-4 animate-spin" /> : <PowerOff className="w-4 h-4" />}
+                        </Button>
+                      </div>
                     </div>
                   ))}
                   {!profile?.servicesSelected?.length && (

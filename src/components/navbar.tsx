@@ -58,10 +58,6 @@ export default function Navbar() {
     { name: 'Our Services', href: '/services' },
   ];
 
-  if (!user && !loading) {
-    navLinks.push({ name: 'Login', href: '/auth' });
-  }
-
   return (
     <nav className={cn(
       "fixed top-0 w-full z-[100] transition-all duration-500 ease-in-out",
@@ -132,14 +128,17 @@ export default function Navbar() {
                     </DropdownMenuItem>
                     <DropdownMenuItem className="rounded-xl py-3 text-destructive focus:bg-destructive/10 focus:text-destructive cursor-pointer" onClick={handleLogout}>
                       <LogOut className="mr-2 h-4 w-4" />
-                      <span>Deactivate Node</span>
+                      <span>Log Out</span>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               ) : (
-                <Button asChild className="h-12 px-8 rounded-xl font-bold shadow-xl shadow-primary/20 bg-primary hover:bg-primary/90 transition-all active:scale-95">
-                  <Link href="/auth?signup=true">Get Started</Link>
-                </Button>
+                <div className="flex items-center gap-4">
+                  <Link href="/auth" className="text-sm font-bold uppercase tracking-widest hover:text-primary transition-colors">Login</Link>
+                  <Button asChild className="h-12 px-8 rounded-xl font-bold shadow-xl shadow-primary/20 bg-primary hover:bg-primary/90 transition-all active:scale-95">
+                    <Link href="/auth?signup=true">Get Started</Link>
+                  </Button>
+                </div>
               )}
             </>
           )}
@@ -232,6 +231,16 @@ function MobileMenu({ navLinks, activePath, user, handleLogout }: { navLinks: an
             </Link>
           )}
           
+          {!user && (
+            <Link 
+              href="/auth" 
+              onClick={() => setOpen(false)}
+              className="text-2xl font-headline font-extrabold tracking-tight transition-all hover:translate-x-2 active:scale-95 antialiased"
+            >
+              Login
+            </Link>
+          )}
+          
           <div className="mt-8 pt-8 border-t border-border">
             {user ? (
               <Button 
@@ -243,7 +252,7 @@ function MobileMenu({ navLinks, activePath, user, handleLogout }: { navLinks: an
                 }}
               >
                 <LogOut className="w-5 h-5" />
-                Sign Out
+                Log Out
               </Button>
             ) : (
               <Button asChild className="w-full h-14 rounded-xl font-bold shadow-2xl shadow-primary/30 bg-primary text-white text-lg">
