@@ -184,10 +184,6 @@ function AuthPageContent() {
     <div className="flex flex-col min-h-screen bg-background">
       <main className="flex-grow flex items-center justify-center p-4 pt-24 pb-12">
         <div className="w-full max-w-md animate-fade-in">
-          <Link href="/services" className="inline-flex items-center text-sm text-muted-foreground hover:text-primary mb-6 transition-colors group">
-            <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
-            Back to Services
-          </Link>
 
           <Card className="bg-card border-border shadow-2xl relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary via-accent to-rwanda-green" />
@@ -199,12 +195,12 @@ function AuthPageContent() {
                 </div>
               </div>
               <CardTitle className="text-2xl font-headline font-bold">
-                {isSignUp ? 'Secure Your Piece of Tomorrow' : 'Agent Access'}
+                {isSignUp ? 'Secure Your Piece of Tomorrow' : 'Login'}
               </CardTitle>
               <CardDescription>
                 {isSignUp 
-                  ? 'Initialize your SafeRwanda security node.' 
-                  : 'Access your monitoring dashboard and AI concierge.'}
+                  ? 'Initialize your SafeRwanda security account.' 
+                  : 'Access your monitoring dashboard.'}
               </CardDescription>
             </CardHeader>
 
@@ -271,7 +267,7 @@ function AuthPageContent() {
                 </div>
                 
                 <Button className="w-full bg-primary hover:bg-primary/90 h-12 rounded-xl font-bold shadow-lg shadow-primary/20 active:scale-[0.98] transition-all" disabled={loading}>
-                  {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : (isSignUp ? 'Create Node Account' : 'Authenticate')}
+                  {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : (isSignUp ? 'Create Account' : 'Login')}
                 </Button>
               </form>
 
@@ -280,7 +276,7 @@ function AuthPageContent() {
                   <span className="w-full border-t border-border" />
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-card px-2 text-muted-foreground font-bold tracking-widest">Or utilize external provider</span>
+                  <span className="bg-card px-2 text-muted-foreground font-bold tracking-widest">Or</span>
                 </div>
               </div>
 
