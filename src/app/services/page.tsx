@@ -2,9 +2,8 @@
 "use client"
 
 import Image from 'next/image';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Shield, Heart, Flame, Home, Box, Eye, Network, ArrowRight } from 'lucide-react';
+import { Shield, Heart, Flame, Home, Box, Eye, ArrowRight } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 
@@ -16,72 +15,65 @@ export default function ServicesPage() {
       id: "child-protection",
       title: "Protect Your Child",
       shortNote: "Smart wearables for school safety.",
-      description: "Real-time tracking and geo-fencing for safe school commutes. Includes a one-touch SOS panic button for immediate distress alerts and silent audio callback to ensure your child's environment is safe.",
+      description: "Comprehensive school-safety infrastructure featuring real-time tracking, safe-zone geofencing, and a dedicated SOS button for emergency response.",
       icon: <Shield className="w-10 h-10 text-accent" />,
-      imageUrl: "/images/child.png",
+      imageUrl: "https://picsum.photos/seed/safe2/600/400",
       imageHint: "child safety tracker",
       theme: "bg-primary/5 border-primary/20",
-      accentColor: "text-accent"
     },
     {
       id: "elderly-care",
       title: "Elderly Care",
       shortNote: "Fall detection & health monitors.",
-      description: "Dedicated fall detection and health monitoring for seniors. Features automatic alerts for body temperature, blood pressure, and heart rate irregularities, instantly notifying family contacts.",
+      description: "Advanced health-monitoring mesh network for seniors, incorporating fall detection, vitals tracking, and automated emergency alerts for caretakers.",
       icon: <Heart className="w-10 h-10 text-primary" />,
-      imageUrl: "/images/elder.png",
+      imageUrl: "https://picsum.photos/seed/safe3/600/400",
       imageHint: "elderly health monitor",
       theme: "bg-accent/5 border-accent/20",
-      accentColor: "text-primary"
     },
     {
       id: "fire-prevention",
       title: "Fire Prevention",
       shortNote: "Smart thermal & gas sensors.",
-      description: "Advanced gas, thermal, and humidity sensors that continuously monitor surroundings to deliver instant feedback on leakage warnings, high temperatures, and active fire outbreaks.",
+      description: "Intelligent thermal and gas leak detection systems that provide instant mobile alerts and community-wide fire outbreak warnings in real-time.",
       icon: <Flame className="w-10 h-10 text-red-500" />,
-      imageUrl: "/images/fire.png",
+      imageUrl: "https://picsum.photos/seed/safe4/600/400",
       imageHint: "fire safety system",
       theme: "bg-red-500/5 border-red-500/20",
-      accentColor: "text-red-500"
     },
     {
       id: "property-security",
       title: "Property Security",
       shortNote: "Connected smart locks & sensors.",
-      description: "Comprehensive home intrusion detection featuring smart locks, perimeter breach detectors, and intelligent entry logs for residences and secure compounds.",
+      description: "A complete residential perimeter security solution with connected smart locks, entry logs, and high-frequency breach detection sensors.",
       icon: <Home className="w-10 h-10 text-primary" />,
-      imageUrl: "https://mecsecurity.com/news/wp-content/uploads/2018/11/6.jpg",
+      imageUrl: "https://picsum.photos/seed/safe5/600/400",
       imageHint: "home security cameras",
       theme: "bg-primary/5 border-primary/20",
-      accentColor: "text-primary"
     },
     {
       id: "asset-protection",
       title: "Asset Protection",
       shortNote: "High-precision hardware tracking.",
-      description: "Robust tracking nodes built to safeguard high-value equipment and vehicles with real-time GPS precision and movement history analytics.",
+      description: "Precision-engineered GPS nodes designed for high-value asset protection, offering real-time transit history and theft-recovery assistance.",
       icon: <Box className="w-10 h-10 text-accent" />,
-      imageUrl: "https://i5.walmartimages.com/seo/EON-Odyssey-18-Month-Long-Life-GPS-Tracker-Vehicles-Assets-Fleet-Hidden-Magnetic-GPS-Tracking-Device-Track-Years-Single-Charge-4G-LTE-Real-Time-Track_ddc51730-ff5f-4363-afc6-70c6686ebb84.bb45370a23c0677c87767a2e8b848bf3.jpeg?odnHeight=328&odnWidth=328&odnBg=FFFFFF",
+      imageUrl: "https://picsum.photos/seed/safe6/600/400",
       imageHint: "gps asset tracker",
       theme: "bg-accent/5 border-accent/20",
-      accentColor: "text-accent"
     },
     {
       id: "neighborhood-surveillance",
       title: "Neighborhood Surveillance",
       shortNote: "AI-powered community watch.",
-      description: "Decentralized network gateway monitoring nodes linking neighborhood watch loops together, using AI to detect suspicious patterns and alert officers.",
+      description: "Integrated community surveillance network that uses AI to detect suspicious activities and foster collaborative neighborhood safety protocols.",
       icon: <Eye className="w-10 h-10 text-[#20603D]" />,
-      imageUrl: "https://images.unsplash.com/photo-1589935447067-5531094415d1?w=800&auto=format&fit=crop&q=80",
+      imageUrl: "https://picsum.photos/seed/safe7/600/400",
       imageHint: "neighborhood security camera",
       theme: "bg-[#20603D]/5 border-[#20603D]/20",
-      accentColor: "text-[#20603D]"
     }
   ];
 
   const handleGetStarted = (serviceId: string) => {
-    // Store initial selection in localStorage so onboarding knows where to start
     localStorage.setItem('temp_initial_service', serviceId);
     router.push(`/onboarding?id=${serviceId}`);
   };
@@ -98,7 +90,7 @@ export default function ServicesPage() {
               Our <span className="text-gradient">Core Services</span>
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground font-light max-w-2xl mx-auto leading-relaxed">
-              SafeRwanda offers a specialized suite of protection services designed to integrate seamlessly into your life and community.
+              SafeRwanda offers a specialized suite of protection services designed to integrate seamlessly into your life and community infrastructure.
             </p>
           </div>
 
@@ -108,7 +100,7 @@ export default function ServicesPage() {
                 key={service.id} 
                 className={`group relative flex flex-col overflow-hidden rounded-[2rem] border transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 ${service.theme}`}
               >
-                <div className="relative h-64 w-full overflow-hidden">
+                <div className="relative h-80 w-full overflow-hidden">
                   <Image
                     src={service.imageUrl}
                     alt={service.title}
@@ -123,6 +115,9 @@ export default function ServicesPage() {
                 </div>
 
                 <div className="p-8 flex flex-col flex-grow">
+                  <Badge variant="secondary" className="w-fit mb-3 text-[10px] uppercase font-bold tracking-widest bg-primary/10 text-primary border-none">
+                    {service.shortNote}
+                  </Badge>
                   <h3 className="text-2xl font-headline font-extrabold mb-3 tracking-tight">
                     {service.title}
                   </h3>

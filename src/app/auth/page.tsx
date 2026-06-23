@@ -3,7 +3,7 @@
 
 import { useState, useEffect, Suspense, useRef } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { Shield, Mail, Lock, User, Github, Loader2, AlertTriangle, ArrowLeft } from 'lucide-react';
+import { Shield, Mail, Lock, User, Loader2, AlertTriangle, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
@@ -15,7 +15,8 @@ import {
   GoogleAuthProvider, 
   signInWithRedirect, 
   getRedirectResult,
-  updateProfile
+  updateProfile,
+  signOut
 } from 'firebase/auth';
 import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
 import Link from 'next/link';
@@ -64,14 +65,14 @@ function AuthPageContent() {
         const userDoc = await getDoc(userDocRef);
 
         if (!userDoc.exists()) {
-          // New User via Google -> Finish setup using saved services
+          // New User via Google -> Check for temporary selection
           const savedServices = localStorage.getItem('temp_selected_services');
           const services = savedServices ? JSON.parse(savedServices) : [];
 
           if (services.length > 0) {
             await setDoc(userDocRef, {
               uid: user.uid,
-              fullName: user.displayName || '',
+              fullName: user.displayName || 'Security Agent',
               email: user.email || '',
               servicesSelected: services,
               isOnboarded: true,
@@ -90,9 +91,7 @@ function AuthPageContent() {
         }
       } catch (err: any) {
         console.error("Redirect Error:", err);
-        if (err.code !== 'auth/popup-closed-by-user') {
-          setError({ message: err.message, code: err.code });
-        }
+        setError({ message: err.message, code: err.code });
       } finally {
         setLoading(false);
         setCheckingRedirect(false);
@@ -113,8 +112,13 @@ function AuthPageContent() {
       const userDoc = await getDoc(userDocRef);
       if (userDoc.exists()) {
         const data = userDoc.data();
-        router.replace(data?.isOnboarded ? '/dashboard' : '/onboarding');
+        if (data?.isOnboarded) {
+          router.replace('/dashboard');
+        } else {
+          router.replace('/onboarding');
+        }
       } else {
+        // No document exists, but they are logged in. Send to onboarding to pick services.
         router.replace('/onboarding');
       }
     };
@@ -151,7 +155,7 @@ function AuthPageContent() {
         router.replace(services.length > 0 ? '/dashboard' : '/onboarding');
       } else {
         await signInWithEmailAndPassword(auth, email, password);
-        // Background useEffect handles redirection
+        // useEffect handles redirection
       }
     } catch (err: any) {
       setError({ message: err.message, code: err.code });
@@ -175,11 +179,17 @@ function AuthPageContent() {
     }
   };
 
+  const handleSignOut = async () => {
+    if (!auth) return;
+    await signOut(auth);
+    window.location.reload();
+  };
+
   if (checkingRedirect) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center p-4">
         <Loader2 className="w-10 h-10 animate-spin text-primary mb-4" />
-        <p className="text-sm font-bold uppercase tracking-widest text-muted-foreground">Synchronizing Protocols...</p>
+        <p className="text-sm font-bold uppercase tracking-widest text-muted-foreground">Authenticating Protocol...</p>
       </div>
     );
   }
@@ -203,12 +213,12 @@ function AuthPageContent() {
                 </div>
               </div>
               <CardTitle className="text-2xl font-headline font-bold">
-                {isSignUp ? 'Create your Account' : 'Welcome Back'}
+                {isSignUp ? 'Secure Your Piece of Tomorrow' : 'Agent Login'}
               </CardTitle>
               <CardDescription>
                 {isSignUp 
-                  ? 'Join the SafeRwanda ecosystem and secure your future.' 
-                  : 'Access your security dashboard and AI Concierge.'}
+                  ? 'Join the SafeRwanda smart infrastructure network.' 
+                  : 'Access your security node and AI concierge.'}
               </CardDescription>
             </CardHeader>
 
@@ -219,9 +229,6 @@ function AuthPageContent() {
                   <div>
                     <p className="font-bold mb-1">Authorization Failed</p>
                     <p className="opacity-80">{error.message}</p>
-                    {error.code === 'auth/unauthorized-domain' && (
-                      <p className="mt-2 font-bold underline">Contact support: Domain not whitelisted.</p>
-                    )}
                   </div>
                 </div>
               )}
@@ -305,7 +312,7 @@ function AuthPageContent() {
                     <path fill="#34A853" d="M5.27 14.29c-.24-.72-.38-1.49-.38-2.29s.14-1.57.38-2.29v-3.09h-3.98c-.81 1.61-1.27 3.44-1.27 5.38s.46 3.77 1.27 5.38l3.98-3.09z"/>
                     <path fill="#4285F4" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.44-3.44c-2.1-1.96-4.85-3.11-8.04-3.11-4.69 0-8.74 2.7-10.71 6.62l3.98 3.09c.95-2.85 3.6-4.96 6.73-4.96z"/>
                   </svg>
-                  Sign in with Google
+                  Continue with Google
                 </Button>
               </div>
             </CardContent>
@@ -319,9 +326,11 @@ function AuthPageContent() {
                   {isSignUp ? 'Log In' : 'Sign Up'}
                 </button>
               </p>
-              <p className="text-[10px] text-center text-muted-foreground leading-relaxed px-8">
-                By continuing, you agree to SafeRwanda's <Link href="#" className="underline">Terms of Service</Link> and <Link href="#" className="underline">Privacy Policy</Link>.
-              </p>
+              {currentUser && !loading && (
+                <button onClick={handleSignOut} className="text-xs text-muted-foreground hover:text-destructive underline font-medium">
+                  Switch Account / Sign Out
+                </button>
+              )}
             </CardFooter>
           </Card>
         </div>
