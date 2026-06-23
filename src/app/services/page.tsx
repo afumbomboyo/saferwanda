@@ -1,9 +1,8 @@
-
-'use client';
+"use client"
 
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { Shield, Heart, Flame, Home, Box, Eye, ArrowRight } from 'lucide-react';
+import { Shield, Heart, Flame, Home, Box, Eye, ArrowRight, Network } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 
@@ -74,6 +73,17 @@ export default function ServicesPage() {
       icon: <Eye className="w-10 h-10 text-[#20603D]" />,
       imageUrl: "https://images.unsplash.com/photo-1589935447067-5531094415d1?w=800&auto=format&fit=crop&q=80",
       imageHint: "neighborhood security camera",
+      theme: "bg-[#20603D]/5 border-[#20603D]/20",
+      accentColor: "text-[#20603D]"
+    },
+    {
+      id: "smart-community",
+      title: "Smart Community Integration",
+      description: "Scalable urban IoT applications, including smart lighting, waste analytics, water hygiene and environmental hazard tracking.",
+      icon: <Network className="w-10 h-10 text-[#20603D]" />,
+      imageUrl: "/images/smart-community.png",
+      imageHint: "smart city infrastructure",
+      shortNote: "Scalable urban IoT solutions.",
       theme: "bg-[#20603D]/5 border-[#20603D]/20",
       accentColor: "text-[#20603D]"
     }

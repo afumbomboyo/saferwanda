@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { 
   ArrowRight, 
   Lock, 
@@ -23,6 +24,7 @@ import { Input } from '@/components/ui/input';
 import { PlaceHolderImages } from '@/app/lib/placeholder-images';
 
 export default function Home() {
+  const router = useRouter();
   const heroImg = PlaceHolderImages.find(img => img.id === 'hero-security');
   const communityImg = PlaceHolderImages.find(img => img.id === 'smart-community');
 
@@ -48,6 +50,11 @@ export default function Home() {
     
     return () => clearInterval(interval);
   }, []);
+
+  const handleGetStarted = (serviceId: string) => {
+    localStorage.setItem('temp_initial_service', serviceId);
+    router.push(`/onboarding?id=${serviceId}`);
+  };
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -118,27 +125,33 @@ export default function Home() {
                     <span className="text-accent font-bold tracking-widest uppercase text-[10px]">Family & Care</span>
                   </div>
                 </div>
-                <Card className="glass-card group hover:-translate-y-1 transition-transform duration-500 overflow-hidden">
+                <Card className="glass-card group hover:-translate-y-1 transition-transform duration-500 overflow-hidden flex flex-col h-full">
                   <div className="relative w-full h-80 border-b border-accent/10">
                     <Image src="/images/child.png" alt="Protect Your Child" fill className="object-cover" />
                   </div>
                   <CardHeader>
                     <CardTitle className="text-xl md:text-2xl font-bold">Protect Your Child</CardTitle>
                   </CardHeader>
-                  <CardContent className="text-muted-foreground leading-relaxed text-xs md:text-sm">
+                  <CardContent className="text-muted-foreground leading-relaxed text-xs md:text-sm flex-grow">
                   Real-time tracking and geofencing for safe school commutes. Includes a one-touch SOS panic button for immediate distress alerts and a silent audio callback to instantly hear your child’s surroundings.
                   </CardContent>
+                  <div className="p-6 pt-0">
+                    <Button onClick={() => handleGetStarted('child-protection')} className="w-full rounded-xl bg-accent text-accent-foreground hover:bg-accent/90">Get Started</Button>
+                  </div>
                 </Card>
-                <Card className="glass-card group hover:-translate-y-1 transition-transform duration-500 overflow-hidden">
+                <Card className="glass-card group hover:-translate-y-1 transition-transform duration-500 overflow-hidden flex flex-col h-full">
                   <div className="relative w-full h-80 border-b border-accent/10">
                     <Image src="/images/elder.png" alt="Take Care of Your Elderly" fill className="object-cover" />
                   </div>
                   <CardHeader>
                     <CardTitle className="text-xl md:text-2xl font-bold">Take Care of Your Elderly</CardTitle>
                   </CardHeader>
-                  <CardContent className="text-muted-foreground leading-relaxed text-xs md:text-sm">
+                  <CardContent className="text-muted-foreground leading-relaxed text-xs md:text-sm flex-grow">
                   Smart sensors monitoring body temperature, blood pressure, and heart rate. Features automatic fall-detection alerts and instant panic buttons and notifications to family contacts the moment a health check drops.
                   </CardContent>
+                  <div className="p-6 pt-0">
+                    <Button onClick={() => handleGetStarted('elderly-care')} className="w-full rounded-xl bg-accent text-accent-foreground hover:bg-accent/90">Get Started</Button>
+                  </div>
                 </Card>
               </div>
 
@@ -150,38 +163,47 @@ export default function Home() {
                     <span className="text-primary font-bold tracking-widest uppercase text-[10px]">Home & Assets</span>
                   </div>
                 </div>
-                <Card className="glass-card group hover:-translate-y-1 transition-transform duration-500 border-primary/20 overflow-hidden">
+                <Card className="glass-card group hover:-translate-y-1 transition-transform duration-500 border-primary/20 overflow-hidden flex flex-col h-full">
                   <div className="relative w-full h-80 border-b border-primary/10">
                     <Image src="/images/fire.png" alt="Prevent Fire" fill className="object-cover" />
                   </div>
                   <CardHeader>
                     <CardTitle className="text-xl md:text-2xl font-bold">Prevent Fire</CardTitle>
                   </CardHeader>
-                  <CardContent className="text-muted-foreground leading-relaxed text-xs md:text-sm">
+                  <CardContent className="text-muted-foreground leading-relaxed text-xs md:text-sm flex-grow">
                   Smart gas, thermal, and humidity (all in one) sensors that continuously monitor surroundings to deliver instant feedback on gas leakage warnings, high temperatures, and potential or active fire outbreaks.
                   </CardContent>
+                  <div className="p-6 pt-0">
+                    <Button onClick={() => handleGetStarted('fire-prevention')} className="w-full rounded-xl">Get Started</Button>
+                  </div>
                 </Card>
-                <Card className="glass-card group hover:-translate-y-1 transition-transform duration-500 border-primary/20 overflow-hidden">
+                <Card className="glass-card group hover:-translate-y-1 transition-transform duration-500 border-primary/20 overflow-hidden flex flex-col h-full">
                   <div className="relative w-full h-80 border-b border-primary/10">
                     <Image src="https://mecsecurity.com/news/wp-content/uploads/2018/11/6.jpg" alt="Secure Your Premise" fill className="object-cover" />
                   </div>
                   <CardHeader>
                     <CardTitle className="text-xl md:text-2xl font-bold">Secure Your Premise</CardTitle>
                   </CardHeader>
-                  <CardContent className="text-muted-foreground leading-relaxed text-xs md:text-sm">
+                  <CardContent className="text-muted-foreground leading-relaxed text-xs md:text-sm flex-grow">
                     Connected smart locks, perimeter breach detectors, and intelligent entry logs for residential layouts.
                   </CardContent>
+                  <div className="p-6 pt-0">
+                    <Button onClick={() => handleGetStarted('property-security')} className="w-full rounded-xl">Get Started</Button>
+                  </div>
                 </Card>
-                <Card className="glass-card group hover:-translate-y-1 transition-transform duration-500 border-primary/20 overflow-hidden">
+                <Card className="glass-card group hover:-translate-y-1 transition-transform duration-500 border-primary/20 overflow-hidden flex flex-col h-full">
                   <div className="relative w-full h-80 border-b border-primary/10">
                     <Image src="https://i5.walmartimages.com/seo/EON-Odyssey-18-Month-Long-Life-GPS-Tracker-Vehicles-Assets-Fleet-Hidden-Magnetic-GPS-Tracking-Device-Track-Years-Single-Charge-4G-LTE-Real-Time-Track_ddc51730-ff5f-4363-afc6-70c6686ebb84.bb45370a23c0677c87767a2e8b848bf3.jpeg?odnHeight=328&odnWidth=328&odnBg=FFFFFF" alt="Secure Your Assets" fill className="object-cover" />
                   </div>
                   <CardHeader>
                     <CardTitle className="text-xl md:text-2xl font-bold">Secure Your Assets</CardTitle>
                   </CardHeader>
-                  <CardContent className="text-muted-foreground leading-relaxed text-xs md:text-sm">
+                  <CardContent className="text-muted-foreground leading-relaxed text-xs md:text-sm flex-grow">
                     High-precision hardware asset tracking nodes built to safeguard equipment and vehicles.
                   </CardContent>
+                  <div className="p-6 pt-0">
+                    <Button onClick={() => handleGetStarted('asset-protection')} className="w-full rounded-xl">Get Started</Button>
+                  </div>
                 </Card>
               </div>
 
@@ -193,27 +215,33 @@ export default function Home() {
                     <span className="text-[#20603D] font-bold tracking-widest uppercase text-[10px]">Community Infrastructure</span>
                   </div>
                 </div>
-                <Card className="glass-card group hover:-translate-y-1 transition-transform duration-500 overflow-hidden">
+                <Card className="glass-card group hover:-translate-y-1 transition-transform duration-500 overflow-hidden flex flex-col h-full">
                   <div className="relative w-full h-80 border-b border-[#20603D]/10">
                     <Image src="https://images.unsplash.com/photo-1589935447067-5531094415d1?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Y2N0diUyMGNhbWVyYXxlbnwwfHwwfHx8MA%3D%3D" alt="Neighborhood Survey" fill className="object-cover" />
                   </div>
                   <CardHeader>
                     <CardTitle className="text-xl md:text-2xl font-bold">Neighborhood Survey</CardTitle>
                   </CardHeader>
-                  <CardContent className="text-muted-foreground leading-relaxed text-xs md:text-sm">
+                  <CardContent className="text-muted-foreground leading-relaxed text-xs md:text-sm flex-grow">
                     Decentralized network gateway monitoring nodes linking neighborhood watch loops together.
                   </CardContent>
+                  <div className="p-6 pt-0">
+                    <Button onClick={() => handleGetStarted('neighborhood-surveillance')} className="w-full rounded-xl bg-rwanda-green text-white hover:bg-rwanda-green/90">Get Started</Button>
+                  </div>
                 </Card>
-                <Card className="glass-card group hover:-translate-y-1 transition-transform duration-500 overflow-hidden">
+                <Card className="glass-card group hover:-translate-y-1 transition-transform duration-500 overflow-hidden flex flex-col h-full">
                   <div className="relative w-full h-80 border-b border-[#20603D]/10">
                     <Image src="/images/smart-community.png" alt="Make Community Smart" fill className="object-cover" />
                   </div>
                   <CardHeader>
                     <CardTitle className="text-xl md:text-2xl font-bold">Make Community Smart</CardTitle>
                   </CardHeader>
-                  <CardContent className="text-muted-foreground leading-relaxed text-xs md:text-sm">
+                  <CardContent className="text-muted-foreground leading-relaxed text-xs md:text-sm flex-grow">
                     Scalable urban IoT applications, including smart lighting, waste analytics, and environmental hazard tracking.
                   </CardContent>
+                  <div className="p-6 pt-0">
+                    <Button onClick={() => handleGetStarted('smart-community')} className="w-full rounded-xl bg-rwanda-green text-white hover:bg-rwanda-green/90">Get Started</Button>
+                  </div>
                 </Card>
               </div>
             </div>
