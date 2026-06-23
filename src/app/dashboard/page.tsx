@@ -25,19 +25,24 @@ export default function DashboardPage() {
     }
 
     const fetchProfile = async () => {
-      const docRef = doc(db, 'users', user.uid);
-      const res = await getDoc(docRef);
-      if (res.exists()) {
-        const data = res.data();
-        if (!data.isOnboarded) {
-          router.replace('/onboarding');
+      try {
+        const docRef = doc(db, 'users', user.uid);
+        const res = await getDoc(docRef);
+        if (res.exists()) {
+          const data = res.data();
+          if (!data.isOnboarded) {
+            router.replace('/onboarding');
+          } else {
+            setProfile(data);
+          }
         } else {
-          setProfile(data);
+          router.replace('/onboarding');
         }
-      } else {
-        router.replace('/onboarding');
+      } catch (err) {
+        console.error("Dashboard profile fetch error:", err);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
     fetchProfile();
@@ -119,6 +124,9 @@ export default function DashboardPage() {
                       <Badge className="bg-primary text-white">Active</Badge>
                     </div>
                   ))}
+                  {(!profile?.servicesSelected || profile.servicesSelected.length === 0) && (
+                    <p className="text-center text-muted-foreground py-8">No active protocols detected.</p>
+                  )}
                 </div>
               </CardContent>
             </Card>

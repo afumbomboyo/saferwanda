@@ -67,7 +67,7 @@ function OnboardingContent() {
           email: user.email || '',
           servicesSelected: selectedIds,
           isOnboarded: true,
-          createdAt: userDoc.exists() ? userDoc.data().createdAt : serverTimestamp(),
+          createdAt: userDoc.exists() ? userDoc.data()?.createdAt : serverTimestamp(),
         };
 
         await setDoc(userDocRef, userData, { merge: true });

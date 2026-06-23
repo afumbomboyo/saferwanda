@@ -14,7 +14,7 @@ export function useCollection<T = DocumentData>(query: Query<T> | null) {
     setLoading(true);
     const unsubscribe = onSnapshot(query, 
       (snapshot: QuerySnapshot<T>) => {
-        setData(snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id })));
+        setData(snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id } as T)));
         setLoading(false);
       },
       (err) => {
