@@ -91,6 +91,17 @@ export default function Navbar() {
                 </Link>
               );
             })}
+            {!loading && !user && (
+              <Link 
+                href="/auth" 
+                className={cn(
+                  "text-sm font-bold uppercase tracking-widest transition-colors antialiased border-l border-white/10 pl-8",
+                  activePath === '/auth' ? "text-primary" : "text-foreground hover:text-primary"
+                )}
+              >
+                Login
+              </Link>
+            )}
           </div>
 
           {!loading && (
@@ -133,12 +144,9 @@ export default function Navbar() {
                   </DropdownMenuContent>
                 </DropdownMenu>
               ) : (
-                <div className="flex items-center gap-4">
-                  <Link href="/auth" className="text-sm font-bold uppercase tracking-widest hover:text-primary transition-colors">Login</Link>
-                  <Button asChild className="h-12 px-8 rounded-xl font-bold shadow-xl shadow-primary/20 bg-primary hover:bg-primary/90 transition-all active:scale-95">
-                    <Link href="/auth?signup=true">Get Started</Link>
-                  </Button>
-                </div>
+                <Button asChild className="h-12 px-8 rounded-xl font-bold shadow-xl shadow-primary/20 bg-primary hover:bg-primary/90 transition-all active:scale-95">
+                  <Link href="/auth?signup=true">Get Started</Link>
+                </Button>
               )}
             </>
           )}
