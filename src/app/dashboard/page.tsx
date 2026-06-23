@@ -2,9 +2,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useUser, useFirestore } from '@/firebase';
+import { useUser, useFirestore, useAuth } from '@/firebase';
 import { useRouter } from 'next/navigation';
 import { doc, getDoc } from 'firebase/firestore';
+import { signOut } from 'firebase/auth';
 import { Shield, Loader2, LayoutDashboard, Settings, LogOut, Bell, Activity } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -13,6 +14,7 @@ import { Badge } from '@/components/ui/badge';
 export default function DashboardPage() {
   const router = useRouter();
   const { user, loading: userLoading } = useUser();
+  const auth = useAuth();
   const db = useFirestore();
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -48,6 +50,16 @@ export default function DashboardPage() {
     fetchProfile();
   }, [user, userLoading, db, router]);
 
+  const handleLogout = async () => {
+    if (!auth) return;
+    try {
+      await signOut(auth);
+      router.push('/');
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
+  };
+
   if (loading || userLoading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-4">
@@ -69,7 +81,9 @@ export default function DashboardPage() {
             <div className="flex gap-4">
               <Button variant="outline" size="icon" className="rounded-xl border-border"><Bell className="w-5 h-5" /></Button>
               <Button variant="outline" size="icon" className="rounded-xl border-border"><Settings className="w-5 h-5" /></Button>
-              <Button variant="destructive" size="icon" className="rounded-xl" onClick={() => router.push('/auth')}><LogOut className="w-5 h-5" /></Button>
+              <Button variant="destructive" size="icon" className="rounded-xl" onClick={handleLogout} title="Sign Out">
+                <LogOut className="w-5 h-5" />
+              </Button>
             </div>
           </div>
 
@@ -124,6 +138,9 @@ export default function DashboardPage() {
                       <Badge className="bg-primary text-white">Active</Badge>
                     </div>
                   ))}
+                  {!profile?.servicesSelected?.length && (
+                    <p className="text-sm text-muted-foreground text-center py-8">No active services. Initialize a protocol from the services menu.</p>
+                  )}
                 </div>
               </CardContent>
             </Card>

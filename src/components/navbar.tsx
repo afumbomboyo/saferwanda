@@ -2,11 +2,13 @@
 "use client"
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { ShieldCheck, Menu, X } from 'lucide-react';
+import { usePathname, useRouter } from 'next/navigation';
+import { ShieldCheck, Menu, X, User, LogOut, LayoutDashboard, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
+import { useUser, useAuth } from '@/firebase';
+import { signOut } from 'firebase/auth';
 import {
   Sheet,
   SheetContent,
@@ -14,15 +16,25 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export default function Navbar() {
   const pathname = usePathname();
+  const router = useRouter();
+  const { user, loading } = useUser();
+  const auth = useAuth();
   const [isScrolled, setIsScrolled] = useState(false);
   const [activePath, setActivePath] = useState<string | null>(null);
 
   useEffect(() => {
-    // We set the active path after mounting to avoid hydration mismatch
-    // between server-rendered HTML and initial client-side render.
     setActivePath(pathname);
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
@@ -31,11 +43,24 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [pathname]);
 
+  const handleLogout = async () => {
+    if (!auth) return;
+    try {
+      await signOut(auth);
+      router.push('/');
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
+  };
+
   const navLinks = [
     { name: 'Home', href: '/' },
     { name: 'Our Services', href: '/services' },
-    { name: 'Login', href: '/auth' },
   ];
+
+  if (!user && !loading) {
+    navLinks.push({ name: 'Login', href: '/auth' });
+  }
 
   return (
     <nav className={cn(
@@ -56,7 +81,6 @@ export default function Navbar() {
         <div className="hidden md:flex items-center gap-10">
           <div className="flex items-center gap-8 px-6 py-2 rounded-2xl bg-white/5 border border-white/5 backdrop-blur-md">
             {navLinks.map((link) => {
-              // During hydration, activePath is null, ensuring consistent rendering with server
               const isActive = activePath === link.href;
               return (
                 <Link 
@@ -72,24 +96,70 @@ export default function Navbar() {
               );
             })}
           </div>
-          <Button asChild className="h-12 px-8 rounded-xl font-bold shadow-xl shadow-primary/20 bg-primary hover:bg-primary/90 transition-all active:scale-95">
-            <Link href="/auth?signup=true">Get Started</Link>
-          </Button>
+
+          {!loading && (
+            <>
+              {user ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="relative h-12 flex items-center gap-3 px-2 rounded-xl hover:bg-white/10">
+                      <Avatar className="h-9 w-9 border-2 border-primary/20">
+                        <AvatarImage src={user.photoURL || undefined} alt={user.displayName || "User"} />
+                        <AvatarFallback className="bg-primary/10 text-primary font-bold">
+                          {(user.displayName || "U").charAt(0).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex flex-col items-start text-left">
+                        <span className="text-xs font-bold leading-none">{user.displayName || 'Agent'}</span>
+                        <span className="text-[10px] text-muted-foreground font-medium">Node Operator</span>
+                      </div>
+                      <ChevronDown className="w-4 h-4 text-muted-foreground" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-56 mt-2 rounded-2xl p-2 bg-card/95 backdrop-blur-xl border-white/10" align="end">
+                    <DropdownMenuLabel className="px-3 py-3">
+                      <div className="flex flex-col space-y-1">
+                        <p className="text-sm font-bold leading-none">{user.displayName || 'Security Agent'}</p>
+                        <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
+                      </div>
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator className="bg-white/5" />
+                    <DropdownMenuItem asChild className="rounded-xl py-3 cursor-pointer">
+                      <Link href="/dashboard" className="flex items-center">
+                        <LayoutDashboard className="mr-2 h-4 w-4 text-primary" />
+                        <span>Command Center</span>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem className="rounded-xl py-3 text-destructive focus:bg-destructive/10 focus:text-destructive cursor-pointer" onClick={handleLogout}>
+                      <LogOut className="mr-2 h-4 w-4" />
+                      <span>Deactivate Node</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <Button asChild className="h-12 px-8 rounded-xl font-bold shadow-xl shadow-primary/20 bg-primary hover:bg-primary/90 transition-all active:scale-95">
+                  <Link href="/auth?signup=true">Get Started</Link>
+                </Button>
+              )}
+            </>
+          )}
         </div>
 
         {/* Mobile Nav Toggle */}
         <div className="md:hidden flex items-center gap-4">
-          <Button asChild size="sm" className="h-9 px-4 rounded-lg font-bold bg-primary text-xs">
-            <Link href="/auth?signup=true">Get Started</Link>
-          </Button>
-          <MobileMenu navLinks={navLinks} activePath={activePath} />
+          {!user && !loading && (
+            <Button asChild size="sm" className="h-9 px-4 rounded-lg font-bold bg-primary text-xs">
+              <Link href="/auth?signup=true">Get Started</Link>
+            </Button>
+          )}
+          <MobileMenu navLinks={navLinks} activePath={activePath} user={user} handleLogout={handleLogout} />
         </div>
       </div>
     </nav>
   );
 }
 
-function MobileMenu({ navLinks, activePath }: { navLinks: any[], activePath: string | null }) {
+function MobileMenu({ navLinks, activePath, user, handleLogout }: { navLinks: any[], activePath: string | null, user: any, handleLogout: () => void }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -103,12 +173,9 @@ function MobileMenu({ navLinks, activePath }: { navLinks: any[], activePath: str
           <Menu className="w-5 h-5" />
         </Button>
       </SheetTrigger>
-      {/* Increased z-index and ensured proper portal rendering to avoid clipping from the fixed header */}
       <SheetContent side="right" className="w-[85%] sm:max-w-[380px] bg-background border-l border-border p-0 flex flex-col overflow-hidden z-[200]">
         <SheetHeader className="p-8 text-left relative bg-gradient-to-br from-primary via-primary to-[#20603D] text-white overflow-hidden border-b-4 border-accent">
-          {/* Subtle Rwanda Color Accents */}
           <div className="absolute top-0 right-0 w-32 h-32 bg-accent/20 rounded-full blur-3xl -mr-16 -mt-16" />
-          
           <SheetTitle className="flex items-center gap-3 text-white relative z-10">
              <div className="w-10 h-10 rounded-xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20">
               <ShieldCheck className="w-6 h-6 text-white" />
@@ -120,7 +187,20 @@ function MobileMenu({ navLinks, activePath }: { navLinks: any[], activePath: str
           </p>
         </SheetHeader>
         
-        <div className="flex flex-grow flex-col gap-6 p-8">
+        <div className="flex flex-grow flex-col gap-4 p-8">
+          {user && (
+            <div className="flex items-center gap-4 p-4 rounded-2xl bg-secondary/30 border border-border mb-4">
+              <Avatar className="h-12 w-12 border-2 border-primary/20">
+                <AvatarImage src={user.photoURL} />
+                <AvatarFallback>{(user.displayName || "U").charAt(0)}</AvatarFallback>
+              </Avatar>
+              <div>
+                <p className="font-bold text-sm leading-none">{user.displayName || 'Agent'}</p>
+                <p className="text-xs text-muted-foreground mt-1">{user.email}</p>
+              </div>
+            </div>
+          )}
+
           {navLinks.map((link) => {
             const isActive = activePath === link.href;
             return (
@@ -129,7 +209,7 @@ function MobileMenu({ navLinks, activePath }: { navLinks: any[], activePath: str
                 href={link.href} 
                 onClick={() => setOpen(false)}
                 className={cn(
-                  "text-3xl font-headline font-extrabold tracking-tight transition-all hover:translate-x-2 active:scale-95 antialiased",
+                  "text-2xl font-headline font-extrabold tracking-tight transition-all hover:translate-x-2 active:scale-95 antialiased",
                   isActive ? "text-primary" : "text-foreground/90"
                 )}
               >
@@ -137,13 +217,41 @@ function MobileMenu({ navLinks, activePath }: { navLinks: any[], activePath: str
               </Link>
             );
           })}
+
+          {user && (
+            <Link 
+              href="/dashboard"
+              onClick={() => setOpen(false)}
+              className={cn(
+                "text-2xl font-headline font-extrabold tracking-tight transition-all hover:translate-x-2 active:scale-95 antialiased flex items-center gap-2",
+                activePath === '/dashboard' ? "text-primary" : "text-foreground/90"
+              )}
+            >
+              <LayoutDashboard className="w-6 h-6" />
+              Dashboard
+            </Link>
+          )}
           
           <div className="mt-8 pt-8 border-t border-border">
-            <Button asChild className="w-full h-14 rounded-xl font-bold shadow-2xl shadow-primary/30 bg-primary text-white text-lg">
-              <Link href="/auth?signup=true" onClick={() => setOpen(false)}>
-                Get Started
-              </Link>
-            </Button>
+            {user ? (
+              <Button 
+                variant="destructive"
+                className="w-full h-14 rounded-xl font-bold shadow-2xl text-lg flex items-center gap-2"
+                onClick={() => {
+                  handleLogout();
+                  setOpen(false);
+                }}
+              >
+                <LogOut className="w-5 h-5" />
+                Sign Out
+              </Button>
+            ) : (
+              <Button asChild className="w-full h-14 rounded-xl font-bold shadow-2xl shadow-primary/30 bg-primary text-white text-lg">
+                <Link href="/auth?signup=true" onClick={() => setOpen(false)}>
+                  Get Started
+                </Link>
+              </Button>
+            )}
           </div>
         </div>
         
