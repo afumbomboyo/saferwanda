@@ -6,7 +6,6 @@ import { useRouter } from 'next/navigation';
 import { Shield, Heart, Flame, Home, Box, Eye, ArrowRight } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { PlaceHolderImages } from '@/app/lib/placeholder-images';
 
 export default function ServicesPage() {
   const router = useRouter();
@@ -14,63 +13,69 @@ export default function ServicesPage() {
   const services = [
     {
       id: "child-protection",
-      title: "Child Protection",
-      shortNote: "Real-time school tracking & SOS alerts.",
-      description: "Our child safety infrastructure integrates high-precision GPS wearables with a centralized monitoring node. Parents receive instant geofencing alerts, safe-commute tracking, and one-touch SOS distress signals.",
+      title: "Protect Your Child",
+      shortNote: "Smart wearables for school safety.",
+      description: "Real-time tracking and geo-fencing for safe school commutes. Includes a one-touch SOS panic button for immediate distress alerts and silent audio callback to ensure your child's environment is safe.",
       icon: <Shield className="w-10 h-10 text-accent" />,
-      imageUrl: PlaceHolderImages.find(img => img.id === 'child-protection')?.imageUrl || "https://picsum.photos/seed/child/600/400",
+      imageUrl: "/images/child.png",
       imageHint: "child safety tracker",
       theme: "bg-primary/5 border-primary/20",
+      accentColor: "text-accent"
     },
     {
       id: "elderly-care",
       title: "Elderly Care",
-      shortNote: "Health vitals & fall detection mesh.",
-      description: "Advanced monitoring systems for seniors that track heart rate, blood pressure, and movement. Our AI-driven fall detection automatically notifies designated family nodes the moment an incident is detected.",
+      shortNote: "Fall detection & health monitors.",
+      description: "Dedicated fall detection and health monitoring for seniors. Features automatic alerts for body temperature, blood pressure, and heart rate irregularities, instantly notifying family contacts.",
       icon: <Heart className="w-10 h-10 text-primary" />,
-      imageUrl: PlaceHolderImages.find(img => img.id === 'elderly-care')?.imageUrl || "https://picsum.photos/seed/elder/600/400",
+      imageUrl: "/images/elder.png",
       imageHint: "elderly health monitor",
       theme: "bg-accent/5 border-accent/20",
+      accentColor: "text-primary"
     },
     {
       id: "fire-prevention",
       title: "Fire Prevention",
-      shortNote: "Thermal leak & gas detection protocols.",
-      description: "Industrial-grade thermal sensors and gas leak detectors providing 24/7 protection. Our IoT mesh sends instant thermal warnings to prevent outbreaks before they escalate into dangerous fires.",
-      icon: <Flame className="w-10 h-10 text-destructive" />,
-      imageUrl: PlaceHolderImages.find(img => img.id === 'fire-prevention')?.imageUrl || "https://picsum.photos/seed/fire/600/400",
+      shortNote: "Smart thermal & gas sensors.",
+      description: "Advanced gas, thermal, and humidity sensors that continuously monitor surroundings to deliver instant feedback on leakage warnings, high temperatures, and active fire outbreaks.",
+      icon: <Flame className="w-10 h-10 text-red-500" />,
+      imageUrl: "/images/fire.png",
       imageHint: "fire safety system",
-      theme: "bg-destructive/5 border-destructive/20",
+      theme: "bg-red-500/5 border-red-500/20",
+      accentColor: "text-red-500"
     },
     {
       id: "property-security",
       title: "Property Security",
-      shortNote: "Smart locks & perimeter breach audit.",
-      description: "Comprehensive residential security including connected smart locks, perimeter breach sensors, and an intelligent entry log. Control access to your premise from anywhere in the world.",
+      shortNote: "Connected smart locks & sensors.",
+      description: "Comprehensive home intrusion detection featuring smart locks, perimeter breach detectors, and intelligent entry logs for residences and secure compounds.",
       icon: <Home className="w-10 h-10 text-primary" />,
-      imageUrl: PlaceHolderImages.find(img => img.id === 'property-security')?.imageUrl || "https://picsum.photos/seed/home/600/400",
+      imageUrl: "https://mecsecurity.com/news/wp-content/uploads/2018/11/6.jpg",
       imageHint: "home security cameras",
       theme: "bg-primary/5 border-primary/20",
+      accentColor: "text-primary"
     },
     {
       id: "asset-protection",
       title: "Asset Protection",
-      shortNote: "Hardware tracking for high-value nodes.",
-      description: "Securing your equipment and vehicles with ruggedized, long-life tracking hardware. Monitor transit paths and set digital perimeters for high-value assets across the national network.",
+      shortNote: "High-precision hardware tracking.",
+      description: "Robust tracking nodes built to safeguard high-value equipment and vehicles with real-time GPS precision and movement history analytics.",
       icon: <Box className="w-10 h-10 text-accent" />,
-      imageUrl: PlaceHolderImages.find(img => img.id === 'asset-protection')?.imageUrl || "https://picsum.photos/seed/asset/600/400",
+      imageUrl: "https://i5.walmartimages.com/seo/EON-Odyssey-18-Month-Long-Life-GPS-Tracker-Vehicles-Assets-Fleet-Hidden-Magnetic-GPS-Tracking-Device-Track-Years-Single-Charge-4G-LTE-Real-Time-Track_ddc51730-ff5f-4363-afc6-70c6686ebb84.bb45370a23c0677c87767a2e8b848bf3.jpeg?odnHeight=328&odnWidth=328&odnBg=FFFFFF",
       imageHint: "gps asset tracker",
       theme: "bg-accent/5 border-accent/20",
+      accentColor: "text-accent"
     },
     {
       id: "neighborhood-surveillance",
       title: "Neighborhood Surveillance",
-      shortNote: "Collaborative pattern detection network.",
-      description: "Join a decentralized community safety net. We deploy neighborhood-wide monitoring nodes that use AI pattern detection to flag suspicious activity to shared community watch groups.",
-      icon: <Eye className="w-10 h-10 text-rwanda-green" />,
-      imageUrl: PlaceHolderImages.find(img => img.id === 'neighborhood-surveillance')?.imageUrl || "https://picsum.photos/seed/neighborhood/600/400",
+      shortNote: "AI-powered community watch.",
+      description: "Decentralized network gateway monitoring nodes linking neighborhood watch loops together, using AI to detect suspicious patterns and alert officers.",
+      icon: <Eye className="w-10 h-10 text-[#20603D]" />,
+      imageUrl: "https://images.unsplash.com/photo-1589935447067-5531094415d1?w=800&auto=format&fit=crop&q=80",
       imageHint: "neighborhood security camera",
-      theme: "bg-rwanda-green/5 border-rwanda-green/20",
+      theme: "bg-[#20603D]/5 border-[#20603D]/20",
+      accentColor: "text-[#20603D]"
     }
   ];
 
