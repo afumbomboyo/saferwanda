@@ -75,7 +75,7 @@ export default function Navbar() {
 
         {/* Desktop Nav */}
         <div className="hidden md:flex items-center gap-10">
-          <div className="flex items-center gap-8 px-6 py-2 rounded-2xl bg-white/5 border border-white/5 backdrop-blur-md">
+          <div className="flex items-center gap-8 px-8 py-2 rounded-2xl bg-white/5 border border-white/5 backdrop-blur-md">
             {navLinks.map((link) => {
               const isActive = activePath === link.href;
               return (
@@ -95,7 +95,7 @@ export default function Navbar() {
               <Link 
                 href="/auth" 
                 className={cn(
-                  "text-sm font-bold uppercase tracking-widest transition-colors antialiased border-l border-white/10 pl-8",
+                  "text-sm font-bold uppercase tracking-widest transition-colors antialiased",
                   activePath === '/auth' ? "text-primary" : "text-foreground hover:text-primary"
                 )}
               >

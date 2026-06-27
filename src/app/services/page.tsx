@@ -1,3 +1,4 @@
+
 "use client"
 
 import Image from 'next/image';
@@ -98,7 +99,7 @@ export default function ServicesPage() {
     <div className="flex flex-col min-h-screen bg-background">
       <main className="flex-grow pt-32 pb-24">
         <div className="container mx-auto px-4">
-          <div className="max-w-4xl mb-16 animate-fade-in text-center mx-auto">
+          <div className="max-w-4xl mb-16 animate-reveal text-center mx-auto">
             <Badge variant="outline" className="mb-4 px-3 py-1 border-primary text-primary font-bold text-xs uppercase tracking-widest bg-primary/5">
               Secure Your Piece of Tomorrow
             </Badge>
@@ -111,10 +112,11 @@ export default function ServicesPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {services.map((service) => (
+            {services.map((service, idx) => (
               <div 
                 key={service.id} 
-                className={`group relative flex flex-col overflow-hidden rounded-[2rem] border transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 ${service.theme}`}
+                className={`group relative flex flex-col overflow-hidden rounded-[2rem] border transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 animate-reveal ${service.theme}`}
+                style={{ animationDelay: `${idx * 0.1}s` }}
               >
                 <div className="relative h-80 w-full overflow-hidden">
                   <Image
@@ -137,9 +139,7 @@ export default function ServicesPage() {
                   <h3 className="text-2xl font-headline font-extrabold mb-3 tracking-tight">
                     {service.title}
                   </h3>
-                  <p className="text-sm text-muted-foreground mb-6 font-light leading-relaxed flex-grow">
-                    {service.description}
-                  </p>
+                  <p className="text-sm text-muted-foreground mb-6 font-light leading-relaxed flex-grow" dangerouslySetInnerHTML={{ __html: service.description }} />
                   <Button 
                     onClick={() => handleGetStarted(service.id)}
                     className="w-full h-12 rounded-xl font-bold bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20 transition-all active:scale-95 group"

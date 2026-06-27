@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useEffect } from 'react';
@@ -77,7 +78,7 @@ export default function Home() {
           </div>
 
           <div className="container mx-auto px-4 z-10 text-center">
-            <div className="max-w-4xl mx-auto animate-fade-in">
+            <div className="max-w-4xl mx-auto animate-reveal">
               <Badge variant="outline" className="mb-6 px-4 py-1.5 border-primary/30 text-primary font-bold bg-primary/5 backdrop-blur-md">
                 <Signal className="w-3.5 h-3.5 mr-2 animate-pulse text-primary" />
                 Next-Gen IoT Infrastructure
@@ -111,14 +112,14 @@ export default function Home() {
         {/* 2. The Core Value Pillars */}
         <section className="py-24 relative">
           <div className="container mx-auto px-4">
-            <div className="text-center max-w-2xl mx-auto mb-16">
+            <div className="text-center max-w-2xl mx-auto mb-16 animate-reveal">
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-headline font-extrabold mb-4">Our Services</h2>
               <p className="text-sm md:text-base lg:text-lg text-muted-foreground font-light">Our smart infrastructure ecosystem is categorized into three specialized safety tiers, providing granular security for every facet of life.</p>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
               {/* Pillar A: Family & Vulnerable Care */}
-              <div className="space-y-6 flex flex-col">
+              <div className="space-y-6 flex flex-col animate-reveal reveal-delay-1">
                 <div className="flex justify-center mb-2">
                   <div className="inline-flex items-center gap-2 bg-accent/10 px-3 py-1.5 rounded-lg border border-accent/20">
                     <Heart className="w-4 h-4 text-accent" />
@@ -157,7 +158,7 @@ export default function Home() {
               </div>
 
               {/* Pillar B: Smart Home & Asset Protection */}
-              <div className="space-y-6 flex flex-col">
+              <div className="space-y-6 flex flex-col animate-reveal reveal-delay-2">
                 <div className="flex justify-center mb-2">
                   <div className="inline-flex items-center gap-2 bg-primary/10 px-3 py-1.5 rounded-lg border border-primary/20">
                     <Lock className="w-4 h-4 text-primary" />
@@ -209,7 +210,7 @@ export default function Home() {
               </div>
 
               {/* Pillar C: Connected Community */}
-              <div className="space-y-6 flex flex-col">
+              <div className="space-y-6 flex flex-col animate-reveal reveal-delay-3">
                 <div className="flex justify-center mb-2">
                   <div className="inline-flex items-center gap-2 bg-[#20603D]/10 px-3 py-1.5 rounded-lg border border-[#20603D]/20">
                     <Network className="w-4 h-4 text-[#20603D]" />
@@ -252,7 +253,7 @@ export default function Home() {
         {/* 3. How It Works */}
         <section className="py-24 bg-[#F5F5F7] dark:bg-muted/10 relative overflow-hidden">
           <div className="container mx-auto px-4 relative z-10">
-            <div className="text-center max-w-2xl mx-auto mb-16">
+            <div className="text-center max-w-2xl mx-auto mb-16 animate-reveal">
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-headline font-extrabold mb-4">Simplicity in Motion.</h2>
               <p className="text-sm md:text-base lg:text-lg text-muted-foreground font-light">We handle the technical complexity so you can focus on what matters most.</p>
             </div>
@@ -275,7 +276,7 @@ export default function Home() {
                   desc: "Get instant mobile notifications and view metrics on your control panel."
                 }
               ].map((step, idx) => (
-                <div key={idx} className="relative group text-center flex flex-col items-center">
+                <div key={idx} className="relative group text-center flex flex-col items-center animate-reveal" style={{ animationDelay: `${idx * 0.15}s` }}>
                   <div className="w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-gradient-to-br from-primary to-accent text-white flex items-center justify-center mb-6 shadow-xl shadow-primary/20 group-hover:rotate-3 transition-transform">
                     {step.icon}
                   </div>
@@ -291,7 +292,7 @@ export default function Home() {
         <section className="py-24" id="demo">
           <div className="container mx-auto px-4">
             <div className="grid lg:grid-cols-2 gap-16 items-center">
-              <div>
+              <div className="animate-reveal">
                 <Badge variant="outline" className="mb-4 px-3 py-1 border-primary text-primary font-bold text-xs uppercase tracking-widest">PHYSICAL VALIDATION</Badge>
                 <h2 className="text-3xl md:text-4xl lg:text-5xl font-headline font-extrabold mb-6 tracking-tighter leading-tight">Live Capability Stream.</h2>
                 <p className="text-base md:text-lg text-muted-foreground mb-10 font-light leading-relaxed">
@@ -313,7 +314,7 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="relative group rounded-[2rem] overflow-hidden border border-white/5 shadow-[0_0_60px_rgba(37,99,235,0.1)] aspect-square lg:aspect-video">
+              <div className="relative group rounded-[2rem] overflow-hidden border border-white/5 shadow-[0_0_60px_rgba(37,99,235,0.1)] aspect-square lg:aspect-video animate-reveal">
                 <div className="absolute inset-0 z-0">
                   {communityImg && (
                     <Image 
@@ -372,7 +373,7 @@ export default function Home() {
 
           <div className="container mx-auto px-4 relative z-10">
             <div className="grid lg:grid-cols-2 gap-16 items-center">
-              <div>
+              <div className="animate-reveal">
                 <h2 className="text-3xl md:text-5xl lg:text-6xl font-headline font-extrabold mb-6 tracking-tighter leading-tight">Ready to Secure Your Piece of Tomorrow?</h2>
                 <p className="text-lg md:text-xl text-primary-foreground/80 mb-10 font-light leading-relaxed">
                   Contact our technical deployment team today for a tailored residential or community security assessment.
@@ -389,7 +390,7 @@ export default function Home() {
                 </div>
               </div>
 
-              <Card className="bg-white/5 backdrop-blur-2xl p-8 rounded-[2rem] border-white/10 shadow-2xl">
+              <Card className="bg-white/5 backdrop-blur-2xl p-8 rounded-[2rem] border-white/10 shadow-2xl animate-reveal reveal-delay-2">
                 <CardHeader className="px-0 pt-0 mb-6">
                   <CardTitle className="text-xl md:text-2xl font-headline font-bold text-white">Request Assessment</CardTitle>
                 </CardHeader>
