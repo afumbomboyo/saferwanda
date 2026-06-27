@@ -41,6 +41,23 @@ export default function Home() {
     setMounted(true);
     setCurrentTime(new Date().toLocaleTimeString());
     
+    // Intersection Observer for scroll-triggered reveal animations
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('reveal-visible');
+        }
+      });
+    }, observerOptions);
+
+    const revealElements = document.querySelectorAll('.animate-reveal');
+    revealElements.forEach((el) => observer.observe(el));
+    
     const interval = setInterval(() => {
       setMetrics(prev => prev.map(m => {
         if (m.id === 1) return { ...m, value: `${Math.floor(Math.random() * 3) + 11} PPM` };
@@ -49,7 +66,10 @@ export default function Home() {
       setCurrentTime(new Date().toLocaleTimeString());
     }, 4000);
     
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      observer.disconnect();
+    };
   }, []);
 
   const handleGetStarted = (serviceId: string) => {
