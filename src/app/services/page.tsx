@@ -1,6 +1,7 @@
 
 "use client"
 
+import { useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Shield, Heart, Flame, Home, Box, Eye, ArrowRight, Network } from 'lucide-react';
@@ -9,6 +10,26 @@ import { Button } from '@/components/ui/button';
 
 export default function ServicesPage() {
   const router = useRouter();
+
+  useEffect(() => {
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('reveal-visible');
+        }
+      });
+    }, observerOptions);
+
+    const revealElements = document.querySelectorAll('.animate-reveal');
+    revealElements.forEach((el) => observer.observe(el));
+    
+    return () => observer.disconnect();
+  }, []);
 
   const services = [
     {
