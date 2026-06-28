@@ -154,11 +154,6 @@ export default function Navbar() {
 
         {/* Mobile Nav Toggle */}
         <div className="md:hidden flex items-center gap-4">
-          {!user && !loading && (
-            <Button asChild size="sm" className="h-9 px-4 rounded-lg font-bold bg-primary text-xs">
-              <Link href="/auth?signup=true">Get Started</Link>
-            </Button>
-          )}
           <MobileMenu navLinks={navLinks} activePath={activePath} user={user} handleLogout={handleLogout} />
         </div>
       </div>

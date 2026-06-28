@@ -248,7 +248,7 @@ export default function Home() {
                     Decentralized network gateway monitoring nodes linking neighborhood watch loops together.
                   </CardContent>
                   <div className="p-6 pt-0">
-                    <Button onClick={() => handleGetStarted('neighborhood-surveillance')} className="w-full rounded-xl bg-rwanda-green text-white hover:bg-rwanda-green/90">Get Started</Button>
+                    <Button onClick={() => handleGetStarted('neighborhood-surveillance')} className="w-full rounded-xl bg-[#20603D] text-white hover:bg-[#20603D]/90">Get Started</Button>
                   </div>
                 </Card>
                 <Card className="glass-card group hover:-translate-y-1 transition-transform duration-500 overflow-hidden flex flex-col h-full">
@@ -262,7 +262,7 @@ export default function Home() {
                     Scalable urban IoT applications, including smart lighting, waste analytics, and environmental hazard tracking.
                   </CardContent>
                   <div className="p-6 pt-0">
-                    <Button onClick={() => handleGetStarted('smart-community')} className="w-full rounded-xl bg-rwanda-green text-white hover:bg-rwanda-green/90">Get Started</Button>
+                    <Button onClick={() => handleGetStarted('smart-community')} className="w-full rounded-xl bg-[#20603D] text-white hover:bg-[#20603D]/90">Get Started</Button>
                   </div>
                 </Card>
               </div>
