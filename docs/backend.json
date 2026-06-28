@@ -3,7 +3,7 @@
   "entities": {
     "UserProfile": {
       "title": "User Profile",
-      "description": "Stores user account information and selected security services.",
+      "description": "Stores user account information, selected security services, and hardware onboarding progress.",
       "type": "object",
       "properties": {
         "uid": { "type": "string", "description": "Unique Firebase Auth ID" },
@@ -15,6 +15,20 @@
           "description": "List of SafeRwanda service IDs user has opted into."
         },
         "isOnboarded": { "type": "boolean", "description": "Flag indicating if user finished initial setup." },
+        "purchaseStatus": { 
+          "type": "string", 
+          "enum": ["none", "purchased", "leased"],
+          "description": "Hardware procurement status."
+        },
+        "hasPaidSetupFee": { "type": "boolean", "description": "Whether the user opted for professional installation." },
+        "deviceId": { "type": "string", "description": "The linked IoT hardware unique identifier." },
+        "alertPhone": { "type": "string", "description": "Phone number for distress alerts." },
+        "alertEmail": { "type": "string", "description": "Email address for distress alerts." },
+        "subscriptionActive": { "type": "boolean", "description": "Whether the service subscription is current." },
+        "subscriptionType": { 
+          "type": "string", 
+          "enum": ["none", "weekly", "monthly", "yearly"] 
+        },
         "createdAt": { "type": "string", "format": "date-time" }
       },
       "required": ["uid", "email", "isOnboarded"]
@@ -26,7 +40,7 @@
   "firestore": {
     "/users/{userId}": {
       "schema": "#/backend/entities/UserProfile",
-      "description": "User profile document containing account settings and chosen services."
+      "description": "User profile document containing account settings, hardware status, and chosen services."
     }
   }
 }
