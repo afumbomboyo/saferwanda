@@ -25,14 +25,15 @@ import {
   Package,
   Wrench,
   Wifi,
-  PlusCircle,
-  Cpu,
-  LayoutDashboard,
-  ShoppingCart,
   Zap,
   Globe,
   Lock,
-  Target
+  Target,
+  LayoutDashboard,
+  ShoppingCart,
+  Cpu,
+  FileText,
+  ChevronLeft
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
@@ -42,6 +43,53 @@ import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
+import Image from 'next/image';
+
+// Service hardware metadata for procurement
+const HARDWARE_CATALOG: Record<string, any> = {
+  "child-protection": {
+    name: "SR-Tracker Pro",
+    image: "https://picsum.photos/seed/child1/600/400",
+    buyPrice: "45,000 RWF",
+    leasePrice: "4,000 RWF/mo",
+    description: "Multi-band GPS node with SOS override and silent audio channel."
+  },
+  "elderly-care": {
+    name: "SR-Vital Link",
+    image: "https://picsum.photos/seed/elder1/600/400",
+    buyPrice: "38,000 RWF",
+    leasePrice: "3,500 RWF/mo",
+    description: "Medical-grade sensor suite with fall detection and vitals telemetry."
+  },
+  "fire-prevention": {
+    name: "SR-Thermal Node",
+    image: "https://picsum.photos/seed/fire1/600/400",
+    buyPrice: "25,000 RWF",
+    leasePrice: "2,500 RWF/mo",
+    description: "Gas and thermal leak detector with 10-year node battery."
+  },
+  "property-security": {
+    name: "SR-Entry Guard",
+    image: "https://picsum.photos/seed/prop1/600/400",
+    buyPrice: "55,000 RWF",
+    leasePrice: "5,000 RWF/mo",
+    description: "Smart lock and perimeter breach node for secure compounds."
+  },
+  "asset-protection": {
+    name: "SR-Asset Beacon",
+    image: "https://picsum.photos/seed/asset1/600/400",
+    buyPrice: "60,000 RWF",
+    leasePrice: "5,500 RWF/mo",
+    description: "Hardened industrial tracker for vehicles and heavy equipment."
+  },
+  "neighborhood-surveillance": {
+    name: "SR-Mesh Gateway",
+    image: "https://picsum.photos/seed/neigh1/600/400",
+    buyPrice: "75,000 RWF",
+    leasePrice: "7,000 RWF/mo",
+    description: "High-capacity network hub for community mesh integrity."
+  }
+};
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -53,8 +101,12 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
   
-  // Tab state: 'overview' | 'staging' | 'procurement' | 'setup' | 'activation'
+  // Tab state: 'overview' | 'staging' | 'setup' | 'activation'
   const [activeTab, setActiveTab] = useState<string>('overview');
+
+  // Staging Sub-state
+  const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null);
+  const [stagingStep, setStagingStep] = useState<'list' | 'instructions' | 'procurement'>('list');
 
   // Form states
   const [deviceIdInput, setDeviceIdInput] = useState('');
@@ -63,7 +115,6 @@ export default function DashboardPage() {
   const [subType, setSubType] = useState('monthly');
 
   useEffect(() => {
-    // Setup Intersection Observer for reveal animations in the dashboard
     const observerOptions = {
       threshold: 0.05,
       rootMargin: '0px 0px -50px 0px'
@@ -81,7 +132,7 @@ export default function DashboardPage() {
     revealElements.forEach((el) => observer.observe(el));
     
     return () => observer.disconnect();
-  }, [activeTab, loading]);
+  }, [activeTab, loading, stagingStep]);
 
   useEffect(() => {
     if (userLoading) return;
@@ -92,6 +143,7 @@ export default function DashboardPage() {
 
     const fetchProfile = async () => {
       try {
+        if (!db) return;
         const docRef = doc(db, 'users', user.uid);
         const res = await getDoc(docRef);
         if (res.exists()) {
@@ -148,14 +200,12 @@ export default function DashboardPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-background relative overflow-hidden">
-      {/* Visual background flares */}
       <div className="absolute -top-24 -left-24 w-96 h-96 bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute top-1/2 -right-24 w-80 h-80 bg-accent/5 rounded-full blur-[100px] pointer-events-none" />
 
       <main className="flex-grow pt-32 pb-24 relative z-10">
         <div className="container mx-auto px-4 max-w-7xl">
           
-          {/* Header Section */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12 animate-fade-in">
             <div className="flex items-center gap-4">
               <div className="w-16 h-16 rounded-[2rem] bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center border border-primary/20 shadow-2xl shadow-primary/20">
@@ -197,11 +247,10 @@ export default function DashboardPage() {
           </div>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full space-y-12">
-            <TabsList className="grid grid-cols-5 h-auto p-1.5 bg-secondary/40 backdrop-blur-2xl rounded-[1.5rem] border border-border/50 sticky top-24 z-[50] shadow-xl">
+            <TabsList className="grid grid-cols-4 h-auto p-1.5 bg-secondary/40 backdrop-blur-2xl rounded-[1.5rem] border border-border/50 sticky top-24 z-[50] shadow-xl">
               {[
                 { id: 'overview', icon: LayoutDashboard, label: 'Overview' },
                 { id: 'staging', icon: ShoppingCart, label: 'Staging' },
-                { id: 'procurement', icon: Package, label: 'Procurement' },
                 { id: 'setup', icon: Wrench, label: 'Integration' },
                 { id: 'activation', icon: Zap, label: 'Activation' },
               ].map((tab) => (
@@ -259,13 +308,13 @@ export default function DashboardPage() {
                   <CardContent className="p-8 pt-0 flex-grow flex flex-col justify-between">
                     <p className="text-sm text-muted-foreground font-light leading-relaxed">
                       {!profile?.deviceId 
-                        ? "Your Command Center is operational, but no hardware nodes are linked. Proceed to Setup to initialize your first device."
+                        ? "Your Command Center is operational, but no hardware nodes are linked. Proceed to Staging to initialize your first device."
                         : !profile?.subscriptionActive 
                           ? "Node linked successfully. Finalize your strategic activation to begin receiving live telemetry and distress alerts."
                           : "All systems operational. Monitoring active security mesh."}
                     </p>
                     <Button 
-                      onClick={() => setActiveTab(profile?.deviceId ? 'activation' : 'setup')}
+                      onClick={() => setActiveTab(profile?.deviceId ? 'activation' : 'staging')}
                       className="w-full mt-6 rounded-2xl h-14 font-black uppercase tracking-widest text-xs bg-primary shadow-xl shadow-primary/20"
                     >
                       {profile?.deviceId ? 'Go to Activation' : 'Initialize Setup'}
@@ -273,212 +322,200 @@ export default function DashboardPage() {
                   </CardContent>
                 </Card>
               </div>
+            </TabsContent>
 
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <Card className="bg-card/40 backdrop-blur-md border-border rounded-[2.5rem] overflow-hidden shadow-2xl shadow-black/5">
-                  <CardHeader className="p-8">
-                    <CardTitle className="text-xl font-black tracking-tight flex items-center gap-3">
-                      <Lock className="w-5 h-5 text-primary" />
-                      Secure Registry
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="p-8 pt-0 space-y-4">
-                    {profile?.deviceId ? (
-                      <div className="p-6 rounded-2xl bg-secondary/30 border border-border flex items-center justify-between group">
-                        <div className="flex items-center gap-4">
-                          <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:scale-105 transition-transform">
-                            <Smartphone className="w-6 h-6" />
-                          </div>
-                          <div>
-                            <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">Linked Device</p>
-                            <p className="font-mono font-bold text-lg">{profile.deviceId}</p>
-                          </div>
-                        </div>
-                        <CheckCircle2 className="w-5 h-5 text-rwanda-green" />
+            {/* TAB 2: STAGING (CART + PROCUREMENT FLOW) */}
+            <TabsContent value="staging" className="space-y-8 animate-reveal outline-none">
+              {stagingStep === 'list' && (
+                <Card className="bg-card/60 backdrop-blur-xl border-border rounded-[3rem] overflow-hidden shadow-2xl shadow-black/5">
+                  <CardHeader className="p-12 pb-6 border-b border-border/50">
+                    <div className="flex items-center gap-4 mb-4">
+                      <div className="p-4 rounded-[1.5rem] bg-accent/10 text-accent border border-accent/10 shadow-inner">
+                        <ShoppingCart className="w-8 h-8" />
                       </div>
-                    ) : (
-                      <div className="py-12 text-center border-2 border-dashed border-border rounded-[2rem] bg-secondary/10">
-                        <p className="text-xs text-muted-foreground uppercase font-black tracking-widest mb-4">No Devices Authenticated</p>
-                        <Button variant="outline" size="sm" onClick={() => setActiveTab('setup')} className="rounded-xl font-bold">Register Now</Button>
+                      <div>
+                        <CardTitle className="text-4xl font-black tracking-tighter">Strategic Staging</CardTitle>
+                        <CardDescription className="text-lg font-light">Your operational roadmap for hardware deployment.</CardDescription>
                       </div>
-                    )}
-                  </CardContent>
-                </Card>
-
-                <Card className="bg-card/40 backdrop-blur-md border-border rounded-[2.5rem] overflow-hidden shadow-2xl shadow-black/5">
-                  <CardHeader className="p-8">
-                    <CardTitle className="text-xl font-black tracking-tight flex items-center gap-3">
-                      <ListChecks className="w-5 h-5 text-accent" />
-                      Staged Protocols
-                    </CardTitle>
+                    </div>
                   </CardHeader>
-                  <CardContent className="p-8 pt-0">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      {profile?.servicesSelected?.map((s: string) => (
-                        <div key={s} className="flex items-center gap-3 p-4 rounded-xl bg-secondary/20 border border-border/50">
-                          <Shield className="w-4 h-4 text-primary opacity-60" />
-                          <span className="text-[10px] font-black uppercase tracking-widest truncate">{s.replace('-', ' ')}</span>
+                  <CardContent className="p-12">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {profile?.servicesSelected?.length > 0 ? (
+                        profile.servicesSelected.map((serviceId: string) => (
+                          <div key={serviceId} className="p-8 rounded-[2.5rem] border bg-background border-border shadow-sm flex flex-col justify-between group hover:border-primary hover:shadow-2xl hover:shadow-primary/5 transition-all h-full relative overflow-hidden">
+                             <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
+                              <Shield className="w-20 h-20" />
+                            </div>
+                            <div className="relative z-10">
+                              <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mb-8 border border-primary/5 shadow-inner group-hover:scale-105 transition-transform">
+                                <Shield className="w-7 h-7 text-primary" />
+                              </div>
+                              <h4 className="font-black text-xl capitalize mb-3 tracking-tight">{serviceId.replace('-', ' ')}</h4>
+                              <p className="text-[10px] text-muted-foreground leading-relaxed font-bold uppercase tracking-widest mb-8 opacity-60">Status: Staged for Deployment</p>
+                            </div>
+                            <Button 
+                              onClick={() => {
+                                setSelectedServiceId(serviceId);
+                                setStagingStep('instructions');
+                              }}
+                              className="w-full rounded-xl bg-primary/10 text-primary hover:bg-primary hover:text-white border-none text-[10px] font-black tracking-widest uppercase px-3 py-1"
+                            >
+                              Initialize Setup
+                            </Button>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="col-span-full py-24 text-center border-2 border-dashed border-border rounded-[2.5rem] bg-secondary/5">
+                          <ShoppingCart className="w-16 h-16 text-muted-foreground mx-auto mb-6 opacity-10" />
+                          <h4 className="text-2xl font-black tracking-tight mb-2">Staging Empty</h4>
+                          <p className="text-muted-foreground font-medium mb-8 max-w-sm mx-auto leading-relaxed">You haven't initialized any security domains. Explore our services to build your protection roadmap.</p>
+                          <Button onClick={() => router.push('/services')} className="rounded-2xl h-14 px-10 font-black bg-primary shadow-xl shadow-primary/20 text-sm uppercase tracking-widest">Browse Services</Button>
                         </div>
-                      ))}
-                      {(!profile?.servicesSelected || profile.servicesSelected.length === 0) && (
-                        <p className="text-xs text-muted-foreground italic col-span-2">No protocols staged.</p>
                       )}
                     </div>
                   </CardContent>
                 </Card>
-              </div>
-            </TabsContent>
+              )}
 
-            {/* TAB 2: STAGING (THE CART) */}
-            <TabsContent value="staging" className="space-y-8 animate-reveal outline-none">
-              <Card className="bg-card/60 backdrop-blur-xl border-border rounded-[3rem] overflow-hidden shadow-2xl shadow-black/5">
-                <CardHeader className="p-12 pb-6 border-b border-border/50">
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className="p-4 rounded-[1.5rem] bg-accent/10 text-accent border border-accent/10 shadow-inner">
-                      <ShoppingCart className="w-8 h-8" />
-                    </div>
-                    <div>
-                      <CardTitle className="text-4xl font-black tracking-tighter">Strategic Staging</CardTitle>
-                      <CardDescription className="text-lg font-light">Your operational roadmap for hardware deployment.</CardDescription>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="p-12">
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {profile?.servicesSelected?.length > 0 ? (
-                      profile.servicesSelected.map((serviceId: string) => (
-                        <div key={serviceId} className="p-8 rounded-[2.5rem] border bg-background border-border shadow-sm flex flex-col justify-between group hover:border-primary hover:shadow-2xl hover:shadow-primary/5 transition-all h-full relative overflow-hidden">
-                           <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
-                            <Shield className="w-20 h-20" />
-                          </div>
-                          <div className="relative z-10">
-                            <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mb-8 border border-primary/5 shadow-inner group-hover:scale-105 transition-transform">
-                              <Shield className="w-7 h-7 text-primary" />
-                            </div>
-                            <h4 className="font-black text-xl capitalize mb-3 tracking-tight">{serviceId.replace('-', ' ')}</h4>
-                            <p className="text-[10px] text-muted-foreground leading-relaxed font-bold uppercase tracking-widest mb-8 opacity-60">Status: Staged for Linking</p>
-                          </div>
-                          <Badge className="w-fit bg-primary/10 text-primary border-none text-[8px] font-black tracking-widest uppercase px-3 py-1">Node Required</Badge>
-                        </div>
-                      ))
-                    ) : (
-                      <div className="col-span-full py-24 text-center border-2 border-dashed border-border rounded-[2.5rem] bg-secondary/5">
-                        <ShoppingCart className="w-16 h-16 text-muted-foreground mx-auto mb-6 opacity-10" />
-                        <h4 className="text-2xl font-black tracking-tight mb-2">Staging Empty</h4>
-                        <p className="text-muted-foreground font-medium mb-8 max-w-sm mx-auto leading-relaxed">You haven't initialized any security domains. Explore our services to build your protection roadmap.</p>
-                        <Button onClick={() => router.push('/services')} className="rounded-2xl h-14 px-10 font-black bg-primary shadow-xl shadow-primary/20 text-sm uppercase tracking-widest">Browse Services</Button>
+              {stagingStep === 'instructions' && selectedServiceId && (
+                <Card className="bg-card/60 backdrop-blur-xl border-border rounded-[3rem] overflow-hidden shadow-2xl shadow-black/5 animate-reveal">
+                  <CardHeader className="p-12 pb-6 border-b border-border/50">
+                    <Button variant="ghost" className="w-fit mb-6 rounded-xl gap-2 font-bold" onClick={() => setStagingStep('list')}>
+                      <ChevronLeft className="w-4 h-4" /> Back to Staging
+                    </Button>
+                    <div className="flex items-center gap-4">
+                      <div className="p-4 rounded-[1.5rem] bg-primary/10 text-primary border border-primary/10 shadow-inner">
+                        <FileText className="w-8 h-8" />
                       </div>
-                    )}
+                      <div>
+                        <CardTitle className="text-4xl font-black tracking-tighter uppercase">Deployment Protocol</CardTitle>
+                        <CardDescription className="text-lg font-light">Service ID: {selectedServiceId.toUpperCase()}</CardDescription>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="p-12 space-y-12">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                      <div className="space-y-8">
+                        <h3 className="text-2xl font-black tracking-tight">How It Works</h3>
+                        <div className="space-y-6">
+                          {[
+                            { step: "01", title: "Hardware Procurement", desc: "Select between strategic ownership or flexible leasing for your IoT node." },
+                            { step: "02", title: "Physical Integration", desc: "Follow the provided manual to mount and power your physical node." },
+                            { step: "03", title: "Node Registry", desc: "Link your device serial ID to the command center to verify integrity." },
+                            { step: "04", title: "Distress Configuration", desc: "Define your alert contacts to receive real-time notifications." }
+                          ].map((item, i) => (
+                            <div key={i} className="flex gap-6 items-start">
+                              <span className="text-primary font-black text-3xl opacity-20">{item.step}</span>
+                              <div>
+                                <h4 className="font-bold text-lg mb-1">{item.title}</h4>
+                                <p className="text-sm text-muted-foreground font-light">{item.desc}</p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                        <Button className="h-14 px-8 rounded-xl font-bold bg-secondary text-foreground hover:bg-primary hover:text-white transition-all gap-2">
+                          <Download className="w-5 h-5" /> Download Strategic Manual (PDF)
+                        </Button>
+                      </div>
+                      <div className="bg-primary/5 rounded-[2.5rem] border border-primary/10 p-10 flex flex-col justify-center text-center">
+                        <Cpu className="w-20 h-20 text-primary mx-auto mb-6 opacity-20" />
+                        <h4 className="text-2xl font-black tracking-tight mb-4">Ready for Hardware?</h4>
+                        <p className="text-sm text-muted-foreground font-light mb-8">Proceeding to procurement will allow you to select your node model and shipping protocols.</p>
+                        <Button onClick={() => setStagingStep('procurement')} className="h-16 rounded-2xl font-black uppercase tracking-widest text-xs bg-primary shadow-2xl shadow-primary/30">
+                          Proceed to Procurement
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {stagingStep === 'procurement' && selectedServiceId && (
+                <div className="space-y-12 animate-reveal">
+                  <div className="flex items-center justify-between">
+                    <Button variant="ghost" className="rounded-xl gap-2 font-bold" onClick={() => setStagingStep('instructions')}>
+                      <ChevronLeft className="w-4 h-4" /> Back to Instructions
+                    </Button>
+                    <Badge className="bg-primary text-white font-black tracking-widest px-4 py-1 uppercase">{selectedServiceId.replace('-', ' ')}</Badge>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-6xl mx-auto">
+                    {/* Ownership Model */}
+                    <Card className={cn(
+                      "rounded-[3.5rem] overflow-hidden border-4 transition-all cursor-pointer group hover:-translate-y-2 relative shadow-2xl",
+                      profile?.purchaseStatus === 'purchased' ? 'border-primary bg-primary/[0.03]' : 'border-border bg-card/60'
+                    )} onClick={() => updateProfileData({ purchaseStatus: 'purchased', hasPaidSetupFee: true })}>
+                      <div className="relative h-64 w-full">
+                        <Image src={HARDWARE_CATALOG[selectedServiceId]?.image} alt="Hardware" fill className="object-cover brightness-75 group-hover:scale-105 transition-transform duration-700" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
+                        <div className="absolute bottom-8 left-8">
+                          <Badge className="bg-primary text-white mb-2 uppercase tracking-widest text-[8px]">{HARDWARE_CATALOG[selectedServiceId]?.name}</Badge>
+                          <h4 className="text-3xl font-black text-white tracking-tighter">Strategic Ownership</h4>
+                        </div>
+                      </div>
+                      <CardContent className="p-10 space-y-6">
+                        <p className="text-sm text-muted-foreground leading-relaxed font-light">{HARDWARE_CATALOG[selectedServiceId]?.description}</p>
+                        <div className="flex justify-between items-center p-6 rounded-3xl bg-background border border-border">
+                          <div>
+                            <p className="text-[8px] font-black uppercase tracking-widest text-muted-foreground">Asset Cost + Shipping</p>
+                            <p className="text-2xl font-black tracking-tighter">{HARDWARE_CATALOG[selectedServiceId]?.buyPrice}</p>
+                          </div>
+                          <CheckCircle2 className={cn("w-8 h-8", profile?.purchaseStatus === 'purchased' ? "text-primary" : "text-muted opacity-20")} />
+                        </div>
+                        <Button className={cn(
+                          "w-full h-16 rounded-2xl font-black uppercase tracking-widest text-xs transition-all",
+                          profile?.purchaseStatus === 'purchased' ? "bg-primary shadow-xl shadow-primary/20" : "bg-secondary"
+                        )}>
+                          Select Ownership
+                        </Button>
+                      </CardContent>
+                    </Card>
+
+                    {/* Leasing Model */}
+                    <Card className={cn(
+                      "rounded-[3.5rem] overflow-hidden border-4 transition-all cursor-pointer group hover:-translate-y-2 relative shadow-2xl",
+                      profile?.purchaseStatus === 'leased' ? 'border-accent bg-accent/[0.03]' : 'border-border bg-card/60'
+                    )} onClick={() => updateProfileData({ purchaseStatus: 'leased', hasPaidSetupFee: false })}>
+                      <div className="relative h-64 w-full">
+                        <Image src={HARDWARE_CATALOG[selectedServiceId]?.image} alt="Hardware" fill className="object-cover brightness-75 group-hover:scale-105 transition-transform duration-700" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
+                        <div className="absolute bottom-8 left-8">
+                          <Badge className="bg-accent text-accent-foreground mb-2 uppercase tracking-widest text-[8px]">{HARDWARE_CATALOG[selectedServiceId]?.name}</Badge>
+                          <h4 className="text-3xl font-black text-white tracking-tighter">Mesh Leasing</h4>
+                        </div>
+                      </div>
+                      <CardContent className="p-10 space-y-6">
+                        <p className="text-sm text-muted-foreground leading-relaxed font-light">Flexible monthly hardware access with full remote support and digital manuals.</p>
+                        <div className="flex justify-between items-center p-6 rounded-3xl bg-background border border-border">
+                          <div>
+                            <p className="text-[8px] font-black uppercase tracking-widest text-muted-foreground">Monthly Service Fee</p>
+                            <p className="text-2xl font-black tracking-tighter">{HARDWARE_CATALOG[selectedServiceId]?.leasePrice}</p>
+                          </div>
+                          <CheckCircle2 className={cn("w-8 h-8", profile?.purchaseStatus === 'leased' ? "text-accent" : "text-muted opacity-20")} />
+                        </div>
+                        <Button variant="outline" className={cn(
+                          "w-full h-16 rounded-2xl font-black uppercase tracking-widest text-xs transition-all",
+                          profile?.purchaseStatus === 'leased' ? "border-accent text-accent bg-accent/5" : "border-border"
+                        )}>
+                          Select Leasing
+                        </Button>
+                      </CardContent>
+                    </Card>
                   </div>
                   
-                  {profile?.servicesSelected?.length > 0 && (
-                    <div className="mt-12 flex flex-col md:flex-row items-center justify-between p-10 bg-primary/5 rounded-[2.5rem] border border-primary/10 gap-8">
-                      <div className="flex items-center gap-6">
-                        <div className="w-16 h-16 rounded-[1.25rem] bg-primary/20 flex items-center justify-center shrink-0 border border-primary/10">
-                          <Package className="w-8 h-8 text-primary" />
-                        </div>
-                        <div>
-                          <h4 className="text-2xl font-black tracking-tight mb-1">Begin Procurement</h4>
-                          <p className="text-sm text-muted-foreground font-light">Staging is complete. Select your hardware model to start deployment.</p>
-                        </div>
-                      </div>
-                      <Button onClick={() => setActiveTab('procurement')} className="h-16 px-10 rounded-2xl font-black text-xs uppercase tracking-[0.2em] bg-primary shadow-2xl shadow-primary/20 hover:scale-[1.02] transition-transform flex items-center gap-3">
-                        Procure Hardware <ArrowRight className="w-4 h-4" />
+                  {profile?.purchaseStatus !== 'none' && (
+                    <div className="flex justify-center mt-12">
+                      <Button onClick={() => setActiveTab('setup')} className="h-16 px-12 rounded-[1.5rem] font-black uppercase tracking-widest text-xs bg-primary shadow-2xl shadow-primary/30 flex items-center gap-4 group">
+                        Proceed to Node Integration <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                       </Button>
                     </div>
                   )}
-                </CardContent>
-              </Card>
+                </div>
+              )}
             </TabsContent>
 
-            {/* TAB 3: PROCUREMENT */}
-            <TabsContent value="procurement" className="space-y-12 animate-reveal outline-none">
-              <div className="text-center max-w-2xl mx-auto">
-                <Badge variant="outline" className="mb-4 border-accent text-accent font-black tracking-[0.3em] uppercase text-[10px]">Hardware Acquisition</Badge>
-                <h2 className="text-5xl font-black tracking-tighter mb-4">Procurement Models</h2>
-                <p className="text-muted-foreground text-lg font-light leading-relaxed">Choose the node deployment strategy that aligns with your security architecture.</p>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-6xl mx-auto">
-                {/* Ownership Model */}
-                <Card className={cn(
-                  "rounded-[3.5rem] overflow-hidden border-4 transition-all cursor-pointer group hover:-translate-y-2 relative shadow-2xl",
-                  profile?.purchaseStatus === 'purchased' ? 'border-primary bg-primary/[0.03] shadow-primary/10' : 'border-border bg-card/60 backdrop-blur-sm'
-                )} onClick={() => updateProfileData({ purchaseStatus: 'purchased', hasPaidSetupFee: true })}>
-                  {profile?.purchaseStatus === 'purchased' && (
-                    <div className="absolute top-10 right-10 text-primary">
-                      <CheckCircle2 className="w-10 h-10 fill-primary text-white" />
-                    </div>
-                  )}
-                  <CardHeader className="p-12 pb-6">
-                    <div className="w-20 h-20 rounded-[2rem] bg-primary/10 flex items-center justify-center mb-8 border border-primary/5 shadow-inner group-hover:scale-110 transition-transform">
-                      <Package className="w-10 h-10 text-primary" />
-                    </div>
-                    <Badge className="w-fit bg-primary text-white border-none text-[8px] font-black tracking-[0.2em] uppercase py-1 px-3 mb-4">Strategic Asset</Badge>
-                    <CardTitle className="text-4xl font-black tracking-tighter">Ownership</CardTitle>
-                    <CardDescription className="text-lg mt-4 leading-relaxed font-light">Full node control with elite white-glove setup and lifetime warranty.</CardDescription>
-                  </CardHeader>
-                  <CardContent className="px-12 pb-12 space-y-10">
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-4 p-5 rounded-3xl bg-secondary/30 border border-border">
-                        <Wrench className="w-6 h-6 text-primary" />
-                        <span className="text-sm font-bold tracking-tight">Professional Installation Included</span>
-                      </div>
-                      <div className="flex items-center gap-4 p-5 rounded-3xl bg-secondary/30 border border-border">
-                        <Shield className="w-6 h-6 text-primary" />
-                        <span className="text-sm font-bold tracking-tight">Lifetime Hardware Protection</span>
-                      </div>
-                    </div>
-                    <Button className={cn(
-                      "w-full h-20 rounded-[1.75rem] font-black text-sm uppercase tracking-[0.2em] transition-all shadow-2xl",
-                      profile?.purchaseStatus === 'purchased' ? 'bg-primary shadow-primary/30' : 'bg-secondary text-foreground hover:bg-primary hover:text-white'
-                    )}>
-                      {profile?.purchaseStatus === 'purchased' ? 'Selected Protocol' : 'Select Ownership'}
-                    </Button>
-                  </CardContent>
-                </Card>
-
-                {/* Leasing Model */}
-                <Card className={cn(
-                  "rounded-[3.5rem] overflow-hidden border-4 transition-all cursor-pointer group hover:-translate-y-2 relative shadow-2xl",
-                  profile?.purchaseStatus === 'leased' ? 'border-accent bg-accent/[0.03] shadow-accent/10' : 'border-border bg-card/60 backdrop-blur-sm'
-                )} onClick={() => updateProfileData({ purchaseStatus: 'leased', hasPaidSetupFee: false })}>
-                   {profile?.purchaseStatus === 'leased' && (
-                    <div className="absolute top-10 right-10 text-accent">
-                      <CheckCircle2 className="w-10 h-10 fill-accent text-white" />
-                    </div>
-                  )}
-                  <CardHeader className="p-12 pb-6">
-                    <div className="w-20 h-20 rounded-[2rem] bg-accent/10 flex items-center justify-center mb-8 border border-accent/5 shadow-inner group-hover:scale-110 transition-transform">
-                      <CreditCard className="w-10 h-10 text-accent" />
-                    </div>
-                    <Badge className="w-fit bg-accent text-accent-foreground border-none text-[8px] font-black tracking-[0.2em] uppercase py-1 px-3 mb-4">Flexible Mesh</Badge>
-                    <CardTitle className="text-4xl font-black tracking-tighter">Leasing</CardTitle>
-                    <CardDescription className="text-lg mt-4 leading-relaxed font-light">Flexible hardware subscription with comprehensive self-setup protocols.</CardDescription>
-                  </CardHeader>
-                  <CardContent className="px-12 pb-12 space-y-10">
-                     <div className="space-y-4">
-                      <div className="flex items-center gap-4 p-5 rounded-3xl bg-secondary/30 border border-border">
-                        <Download className="w-6 h-6 text-accent" />
-                        <span className="text-sm font-bold tracking-tight">Digital Deployment Manuals</span>
-                      </div>
-                      <div className="flex items-center gap-4 p-5 rounded-3xl bg-secondary/30 border border-border">
-                        <CreditCard className="w-6 h-6 text-accent" />
-                        <span className="text-sm font-bold tracking-tight">Zero Upfront Capital Cost</span>
-                      </div>
-                    </div>
-                    <Button variant="outline" className={cn(
-                      "w-full h-20 rounded-[1.75rem] font-black text-sm uppercase tracking-[0.2em] transition-all shadow-2xl",
-                      profile?.purchaseStatus === 'leased' ? 'border-accent text-accent bg-accent/5 shadow-accent/20' : 'border-border text-foreground hover:border-accent hover:text-accent'
-                    )}>
-                      {profile?.purchaseStatus === 'leased' ? 'Selected Protocol' : 'Select Leasing'}
-                    </Button>
-                  </CardContent>
-                </Card>
-              </div>
-            </TabsContent>
-
-            {/* TAB 4: SETUP & REGISTRY */}
+            {/* TAB 3: SETUP & REGISTRY */}
             <TabsContent value="setup" className="space-y-10 animate-reveal outline-none">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
                 <Card className="rounded-[3rem] bg-card/60 backdrop-blur-xl border-border overflow-hidden shadow-2xl shadow-black/5">
@@ -504,18 +541,6 @@ export default function DashboardPage() {
                       <Button variant="secondary" className="w-full h-20 rounded-[1.75rem] font-black uppercase tracking-[0.2em] text-xs gap-3 shadow-xl group">
                         <Download className="w-6 h-6 group-hover:translate-y-1 transition-transform" /> Download Strategic Manual
                       </Button>
-                    )}
-
-                    {profile?.hasPaidSetupFee && (
-                      <div className="flex items-center gap-5 p-8 rounded-[2rem] bg-rwanda-green/10 border border-rwanda-green/20 text-rwanda-green shadow-inner">
-                        <div className="p-3 rounded-2xl bg-rwanda-green/20">
-                          <CheckCircle2 className="w-7 h-7" />
-                        </div>
-                        <div>
-                          <p className="font-black uppercase tracking-[0.2em] text-[10px] mb-1">Status: Technician Confirmed</p>
-                          <p className="font-bold text-sm tracking-tight">Installation protocols are in progress.</p>
-                        </div>
-                      </div>
                     )}
                   </CardContent>
                 </Card>
@@ -582,7 +607,7 @@ export default function DashboardPage() {
               </div>
             </TabsContent>
 
-            {/* TAB 5: ACTIVATION */}
+            {/* TAB 4: ACTIVATION */}
             <TabsContent value="activation" className="animate-reveal outline-none">
               <Card className="max-w-4xl mx-auto rounded-[4rem] border-rwanda-green/20 overflow-hidden shadow-2xl shadow-black/10">
                 <CardHeader className="p-16 text-center bg-gradient-to-b from-rwanda-green/[0.05] to-transparent border-b border-rwanda-green/10">
@@ -636,14 +661,6 @@ export default function DashboardPage() {
                       <AlertTriangle className="w-5 h-5" /> Authenticate hardware before system activation
                     </div>
                   )}
-                  <div className="space-y-4">
-                    <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.5em] opacity-40">Strategic Processing • AES-256 Encrypted</p>
-                    <div className="flex justify-center gap-6 opacity-20 grayscale contrast-150">
-                      <div className="h-5 w-16 bg-muted rounded-lg" />
-                      <div className="h-5 w-16 bg-muted rounded-lg" />
-                      <div className="h-5 w-16 bg-muted rounded-lg" />
-                    </div>
-                  </div>
                 </CardFooter>
               </Card>
             </TabsContent>
