@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -50,7 +51,6 @@ export default function DashboardPage() {
   const [currentPhase, setCurrentPhase] = useState<string>('staging');
 
   // Form states
-  const [tempSelectedServices, setTempSelectedServices] = useState<string[]>([]);
   const [deviceIdInput, setDeviceIdInput] = useState('');
   const [alertPhone, setAlertPhone] = useState('');
   const [alertEmail, setAlertEmail] = useState('');
@@ -70,20 +70,17 @@ export default function DashboardPage() {
         if (res.exists()) {
           const data = res.data();
           setProfile(data);
-          setTempSelectedServices(data.servicesSelected || []);
           setAlertEmail(data.alertEmail || user.email || '');
           setAlertPhone(data.alertPhone || '');
           setDeviceIdInput(data.deviceId || '');
 
-          // Determine Phase
+          // Determine starting phase based on data
           if (data.subscriptionActive && data.deviceId) {
             setCurrentPhase('command');
           } else if (data.deviceId) {
             setCurrentPhase('activation');
-          } else if (data.purchaseStatus !== 'none') {
+          } else if (data.purchaseStatus && data.purchaseStatus !== 'none') {
             setCurrentPhase('integration');
-          } else if (data.servicesSelected?.length > 0) {
-            setCurrentPhase('procurement');
           } else {
             setCurrentPhase('staging');
           }
@@ -116,9 +113,10 @@ export default function DashboardPage() {
     try {
       const userDocRef = doc(db, 'users', user.uid);
       await updateDoc(userDocRef, newData);
-      setProfile({ ...profile, ...newData });
+      const updatedProfile = { ...profile, ...newData };
+      setProfile(updatedProfile);
       
-      // Auto-advance phase based on what was updated
+      // Phase progression logic
       if (newData.purchaseStatus) setCurrentPhase('integration');
       if (newData.deviceId) setCurrentPhase('activation');
       if (newData.subscriptionActive) setCurrentPhase('command');
@@ -139,7 +137,7 @@ export default function DashboardPage() {
   }
 
   // PHASE 1: Deployment Staging (The "Cart")
-  if (currentPhase === 'staging' || (profile.purchaseStatus === 'none' && !profile.deviceId)) {
+  if (currentPhase === 'staging') {
     return (
       <div className="min-h-screen pt-32 pb-24 bg-background">
         <div className="container mx-auto px-4 max-w-4xl">
@@ -147,7 +145,7 @@ export default function DashboardPage() {
             <div className="text-left">
               <Badge variant="outline" className="mb-4 border-primary text-primary font-bold px-3 py-1 uppercase tracking-widest text-[10px]">Phase 01: Deployment Staging</Badge>
               <h1 className="text-4xl md:text-5xl font-headline font-extrabold tracking-tight">Staging Area</h1>
-              <p className="text-muted-foreground text-lg mt-2">Review your selected security domains and initialize hardware procurement.</p>
+              <p className="text-muted-foreground text-lg mt-2">Review your selected security protocols and initialize hardware procurement.</p>
             </div>
             <Button variant="destructive" className="h-12 px-6 rounded-xl font-bold flex items-center gap-2" onClick={handleLogout}>
               <LogOut className="w-5 h-5" /> Log Out
@@ -167,7 +165,7 @@ export default function DashboardPage() {
                     </div>
                     <div>
                       <span className="font-bold capitalize text-lg block">{serviceId.replace('-', ' ')}</span>
-                      <span className="text-[10px] text-muted-foreground uppercase font-black tracking-widest">Protocol Staged</span>
+                      <span className="text-[10px] text-muted-foreground uppercase font-black tracking-widest">Ready to Deploy</span>
                     </div>
                   </div>
                   <CheckCircle2 className="text-primary w-5 h-5" />
@@ -186,14 +184,14 @@ export default function DashboardPage() {
             <Card className="glass-card border-primary/30 overflow-hidden animate-reveal">
               <CardContent className="p-8 flex flex-col md:flex-row items-center justify-between gap-6">
                 <div>
-                  <h4 className="text-xl font-bold mb-1">Initialize Deployment</h4>
-                  <p className="text-sm text-muted-foreground leading-relaxed">Procure the necessary IoT hardware nodes to activate these staged protocols.</p>
+                  <h4 className="text-xl font-bold mb-1">Initialize Protocol Integration</h4>
+                  <p className="text-sm text-muted-foreground leading-relaxed">Commit to these protocols to acquire the necessary security hardware nodes.</p>
                 </div>
                 <Button 
                   onClick={() => setCurrentPhase('procurement')}
                   className="h-14 px-10 rounded-xl bg-primary hover:bg-primary/90 font-bold shadow-xl shadow-primary/20 transition-all active:scale-95"
                 >
-                  Secure Hardware <ArrowRight className="w-4 h-4 ml-2" />
+                  Confirm & Procure <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               </CardContent>
             </Card>
@@ -204,14 +202,14 @@ export default function DashboardPage() {
   }
 
   // PHASE 2: Hardware Procurement
-  if (currentPhase === 'procurement' || (profile.purchaseStatus === 'none')) {
+  if (currentPhase === 'procurement') {
     return (
       <div className="min-h-screen pt-32 pb-24 bg-background">
         <div className="container mx-auto px-4 max-w-4xl">
           <div className="text-center mb-12 animate-fade-in">
             <Badge variant="outline" className="mb-4 border-accent text-accent font-bold px-3 py-1">PHASE 02: PROCUREMENT</Badge>
             <h1 className="text-4xl md:text-5xl font-headline font-extrabold mb-4">Acquire Security Nodes</h1>
-            <p className="text-muted-foreground text-lg">Select your hardware procurement model to proceed with physical installation.</p>
+            <p className="text-muted-foreground text-lg">Select your deployment model to receive your physical hardware nodes.</p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
@@ -222,12 +220,11 @@ export default function DashboardPage() {
                 </div>
                 <h3 className="text-2xl font-bold mb-3">Ownership Model</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed mb-6">
-                  Purchase the security hardware outright. This includes full ownership of the nodes and a mandatory professional setup by SafeRwanda technicians to ensure 100% mesh coverage.
+                  Purchase the security hardware nodes outright. Includes professional setup by SafeRwanda technicians to ensure 100% mesh coverage.
                 </p>
                 <ul className="space-y-3 mb-8">
-                  <li className="flex items-center gap-3 text-xs font-bold text-foreground/80"><CheckCircle2 className="w-4 h-4 text-primary" /> Professional Installation</li>
-                  <li className="flex items-center gap-3 text-xs font-bold text-foreground/80"><CheckCircle2 className="w-4 h-4 text-primary" /> Lifetime Hardware Warranty</li>
-                  <li className="flex items-center gap-3 text-xs font-bold text-foreground/80"><CheckCircle2 className="w-4 h-4 text-primary" /> Priority Mesh Relinking</li>
+                  <li className="flex items-center gap-3 text-xs font-bold text-foreground/80"><CheckCircle2 className="w-4 h-4 text-primary" /> White-Glove Installation</li>
+                  <li className="flex items-center gap-3 text-xs font-bold text-foreground/80"><CheckCircle2 className="w-4 h-4 text-primary" /> Lifetime Node Warranty</li>
                 </ul>
               </div>
               <CardFooter className="bg-primary/5 p-6 border-t border-primary/10">
@@ -236,7 +233,7 @@ export default function DashboardPage() {
                   className="w-full h-12 rounded-xl bg-primary font-bold"
                   disabled={updating}
                 >
-                  Buy Hardware
+                  Buy Hardware Nodes
                 </Button>
               </CardFooter>
             </Card>
@@ -248,12 +245,11 @@ export default function DashboardPage() {
                 </div>
                 <h3 className="text-2xl font-bold mb-3">Leasing Model</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed mb-6">
-                  Subscribe to the hardware on a monthly basis. This model is designed for self-installation. We provide a digital manual for you to set up and link the nodes yourself.
+                  Flexible monthly hardware subscription. Designed for self-installation. We provide digital setup protocols for node linking.
                 </p>
                 <ul className="space-y-3 mb-8">
-                  <li className="flex items-center gap-3 text-xs font-bold text-foreground/80"><CheckCircle2 className="w-4 h-4 text-accent" /> Lower Initial Capital</li>
-                  <li className="flex items-center gap-3 text-xs font-bold text-foreground/80"><CheckCircle2 className="w-4 h-4 text-accent" /> Flexible Self-Setup</li>
-                  <li className="flex items-center gap-3 text-xs font-bold text-foreground/80"><CheckCircle2 className="w-4 h-4 text-accent" /> Monthly Node Support</li>
+                  <li className="flex items-center gap-3 text-xs font-bold text-foreground/80"><CheckCircle2 className="w-4 h-4 text-accent" /> Low Initial Cost</li>
+                  <li className="flex items-center gap-3 text-xs font-bold text-foreground/80"><CheckCircle2 className="w-4 h-4 text-accent" /> Self-Setup Protocols</li>
                 </ul>
               </div>
               <CardFooter className="bg-accent/5 p-6 border-t border-accent/10">
@@ -263,26 +259,26 @@ export default function DashboardPage() {
                   className="w-full h-12 rounded-xl border-accent/30 font-bold"
                   disabled={updating}
                 >
-                  Lease Hardware
+                  Lease Hardware Nodes
                 </Button>
               </CardFooter>
             </Card>
           </div>
-          <Button variant="ghost" onClick={() => setCurrentPhase('staging')} className="text-muted-foreground flex items-center mx-auto"><ArrowRight className="w-4 h-4 mr-2 rotate-180" /> Back to Staging</Button>
+          <Button variant="ghost" onClick={() => setCurrentPhase('staging')} className="text-muted-foreground flex items-center mx-auto"><ArrowRight className="w-4 h-4 mr-2 rotate-180" /> Return to Staging</Button>
         </div>
       </div>
     );
   }
 
-  // PHASE 3: Node Integration (Setup & Device ID)
-  if (currentPhase === 'integration' || (profile.purchaseStatus !== 'none' && !profile.deviceId)) {
+  // PHASE 3: Node Integration (Manuals & Registration)
+  if (currentPhase === 'integration') {
     return (
       <div className="min-h-screen pt-32 pb-24 bg-background">
         <div className="container mx-auto px-4 max-w-4xl">
           <div className="text-center mb-10">
             <Badge variant="outline" className="mb-4 border-rwanda-green text-rwanda-green font-bold px-3 py-1">PHASE 03: INTEGRATION</Badge>
-            <h1 className="text-4xl md:text-5xl font-headline font-extrabold mb-4">Node Integration</h1>
-            <p className="text-muted-foreground text-lg">Your hardware is ready. Follow the protocols below to link your nodes to the mesh.</p>
+            <h1 className="text-4xl md:text-5xl font-headline font-extrabold mb-4">Integrate Hardware Nodes</h1>
+            <p className="text-muted-foreground text-lg">Your hardware is ready for deployment. Follow these protocols to link your nodes to the mesh network.</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
@@ -292,32 +288,39 @@ export default function DashboardPage() {
                   <Wrench className="text-rwanda-green w-6 h-6" />
                 </div>
                 <CardTitle className="text-2xl">Setup Protocol</CardTitle>
-                <CardDescription>Installation manual for {profile.purchaseStatus} hardware.</CardDescription>
+                <CardDescription>Instructional manual for your {profile.purchaseStatus} hardware.</CardDescription>
               </CardHeader>
               <CardContent className="flex-grow space-y-4">
                 <p className="text-sm text-muted-foreground leading-relaxed">
                   {profile.hasPaidSetupFee 
-                    ? "A professional SafeRwanda technician has been dispatched. They will handle the node placement and initial handshake. Use the reference manual below for your records."
-                    : "You have opted for self-setup. Download the comprehensive guide to ensure optimal signal strength and perimeter integrity."}
+                    ? "SafeRwanda technicians will arrive shortly to handle node placement and network handshake. Review the reference manual to understand your system's capabilities."
+                    : "You are performing a self-setup. Download the comprehensive guide below to ensure optimal node connectivity and perimeter integrity."}
                 </p>
-                <Button variant="secondary" className="w-full gap-2 rounded-xl h-12 font-bold bg-secondary hover:bg-secondary/80 border border-border">
-                  <Download className="w-4 h-4" />
-                  Download Manual (PDF)
-                </Button>
+                {!profile.hasPaidSetupFee && (
+                  <Button variant="secondary" className="w-full gap-2 rounded-xl h-12 font-bold bg-secondary hover:bg-secondary/80 border border-border">
+                    <Download className="w-4 h-4" />
+                    Download Manual (PDF)
+                  </Button>
+                )}
+                {profile.hasPaidSetupFee && (
+                  <div className="flex items-center gap-2 text-rwanda-green text-xs font-bold">
+                    <CheckCircle2 className="w-4 h-4" /> Technician Dispatched
+                  </div>
+                )}
               </CardContent>
             </Card>
 
-            <Card className="glass-card border-primary/20 animate-reveal reveal-delay-1 shadow-2xl shadow-primary/5">
+            <Card className="glass-card border-primary/20 animate-reveal shadow-2xl shadow-primary/5">
               <CardHeader className="pb-4">
                 <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
                   <Smartphone className="text-primary w-6 h-6" />
                 </div>
-                <CardTitle className="text-2xl">Register Device</CardTitle>
-                <CardDescription>Establish the cloud-to-node link.</CardDescription>
+                <CardTitle className="text-2xl">Register Nodes</CardTitle>
+                <CardDescription>Input hardware IDs to link to your command center.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="deviceId" className="text-xs font-black uppercase tracking-widest text-muted-foreground">Unique Device ID</Label>
+                  <Label htmlFor="deviceId" className="text-xs font-black uppercase tracking-widest text-muted-foreground">Node Serial ID</Label>
                   <Input 
                     id="deviceId" 
                     placeholder="SR-XXXX-XXXX" 
@@ -327,31 +330,25 @@ export default function DashboardPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="phone" className="text-xs font-black uppercase tracking-widest text-muted-foreground">Emergency Alert SMS</Label>
-                  <div className="relative">
-                    <Phone className="absolute left-3 top-3.5 w-4 h-4 text-muted-foreground" />
-                    <Input 
-                      id="phone" 
-                      placeholder="+250..." 
-                      className="pl-10 rounded-xl h-12 bg-background border-border"
-                      value={alertPhone}
-                      onChange={(e) => setAlertPhone(e.target.value)}
-                    />
-                  </div>
+                  <Label htmlFor="phone" className="text-xs font-black uppercase tracking-widest text-muted-foreground">Alert Receiving Phone</Label>
+                  <Input 
+                    id="phone" 
+                    placeholder="+250..." 
+                    value={alertPhone}
+                    onChange={(e) => setAlertPhone(e.target.value)}
+                    className="rounded-xl h-12 bg-background border-border"
+                  />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="alertEmail" className="text-xs font-black uppercase tracking-widest text-muted-foreground">Emergency Alert Email</Label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-3.5 w-4 h-4 text-muted-foreground" />
-                    <Input 
-                      id="alertEmail" 
-                      type="email"
-                      placeholder="agent@safety.rw" 
-                      className="pl-10 rounded-xl h-12 bg-background border-border"
-                      value={alertEmail}
-                      onChange={(e) => setAlertEmail(e.target.value)}
-                    />
-                  </div>
+                  <Label htmlFor="email" className="text-xs font-black uppercase tracking-widest text-muted-foreground">Alert Receiving Email</Label>
+                  <Input 
+                    id="email" 
+                    type="email"
+                    placeholder="alert@agent.io" 
+                    value={alertEmail}
+                    onChange={(e) => setAlertEmail(e.target.value)}
+                    className="rounded-xl h-12 bg-background border-border"
+                  />
                 </div>
                 <Button 
                   onClick={() => updateProfileData({ 
@@ -362,55 +359,53 @@ export default function DashboardPage() {
                   className="w-full h-14 rounded-xl font-bold bg-primary shadow-xl shadow-primary/20 text-lg"
                   disabled={updating || !deviceIdInput || !alertPhone || !alertEmail}
                 >
-                  {updating ? <Loader2 className="w-5 h-5 animate-spin" /> : "Verify & Link Node"}
+                  {updating ? <Loader2 className="w-5 h-5 animate-spin" /> : "Verify & Register Node"}
                 </Button>
               </CardContent>
             </Card>
           </div>
+          <Button variant="ghost" onClick={() => setCurrentPhase('procurement')} className="text-muted-foreground flex items-center mx-auto"><ArrowRight className="w-4 h-4 mr-2 rotate-180" /> Change Procurement Model</Button>
         </div>
       </div>
     );
   }
 
   // PHASE 4: Activation (Subscription)
-  if (currentPhase === 'activation' || (profile.deviceId && !profile.subscriptionActive)) {
+  if (currentPhase === 'activation') {
     return (
       <div className="min-h-screen pt-32 pb-24 bg-background">
         <div className="container mx-auto px-4 max-w-2xl">
           <div className="text-center mb-10">
             <Badge variant="outline" className="mb-4 border-rwanda-green text-rwanda-green font-bold px-3 py-1">PHASE 04: ACTIVATION</Badge>
-            <h1 className="text-4xl md:text-5xl font-headline font-extrabold mb-4">Activate Security Mesh</h1>
-            <p className="text-muted-foreground">Node <span className="text-primary font-mono font-bold">{profile.deviceId}</span> has successfully performed the handshake. Finalize your subscription to activate monitoring.</p>
+            <h1 className="text-4xl md:text-5xl font-headline font-extrabold mb-4">Activate Security Shield</h1>
+            <p className="text-muted-foreground">Node <span className="text-primary font-mono font-bold">{profile.deviceId}</span> successfully registered. Subscribe to maintain 24/7 mesh monitoring.</p>
           </div>
 
           <Card className="glass-card overflow-hidden border-rwanda-green/20 animate-reveal">
             <CardHeader className="bg-primary/5 border-b border-primary/10 p-8">
-              <CardTitle className="text-2xl">Select Shield Duration</CardTitle>
-              <CardDescription>Maintain your node's connection to the global monitoring mesh.</CardDescription>
+              <CardTitle className="text-2xl">Monitoring Plan</CardTitle>
+              <CardDescription>Select the frequency of your security mesh linkage.</CardDescription>
             </CardHeader>
             <CardContent className="p-8">
               <RadioGroup value={subType} onValueChange={setSubType} className="space-y-4">
                 {[
                   { id: 'weekly', label: 'Tactical Weekly', price: 'RWF 5,000' },
-                  { id: 'monthly', label: 'Standard Monthly', price: 'RWF 18,000', popular: true },
+                  { id: 'monthly', label: 'Standard Monthly', price: 'RWF 18,000' },
                   { id: 'yearly', label: 'Strategic Annual', price: 'RWF 180,000' }
                 ].map((plan) => (
                   <div 
                     key={plan.id}
                     onClick={() => setSubType(plan.id)}
                     className={cn(
-                      "relative p-6 rounded-2xl border-2 transition-all cursor-pointer flex items-center justify-between",
-                      subType === plan.id ? 'border-primary bg-primary/5 shadow-md' : 'border-border bg-card'
+                      "p-6 rounded-2xl border-2 transition-all cursor-pointer flex items-center justify-between",
+                      subType === plan.id ? 'border-primary bg-primary/5' : 'border-border bg-card'
                     )}
                   >
                     <div className="flex items-center gap-4">
                       <RadioGroupItem value={plan.id} id={plan.id} />
-                      <Label htmlFor={plan.id} className="font-bold text-xl cursor-pointer block">{plan.label}</Label>
+                      <Label htmlFor={plan.id} className="font-bold text-xl cursor-pointer">{plan.label}</Label>
                     </div>
-                    <div className="text-right">
-                      <p className="font-bold text-xl text-primary">{plan.price}</p>
-                      {plan.popular && <Badge className="bg-accent text-accent-foreground text-[10px] uppercase font-bold mt-1">Best Value</Badge>}
-                    </div>
+                    <span className="font-bold text-xl text-primary">{plan.price}</span>
                   </div>
                 ))}
               </RadioGroup>
@@ -421,7 +416,7 @@ export default function DashboardPage() {
                 className="w-full h-16 rounded-xl bg-primary text-xl font-bold shadow-2xl shadow-primary/20"
                 disabled={updating}
               >
-                {updating ? <Loader2 className="w-5 h-5 animate-spin" /> : "Authorize & Activate Mesh"}
+                {updating ? <Loader2 className="w-5 h-5 animate-spin" /> : "Authorize & Activate Shield"}
               </Button>
               <p className="text-[10px] text-center text-muted-foreground uppercase tracking-widest font-bold">Secure Bank-Grade Payment Encryption Active</p>
             </CardFooter>
@@ -431,7 +426,7 @@ export default function DashboardPage() {
     );
   }
 
-  // PHASE 5: Live Command Center
+  // PHASE 5: Live Command Center (The Main Dashboard)
   return (
     <div className="flex flex-col min-h-screen bg-background">
       <main className="flex-grow pt-32 pb-24">
@@ -498,7 +493,7 @@ export default function DashboardPage() {
             </Card>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-reveal reveal-delay-2">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-reveal">
             <Card className="lg:col-span-2 bg-card border-border rounded-[2rem] overflow-hidden">
               <CardHeader className="p-8 pb-4 flex flex-row items-center justify-between">
                 <div>
@@ -510,36 +505,29 @@ export default function DashboardPage() {
                 </Button>
               </CardHeader>
               <CardContent className="p-8 pt-0 space-y-4">
-                {profile.deviceId ? (
-                  <div className="p-6 rounded-2xl bg-secondary/30 border border-border group hover:border-primary/50 transition-all flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-                    <div className="flex items-center gap-6">
-                      <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center shadow-inner">
-                        <Smartphone className="w-8 h-8 text-primary" />
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="text-xs text-muted-foreground uppercase font-black tracking-widest mb-1">Gateway Node</span>
-                        <span className="font-bold text-2xl font-mono">{profile.deviceId}</span>
-                        <div className="flex gap-2 mt-2">
-                          {profile.servicesSelected?.map((s: string) => (
-                            <Badge key={s} variant="secondary" className="capitalize text-[8px] px-2 py-0 border-none">{s.replace('-', ' ')}</Badge>
-                          ))}
-                        </div>
+                <div className="p-6 rounded-2xl bg-secondary/30 border border-border group hover:border-primary/50 transition-all flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                  <div className="flex items-center gap-6">
+                    <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center shadow-inner">
+                      <Smartphone className="w-8 h-8 text-primary" />
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-xs text-muted-foreground uppercase font-black tracking-widest mb-1">Gateway Node</span>
+                      <span className="font-bold text-2xl font-mono">{profile.deviceId}</span>
+                      <div className="flex gap-2 mt-2">
+                        {profile.servicesSelected?.map((s: string) => (
+                          <Badge key={s} variant="secondary" className="capitalize text-[8px] px-2 py-0 border-none">{s.replace('-', ' ')}</Badge>
+                        ))}
                       </div>
                     </div>
-                    <div className="text-right flex flex-col items-end">
-                      <div className="flex items-center gap-2 mb-2">
-                        <div className="w-2 h-2 rounded-full bg-rwanda-green animate-pulse" />
-                        <span className="text-xs font-bold text-rwanda-green uppercase tracking-widest">Live Telemetry</span>
-                      </div>
-                      <Badge className="bg-primary/10 text-primary border-none text-[10px] px-3 py-1 font-bold">PROVISIONED: {profile.purchaseStatus?.toUpperCase()}</Badge>
+                  </div>
+                  <div className="text-right flex flex-col items-end">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-2 h-2 rounded-full bg-rwanda-green animate-pulse" />
+                      <span className="text-xs font-bold text-rwanda-green uppercase tracking-widest">Live Telemetry</span>
                     </div>
+                    <Badge className="bg-primary/10 text-primary border-none text-[10px] px-3 py-1 font-bold">{profile.purchaseStatus?.toUpperCase()}</Badge>
                   </div>
-                ) : (
-                  <div className="text-center py-12 bg-secondary/20 rounded-2xl border-2 border-dashed border-border">
-                    <Smartphone className="w-10 h-10 text-muted-foreground mx-auto mb-4 opacity-20" />
-                    <p className="text-muted-foreground font-medium">No hardware nodes linked to this account.</p>
-                  </div>
-                )}
+                </div>
               </CardContent>
             </Card>
 
@@ -589,4 +577,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-
