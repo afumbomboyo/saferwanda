@@ -51,56 +51,56 @@ import {
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
 
-// Service hardware metadata for procurement
-const HARDWARE_CATALOG: Record<string, any> = {
+// Device details for the shop
+const DEVICE_CATALOG: Record<string, any> = {
   "child-protection": {
     name: "SafeWatch Pro",
     image: "https://picsum.photos/seed/child1/600/400",
     buyPrice: "45,000 RWF",
     leasePrice: "4,000 RWF/mo",
-    description: "A smart GPS tracker with an emergency button and health monitoring."
+    description: "A smart GPS watch with an emergency button and health tracking for kids."
   },
   "elderly-care": {
     name: "SafeLink Vital",
     image: "https://picsum.photos/seed/elder1/600/400",
     buyPrice: "38,000 RWF",
     leasePrice: "3,500 RWF/mo",
-    description: "Medical alert device with fall detection and heart rate monitoring."
+    description: "A medical alert neckpiece with fall detection and heart monitoring."
   },
   "fire-prevention": {
     name: "SafeHome Heat Sensor",
     image: "https://picsum.photos/seed/fire1/600/400",
     buyPrice: "25,000 RWF",
     leasePrice: "2,500 RWF/mo",
-    description: "A smart smoke and gas leak detector for your home."
+    description: "A smart smoke and gas leak detector for your kitchen and home."
   },
   "property-security": {
     name: "SafeGuard Smart Lock",
     image: "https://picsum.photos/seed/prop1/600/400",
     buyPrice: "55,000 RWF",
     leasePrice: "5,000 RWF/mo",
-    description: "Smart lock and alarm for gates and doors."
+    description: "A secure smart lock for your main gate and doors."
   },
   "asset-protection": {
     name: "SafeTrack Asset",
     image: "https://picsum.photos/seed/asset1/600/400",
     buyPrice: "60,000 RWF",
     leasePrice: "5,500 RWF/mo",
-    description: "Tough GPS tracker for cars and valuable equipment."
+    description: "A heavy-duty GPS tracker for vehicles and high-value equipment."
   },
   "neighborhood-surveillance": {
-    name: "SafeMesh Gate",
+    name: "SafeMesh Hub",
     image: "https://picsum.photos/seed/neigh1/600/400",
     buyPrice: "75,000 RWF",
     leasePrice: "7,000 RWF/mo",
-    description: "Security hub to connect with neighbor safety groups."
+    description: "A security hub that connects you with your neighbors' safety network."
   },
   "smart-community": {
     name: "SafeCity Node",
     image: "https://picsum.photos/seed/smart1/600/400",
     buyPrice: "85,000 RWF",
     leasePrice: "8,000 RWF/mo",
-    description: "Community device for smart lighting and environment monitoring."
+    description: "A community device for smart street lighting and hazard tracking."
   }
 };
 
@@ -117,7 +117,7 @@ export default function DashboardPage() {
   
   const [activeTab, setActiveTab] = useState<string>('overview');
   const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null);
-  const [stagingStep, setStagingStep] = useState<'list' | 'instructions' | 'procurement' | 'setup'>('list');
+  const [stagingStep, setStagingStep] = useState<'list' | 'instructions' | 'get-device' | 'setup'>('list');
 
   const [deviceIdInput, setDeviceIdInput] = useState('');
   const [alertPhone, setAlertPhone] = useState('');
@@ -180,7 +180,7 @@ export default function DashboardPage() {
     }
   };
 
-  const handleProcurementSelection = (status: 'purchased' | 'leased') => {
+  const handleDeviceSelection = (status: 'purchased' | 'leased') => {
     updateProfileData({ purchaseStatus: status, hasPaidSetupFee: status === 'purchased' });
     setStagingStep('setup');
   };
@@ -212,11 +212,11 @@ export default function DashboardPage() {
                     "font-black uppercase tracking-widest text-[8px] px-2 py-0.5",
                     profile?.subscriptionActive ? "border-rwanda-green text-rwanda-green bg-rwanda-green/5" : "border-amber-500 text-amber-500 bg-amber-500/5"
                   )}>
-                    {profile?.subscriptionActive ? 'Active Service' : 'Waiting for Subscription'}
+                    {profile?.subscriptionActive ? 'Monitoring Active' : 'Waiting for Start'}
                   </Badge>
                   {profile?.deviceId && (
                     <Badge variant="outline" className="border-primary/30 text-primary bg-primary/5 font-black uppercase tracking-widest text-[8px]">
-                      Device Linked
+                      Device Connected
                     </Badge>
                   )}
                 </div>
@@ -329,14 +329,14 @@ export default function DashboardPage() {
                 <Card className="md:col-span-2 bg-card/40 border-border rounded-[2.5rem] shadow-2xl shadow-black/5">
                   <CardHeader className="p-8 pb-4">
                     <CardTitle className="text-2xl font-black">Status Dashboard</CardTitle>
-                    <CardDescription>How your security system is doing right now.</CardDescription>
+                    <CardDescription>A live look at your security network.</CardDescription>
                   </CardHeader>
                   <CardContent className="p-8 pt-0">
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-4">
                       {[
                         { label: 'Devices', val: profile?.deviceId ? '01' : '00', icon: Smartphone, color: 'text-primary' },
-                        { label: 'Connection', val: profile?.deviceId ? '98%' : '0%', icon: Wifi, color: 'text-rwanda-green' },
-                        { label: 'Uptime', val: profile?.deviceId ? '99.9%' : '0%', icon: Activity, color: 'text-accent' },
+                        { label: 'Signal', val: profile?.deviceId ? '98%' : '0%', icon: Wifi, color: 'text-rwanda-green' },
+                        { label: 'Health', val: profile?.deviceId ? 'Active' : 'Offline', icon: Activity, color: 'text-accent' },
                         { label: 'Alerts', val: '0', icon: Bell, color: 'text-muted-foreground' }
                       ].map((stat, i) => (
                         <div key={i} className="bg-secondary/20 p-6 rounded-[2rem] border border-border/50 text-center">
@@ -359,12 +359,12 @@ export default function DashboardPage() {
                   <CardContent className="p-8 pt-0 flex-grow flex flex-col justify-between">
                     <p className="text-sm text-muted-foreground font-light leading-relaxed">
                       {!profile?.purchaseStatus || profile?.purchaseStatus === 'none'
-                        ? "You haven't initialized your services yet. Go to 'My Services' to begin."
+                        ? "You haven't set up your devices yet. Go to 'My Services' to start the process."
                         : !profile?.deviceId 
-                          ? "Your hardware is on its way or ready. Use 'Connect Your Device' to link it."
+                          ? "Your hardware is being prepared. Once it arrives, use 'Connect Your Device' at the top."
                           : !profile?.subscriptionActive 
-                            ? "Your device is linked! Now activate your service to start monitoring."
-                            : "Everything is working! We are monitoring your safety 24/7."}
+                            ? "Your device is connected! Now choose a plan to start the 24/7 monitoring."
+                            : "Everything is set up! We are monitoring your safety around the clock."}
                     </p>
                     <Button 
                       onClick={() => {
@@ -374,7 +374,7 @@ export default function DashboardPage() {
                       }}
                       className="w-full mt-6 rounded-2xl h-14 font-black uppercase tracking-widest text-xs bg-primary"
                     >
-                      {(!profile?.purchaseStatus || profile.purchaseStatus === 'none') ? 'Initialize My Services' : profile?.deviceId ? 'Go to Subscription' : 'Connect Device'}
+                      {(!profile?.purchaseStatus || profile.purchaseStatus === 'none') ? 'Go to My Services' : profile?.deviceId ? 'See Subscription Plans' : 'Connect Device'}
                     </Button>
                   </CardContent>
                 </Card>
@@ -386,7 +386,7 @@ export default function DashboardPage() {
                 <Card className="bg-card/60 border-border rounded-[3rem] shadow-2xl">
                   <CardHeader className="p-12 pb-6 border-b border-border/50">
                     <CardTitle className="text-4xl font-black">My Selected Services</CardTitle>
-                    <CardDescription className="text-lg font-light">Choose a service below to begin your setup journey.</CardDescription>
+                    <CardDescription className="text-lg font-light">Pick a service below to start your set up.</CardDescription>
                   </CardHeader>
                   <CardContent className="p-12">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -395,22 +395,28 @@ export default function DashboardPage() {
                           <div key={serviceId} className="p-8 rounded-[2.5rem] border bg-background border-border shadow-sm flex flex-col justify-between hover:border-primary transition-all relative overflow-hidden">
                             <div className="relative z-10">
                               <h4 className="font-black text-xl capitalize mb-3">{serviceId.replace('-', ' ')}</h4>
-                              <p className="text-[10px] text-muted-foreground uppercase tracking-widest mb-8">Status: {profile?.purchaseStatus !== 'none' ? 'In Progress' : 'Pending Initialization'}</p>
+                              <p className="text-[10px] text-muted-foreground uppercase tracking-widest mb-8">
+                                Status: {profile?.purchaseStatus !== 'none' ? 'Ready for Connection' : 'Needs Set Up'}
+                              </p>
                             </div>
                             <Button 
                               onClick={() => {
                                 setSelectedServiceId(serviceId);
-                                setStagingStep(profile?.purchaseStatus !== 'none' ? 'setup' : 'instructions');
+                                if (profile?.purchaseStatus !== 'none') {
+                                  setStagingStep('setup');
+                                } else {
+                                  setStagingStep('instructions');
+                                }
                               }}
                               className="w-full rounded-xl bg-primary/10 text-primary hover:bg-primary hover:text-white border-none font-black text-[10px] uppercase tracking-widest h-12"
                             >
-                              Initialize Setup
+                              Start Set Up
                             </Button>
                           </div>
                         ))
                       ) : (
                         <div className="col-span-full py-24 text-center border-2 border-dashed border-border rounded-[2.5rem]">
-                          <h4 className="text-2xl font-black mb-2">No Services Selected</h4>
+                          <h4 className="text-2xl font-black mb-2">No Services Yet</h4>
                           <p className="text-muted-foreground mb-8">You haven't picked any safety services yet.</p>
                           <Button onClick={() => router.push('/services')} className="rounded-2xl h-14 px-10 font-black bg-primary">Browse Services</Button>
                         </div>
@@ -426,16 +432,16 @@ export default function DashboardPage() {
                     <Button variant="ghost" className="w-fit mb-6 rounded-xl gap-2 font-bold" onClick={() => setStagingStep('list')}>
                       <ChevronLeft className="w-4 h-4" /> Back
                     </Button>
-                    <CardTitle className="text-4xl font-black">How Your Setup Works</CardTitle>
-                    <CardDescription className="text-lg font-light mt-2">Before we get your hardware, here is how the process will go.</CardDescription>
+                    <CardTitle className="text-4xl font-black">How it Works</CardTitle>
+                    <CardDescription className="text-lg font-light mt-2">Here is a simple look at how we get you protected.</CardDescription>
                   </CardHeader>
                   <CardContent className="p-12 space-y-10">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                        {[
-                         { step: "1. Hardware Choice", desc: "You'll choose to either buy your device or rent it for a monthly fee." },
-                         { step: "2. Shipping & Delivery", desc: "We'll deliver your SafeRwanda gadget directly to your location." },
-                         { step: "3. Professional Setup", desc: "Follow our simple guide or let our staff install it for you." },
-                         { step: "4. Digital Linking", desc: "Register your device ID in this dashboard to start receiving alerts." }
+                         { step: "1. Pick Your Plan", desc: "Decide if you want to buy your gadget or rent it for a small monthly fee." },
+                         { step: "2. Fast Delivery", desc: "We ship your SafeRwanda device directly to your home or office." },
+                         { step: "3. Easy Install", desc: "Follow our simple guide to turn it on and place it in the right spot." },
+                         { step: "4. Digital Link", desc: "Enter your Device ID in this dashboard to start receiving alerts." }
                        ].map((item, i) => (
                          <div key={i} className="flex gap-4">
                            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
@@ -453,17 +459,17 @@ export default function DashboardPage() {
                       <div className="flex items-center gap-4">
                         <FileText className="w-10 h-10 text-primary opacity-50" />
                         <div>
-                           <h4 className="font-black text-sm uppercase">SafeRwanda Strategic Manual</h4>
+                           <h4 className="font-black text-sm uppercase">SafeRwanda Branded Guide</h4>
                            <p className="text-xs text-muted-foreground">Download the full instructions for your records.</p>
                         </div>
                       </div>
                       <Button variant="outline" className="rounded-xl h-12 gap-2 border-primary/20 hover:bg-primary/5">
-                        <Download className="w-4 h-4" /> Download Manual (PDF)
+                        <Download className="w-4 h-4" /> Download Guide (PDF)
                       </Button>
                     </div>
 
                     <Button 
-                      onClick={() => setStagingStep('procurement')}
+                      onClick={() => setStagingStep('get-device')}
                       className="w-full h-16 rounded-2xl bg-primary hover:bg-primary/90 font-black uppercase tracking-widest text-sm"
                     >
                       Continue to Get Device
@@ -472,53 +478,53 @@ export default function DashboardPage() {
                 </Card>
               )}
 
-              {stagingStep === 'procurement' && selectedServiceId && (
+              {stagingStep === 'get-device' && selectedServiceId && (
                 <div className="space-y-12 animate-reveal">
                   <div className="flex flex-col items-center text-center max-w-2xl mx-auto space-y-4">
                     <Button variant="ghost" className="rounded-xl gap-2 font-bold" onClick={() => setStagingStep('instructions')}>
                       <ChevronLeft className="w-4 h-4" /> Back to Instructions
                     </Button>
-                    <h2 className="text-4xl font-black">Choose Your Device Plan</h2>
-                    <p className="text-muted-foreground">Select how you would like to receive your {HARDWARE_CATALOG[selectedServiceId]?.name}.</p>
+                    <h2 className="text-4xl font-black">Get Your Device</h2>
+                    <p className="text-muted-foreground">Select how you would like to receive your {DEVICE_CATALOG[selectedServiceId]?.name}.</p>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-6xl mx-auto">
-                    <Card className="rounded-[3.5rem] overflow-hidden border-4 border-border bg-card/60 cursor-pointer hover:-translate-y-2 transition-all shadow-2xl" onClick={() => handleProcurementSelection('purchased')}>
+                    <Card className="rounded-[3.5rem] overflow-hidden border-4 border-border bg-card/60 cursor-pointer hover:-translate-y-2 transition-all shadow-2xl" onClick={() => handleDeviceSelection('purchased')}>
                       <div className="relative h-72 w-full">
-                        <Image src={HARDWARE_CATALOG[selectedServiceId]?.image} alt="Device" fill className="object-cover" />
+                        <Image src={DEVICE_CATALOG[selectedServiceId]?.image} alt="Device" fill className="object-cover" />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
                         <div className="absolute bottom-8 left-8">
                           <h4 className="text-3xl font-black text-white">Buy Device</h4>
-                          <p className="text-white/60 text-xs font-bold uppercase tracking-widest">Ownership & Full Access</p>
+                          <p className="text-white/60 text-xs font-bold uppercase tracking-widest">Own it + Professional Shipping</p>
                         </div>
                       </div>
                       <CardContent className="p-10 space-y-6">
-                        <p className="text-sm text-muted-foreground leading-relaxed">{HARDWARE_CATALOG[selectedServiceId]?.description}</p>
+                        <p className="text-sm text-muted-foreground leading-relaxed">{DEVICE_CATALOG[selectedServiceId]?.description}</p>
                         <div className="flex justify-between items-center p-6 rounded-3xl bg-background border border-border">
                           <div>
                             <p className="text-[8px] font-black uppercase text-muted-foreground">One-Time Price + Delivery</p>
-                            <p className="text-2xl font-black">{HARDWARE_CATALOG[selectedServiceId]?.buyPrice}</p>
+                            <p className="text-2xl font-black">{DEVICE_CATALOG[selectedServiceId]?.buyPrice}</p>
                           </div>
                         </div>
                         <Button className="w-full h-16 rounded-2xl font-black uppercase tracking-widest text-xs bg-primary">Select & Buy</Button>
                       </CardContent>
                     </Card>
 
-                    <Card className="rounded-[3.5rem] overflow-hidden border-4 border-border bg-card/60 cursor-pointer hover:-translate-y-2 transition-all shadow-2xl" onClick={() => handleProcurementSelection('leased')}>
+                    <Card className="rounded-[3.5rem] overflow-hidden border-4 border-border bg-card/60 cursor-pointer hover:-translate-y-2 transition-all shadow-2xl" onClick={() => handleDeviceSelection('leased')}>
                       <div className="relative h-72 w-full">
-                        <Image src={HARDWARE_CATALOG[selectedServiceId]?.image} alt="Device" fill className="object-cover" />
+                        <Image src={DEVICE_CATALOG[selectedServiceId]?.image} alt="Device" fill className="object-cover" />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
                         <div className="absolute bottom-8 left-8">
                           <h4 className="text-3xl font-black text-white">Rent Device</h4>
-                          <p className="text-white/60 text-xs font-bold uppercase tracking-widest">Flexible Monthly Plan</p>
+                          <p className="text-white/60 text-xs font-bold uppercase tracking-widest">Low Cost Monthly Plan</p>
                         </div>
                       </div>
                       <CardContent className="p-10 space-y-6">
-                        <p className="text-sm text-muted-foreground leading-relaxed">Lower entry cost. Use the professional SafeRwanda hardware for a small monthly fee instead of buying.</p>
+                        <p className="text-sm text-muted-foreground leading-relaxed">Save money upfront. Use the professional SafeRwanda hardware for a small monthly fee instead of buying.</p>
                         <div className="flex justify-between items-center p-6 rounded-3xl bg-background border border-border">
                           <div>
-                            <p className="text-[8px] font-black uppercase text-muted-foreground">Monthly Rental Fee</p>
-                            <p className="text-2xl font-black">{HARDWARE_CATALOG[selectedServiceId]?.leasePrice}</p>
+                            <p className="text-[8px] font-black uppercase text-muted-foreground">Monthly Rent</p>
+                            <p className="text-2xl font-black">{DEVICE_CATALOG[selectedServiceId]?.leasePrice}</p>
                           </div>
                         </div>
                         <Button variant="outline" className="w-full h-16 rounded-2xl font-black uppercase tracking-widest text-xs">Select & Rent</Button>
@@ -534,7 +540,7 @@ export default function DashboardPage() {
                     <Button variant="ghost" className="w-fit mb-6 rounded-xl gap-2 font-bold" onClick={() => setStagingStep('list')}>
                       <ChevronLeft className="w-4 h-4" /> Back to My Services
                     </Button>
-                    <CardTitle className="text-4xl font-black uppercase">How to Set Up Your {selectedServiceId.replace('-', ' ')} Device</CardTitle>
+                    <CardTitle className="text-4xl font-black uppercase">Setting Up Your {selectedServiceId.replace('-', ' ')}</CardTitle>
                   </CardHeader>
                   <CardContent className="p-12 space-y-12">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
@@ -542,10 +548,10 @@ export default function DashboardPage() {
                         <h3 className="text-2xl font-black">Steps to Install</h3>
                         <div className="space-y-6">
                           {[
-                            { step: "01", title: "Power Up", desc: "Follow the provided manual to mount and power on your hardware." },
-                            { step: "02", title: "Check Connectivity", desc: "Ensure your device is in an area with clear signal for best performance." },
-                            { step: "03", title: "Link Your App", desc: "Use the 'Connect Your Device' button at the top of the dashboard to link your Device ID." },
-                            { step: "04", title: "Start Protection", desc: "Once linked, your alerts will be active and monitored 24/7." }
+                            { step: "01", title: "Mount & Power On", desc: "Use the wall mount or stand to place your device and plug it in." },
+                            { step: "02", title: "Check the Light", desc: "A green light means your device is connected to our network." },
+                            { step: "03", title: "Link Your App", desc: "Click 'Connect Your Device' at the top of this page to enter your Device ID." },
+                            { step: "04", title: "Start Monitoring", desc: "Once linked, we'll watch over your home and family 24/7." }
                           ].map((item, i) => (
                             <div key={i} className="flex gap-6 items-start">
                               <span className="text-primary font-black text-3xl opacity-20">{item.step}</span>
@@ -559,14 +565,14 @@ export default function DashboardPage() {
                       </div>
                       <div className="bg-primary/5 rounded-[2.5rem] border border-primary/10 p-10 flex flex-col justify-center text-center">
                         <FileText className="w-20 h-20 text-primary mx-auto mb-6 opacity-20" />
-                        <h4 className="text-2xl font-black mb-4">Branded Setup Manual</h4>
+                        <h4 className="text-2xl font-black mb-4">SafeRwanda Branded Guide</h4>
                         <p className="text-sm text-muted-foreground mb-8">
                           {profile?.hasPaidSetupFee 
-                            ? "SafeRwanda staff will handle this installation. Download this guide to understand how the system works."
+                            ? "SafeRwanda staff will handle this install. Download this guide to see how the system works."
                             : "Download this guide to help you set up the device and connect it to your dashboard."}
                         </p>
                         <Button className="h-16 rounded-2xl font-black uppercase tracking-widest text-xs bg-primary gap-2">
-                          <Download className="w-5 h-5" /> Download Manual (PDF)
+                          <Download className="w-5 h-5" /> Download Guide (PDF)
                         </Button>
                       </div>
                     </div>
@@ -582,14 +588,14 @@ export default function DashboardPage() {
                     <Zap className="w-12 h-12 text-rwanda-green" />
                   </div>
                   <CardTitle className="text-6xl font-black">Choose a Plan</CardTitle>
-                  <CardDescription className="text-xl mt-6 font-light max-w-lg mx-auto">Select a subscription plan to activate your continuous monitoring service.</CardDescription>
+                  <CardDescription className="text-xl mt-6 font-light max-w-lg mx-auto">Select a plan to start your 24/7 security monitoring.</CardDescription>
                 </CardHeader>
                 <CardContent className="p-16">
                   <RadioGroup value={subType} onValueChange={setSubType} className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     {[
                       { id: 'weekly', label: 'Weekly Plan', price: 'RWF 5,000', note: 'Flexible Monitoring' },
                       { id: 'monthly', label: 'Monthly Plan', price: 'RWF 18,000', note: 'Standard Protection' },
-                      { id: 'yearly', label: 'Yearly Plan', price: 'RWF 180,000', note: 'Best Value Security' }
+                      { id: 'yearly', label: 'Yearly Plan', price: 'RWF 180,000', note: 'Best Value' }
                     ].map((plan) => (
                       <div 
                         key={plan.id}
@@ -614,11 +620,11 @@ export default function DashboardPage() {
                     className="w-full h-24 rounded-[2rem] bg-primary text-3xl font-black shadow-xl"
                     disabled={updating || !profile?.deviceId}
                   >
-                    {updating ? <Loader2 className="w-8 h-8 animate-spin" /> : "Activate Service"}
+                    {updating ? <Loader2 className="w-8 h-8 animate-spin" /> : "Activate Now"}
                   </Button>
                   {!profile?.deviceId && (
                     <div className="flex items-center justify-center gap-3 text-destructive font-black uppercase text-[10px] bg-destructive/10 py-5 px-10 rounded-[1.5rem] border border-destructive/20">
-                      <AlertTriangle className="w-5 h-5" /> Link your hardware first to activate
+                      <AlertTriangle className="w-5 h-5" /> Connect your device first to start monitoring
                     </div>
                   )}
                 </CardFooter>
