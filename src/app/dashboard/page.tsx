@@ -256,60 +256,81 @@ export default function DashboardPage() {
                     Register Your Device
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="sm:max-w-[500px] rounded-[2rem] border-white/10 glass-card">
-                  <DialogHeader>
-                    <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
-                      <Smartphone className="w-6 h-6 text-primary" />
-                    </div>
-                    <DialogTitle className="text-2xl font-black tracking-tight">Node Registry</DialogTitle>
-                    <DialogDescription className="text-sm font-light">
-                      Link your physical SafeRwanda node to the command center to authorize distress alerts.
-                    </DialogDescription>
-                  </DialogHeader>
-                  <div className="space-y-6 py-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="nodeId" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Node Serial Identifier</Label>
-                      <Input 
-                        id="nodeId" 
-                        placeholder="SR-NODE-XXXX-XXXX" 
-                        value={deviceIdInput} 
-                        onChange={(e) => setDeviceIdInput(e.target.value)}
-                        className="h-14 rounded-xl border-border bg-background/50 font-mono tracking-widest"
-                      />
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="alertPhone" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Alert Phone</Label>
-                        <Input 
-                          id="alertPhone" 
-                          placeholder="+250 7XX XXX XXX" 
-                          value={alertPhone} 
-                          onChange={(e) => setAlertPhone(e.target.value)}
-                          className="h-14 rounded-xl border-border bg-background/50"
-                        />
+                <DialogContent className="sm:max-w-[520px] p-0 overflow-hidden border-border/50 bg-background shadow-2xl rounded-[2.5rem]">
+                  <div className="relative p-10 pt-12">
+                    <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-primary via-accent to-rwanda-green" />
+                    <DialogHeader className="mb-8">
+                      <div className="flex items-center gap-4">
+                        <div className="w-14 h-14 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center shadow-inner">
+                          <Smartphone className="w-7 h-7 text-primary" />
+                        </div>
+                        <div>
+                          <DialogTitle className="text-3xl font-black tracking-tight leading-none">Node Registry</DialogTitle>
+                          <DialogDescription className="text-sm mt-2 opacity-70">
+                            Initialize hardware synchronization for active mesh monitoring.
+                          </DialogDescription>
+                        </div>
                       </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="alertEmail" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Alert Email</Label>
-                        <Input 
-                          id="alertEmail" 
-                          type="email"
-                          placeholder="alerts@safe.rw" 
-                          value={alertEmail} 
-                          onChange={(e) => setAlertEmail(e.target.value)}
-                          className="h-14 rounded-xl border-border bg-background/50"
-                        />
+                    </DialogHeader>
+                    <div className="space-y-6">
+                      <div className="space-y-3">
+                        <Label htmlFor="nodeId" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Node Serial Identifier</Label>
+                        <div className="relative">
+                          <Input 
+                            id="nodeId" 
+                            placeholder="SR-NODE-XXXX-XXXX" 
+                            value={deviceIdInput} 
+                            onChange={(e) => setDeviceIdInput(e.target.value)}
+                            className="h-16 rounded-2xl border-border bg-secondary/30 font-mono text-lg tracking-widest px-6 focus-visible:ring-primary focus-visible:border-primary/50"
+                          />
+                          <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                             <Cpu className="w-5 h-5 text-muted-foreground/30" />
+                          </div>
+                        </div>
                       </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-3">
+                          <Label htmlFor="alertPhone" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Alert Phone</Label>
+                          <div className="relative">
+                            <Input 
+                              id="alertPhone" 
+                              placeholder="+250 7XX XXX XXX" 
+                              value={alertPhone} 
+                              onChange={(e) => setAlertPhone(e.target.value)}
+                              className="h-16 rounded-2xl border-border bg-secondary/30 px-6 pl-12 focus-visible:ring-primary"
+                            />
+                            <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50" />
+                          </div>
+                        </div>
+                        <div className="space-y-3">
+                          <Label htmlFor="alertEmail" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Alert Email</Label>
+                          <div className="relative">
+                            <Input 
+                              id="alertEmail" 
+                              type="email"
+                              placeholder="alerts@safe.rw" 
+                              value={alertEmail} 
+                              onChange={(e) => setAlertEmail(e.target.value)}
+                              className="h-16 rounded-2xl border-border bg-secondary/30 px-6 pl-12 focus-visible:ring-primary"
+                            />
+                            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="mt-10">
+                      <Button 
+                        onClick={() => updateProfileData({ deviceId: deviceIdInput, alertPhone, alertEmail })}
+                        className="w-full h-16 rounded-2xl bg-primary hover:bg-primary/90 font-black uppercase tracking-widest text-sm shadow-xl shadow-primary/20 transition-all active:scale-[0.98]"
+                        disabled={updating || !deviceIdInput || !alertPhone || !alertEmail}
+                      >
+                        {updating ? <Loader2 className="w-5 h-5 animate-spin" /> : "Authenticate & Link Node"}
+                      </Button>
+                      <p className="text-[10px] text-center text-muted-foreground mt-4 uppercase tracking-widest font-bold opacity-40">
+                        Secure Handshake Protocol: AES-256 Encrypted
+                      </p>
                     </div>
                   </div>
-                  <DialogFooter>
-                    <Button 
-                      onClick={() => updateProfileData({ deviceId: deviceIdInput, alertPhone, alertEmail })}
-                      className="w-full h-14 rounded-xl bg-primary font-black uppercase tracking-widest text-xs"
-                      disabled={updating || !deviceIdInput || !alertPhone || !alertEmail}
-                    >
-                      {updating ? <Loader2 className="w-4 h-4 animate-spin" /> : "Authenticate & Link Node"}
-                    </Button>
-                  </DialogFooter>
                 </DialogContent>
               </Dialog>
             </div>
@@ -378,7 +399,7 @@ export default function DashboardPage() {
                       {!profile?.purchaseStatus || profile?.purchaseStatus === 'none'
                         ? "Your Command Center is operational. Initialize setup for your staged services to acquire hardware."
                         : !profile?.deviceId 
-                          ? "Hardware acquired. Link your physical node using the Register Device portal to begin monitoring."
+                          ? "Hardware acquired. Link your physical node using the Register Device portal in the dashboard header."
                           : !profile?.subscriptionActive 
                             ? "Node linked successfully. Finalize your strategic activation to begin receiving live alerts."
                             : "All systems operational. Monitoring active security mesh."}
