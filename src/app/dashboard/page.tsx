@@ -10,30 +10,26 @@ import {
   Shield, 
   Loader2, 
   Settings, 
-  LogOut, 
   Bell, 
   Activity, 
   Smartphone, 
   Download, 
-  CreditCard, 
   CheckCircle2, 
   AlertTriangle,
   Mail,
   Phone,
   ArrowRight,
-  ListChecks,
-  Package,
   Wrench,
   Wifi,
   Zap,
   Globe,
-  Lock,
   Target,
   LayoutDashboard,
   ShoppingCart,
   Cpu,
   FileText,
-  ChevronLeft
+  ChevronLeft,
+  Plus
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
@@ -42,6 +38,15 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
 
@@ -52,7 +57,7 @@ const HARDWARE_CATALOG: Record<string, any> = {
     image: "https://picsum.photos/seed/child1/600/400",
     buyPrice: "45,000 RWF",
     leasePrice: "4,000 RWF/mo",
-    description: "Multi-band GPS node with SOS override and silent audio channel."
+    description: "Multi-band GPS node with SOS override and health monitoring (Temp/O2)."
   },
   "elderly-care": {
     name: "SR-Vital Link",
@@ -88,6 +93,13 @@ const HARDWARE_CATALOG: Record<string, any> = {
     buyPrice: "75,000 RWF",
     leasePrice: "7,000 RWF/mo",
     description: "High-capacity network hub for community mesh integrity."
+  },
+  "smart-community": {
+    name: "SR-Community Node",
+    image: "https://picsum.photos/seed/smart1/600/400",
+    buyPrice: "85,000 RWF",
+    leasePrice: "8,000 RWF/mo",
+    description: "Urban IoT node for lighting, waste, and environmental monitoring."
   }
 };
 
@@ -100,15 +112,16 @@ export default function DashboardPage() {
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
+  const [isRegisterOpen, setIsRegisterOpen] = useState(false);
   
-  // Tab state: 'overview' | 'staging' | 'setup' | 'activation'
+  // Tab state: 'overview' | 'staging' | 'activation'
   const [activeTab, setActiveTab] = useState<string>('overview');
 
   // Staging Sub-state
   const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null);
-  const [stagingStep, setStagingStep] = useState<'list' | 'instructions' | 'procurement'>('list');
+  const [stagingStep, setStagingStep] = useState<'list' | 'procurement' | 'setup'>('list');
 
-  // Form states
+  // Form states (Registry)
   const [deviceIdInput, setDeviceIdInput] = useState('');
   const [alertPhone, setAlertPhone] = useState('');
   const [alertEmail, setAlertEmail] = useState('');
@@ -165,16 +178,6 @@ export default function DashboardPage() {
     fetchProfile();
   }, [user, userLoading, db, router]);
 
-  const handleLogout = async () => {
-    if (!auth) return;
-    try {
-      await signOut(auth);
-      router.push('/');
-    } catch (error) {
-      console.error("Logout error:", error);
-    }
-  };
-
   const updateProfileData = async (newData: any) => {
     if (!user || !db) return;
     setUpdating(true);
@@ -182,11 +185,20 @@ export default function DashboardPage() {
       const userDocRef = doc(db, 'users', user.uid);
       await updateDoc(userDocRef, newData);
       setProfile((prev: any) => ({ ...prev, ...newData }));
+      if (newData.deviceId) setIsRegisterOpen(false);
     } catch (err) {
       console.error("Update profile error:", err);
     } finally {
       setUpdating(false);
     }
+  };
+
+  const handleProcurementSelection = (status: 'purchased' | 'leased') => {
+    updateProfileData({ 
+      purchaseStatus: status, 
+      hasPaidSetupFee: status === 'purchased' 
+    });
+    setStagingStep('setup');
   };
 
   if (loading || userLoading) {
@@ -234,24 +246,80 @@ export default function DashboardPage() {
               <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl"><Bell className="w-4 h-4" /></Button>
               <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl"><Settings className="w-4 h-4" /></Button>
               <div className="h-6 w-px bg-border mx-1" />
-              <Button 
-                variant="destructive" 
-                size="sm"
-                className="rounded-xl font-bold px-4 h-10 gap-2" 
-                onClick={handleLogout}
-              >
-                <LogOut className="w-4 h-4" />
-                Logout
-              </Button>
+              
+              <Dialog open={isRegisterOpen} onOpenChange={setIsRegisterOpen}>
+                <DialogTrigger asChild>
+                  <Button 
+                    className="rounded-xl font-bold px-6 h-10 gap-2 bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20" 
+                  >
+                    <Plus className="w-4 h-4" />
+                    Register Your Device
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[500px] rounded-[2rem] border-white/10 glass-card">
+                  <DialogHeader>
+                    <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
+                      <Smartphone className="w-6 h-6 text-primary" />
+                    </div>
+                    <DialogTitle className="text-2xl font-black tracking-tight">Node Registry</DialogTitle>
+                    <DialogDescription className="text-sm font-light">
+                      Link your physical SafeRwanda node to the command center to authorize distress alerts.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="space-y-6 py-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="nodeId" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Node Serial Identifier</Label>
+                      <Input 
+                        id="nodeId" 
+                        placeholder="SR-NODE-XXXX-XXXX" 
+                        value={deviceIdInput} 
+                        onChange={(e) => setDeviceIdInput(e.target.value)}
+                        className="h-14 rounded-xl border-border bg-background/50 font-mono tracking-widest"
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="alertPhone" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Alert Phone</Label>
+                        <Input 
+                          id="alertPhone" 
+                          placeholder="+250 7XX XXX XXX" 
+                          value={alertPhone} 
+                          onChange={(e) => setAlertPhone(e.target.value)}
+                          className="h-14 rounded-xl border-border bg-background/50"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="alertEmail" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Alert Email</Label>
+                        <Input 
+                          id="alertEmail" 
+                          type="email"
+                          placeholder="alerts@safe.rw" 
+                          value={alertEmail} 
+                          onChange={(e) => setAlertEmail(e.target.value)}
+                          className="h-14 rounded-xl border-border bg-background/50"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <DialogFooter>
+                    <Button 
+                      onClick={() => updateProfileData({ deviceId: deviceIdInput, alertPhone, alertEmail })}
+                      className="w-full h-14 rounded-xl bg-primary font-black uppercase tracking-widest text-xs"
+                      disabled={updating || !deviceIdInput || !alertPhone || !alertEmail}
+                    >
+                      {updating ? <Loader2 className="w-4 h-4 animate-spin" /> : "Authenticate & Link Node"}
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
             </div>
           </div>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full space-y-12">
-            <TabsList className="grid grid-cols-4 h-auto p-1.5 bg-secondary/40 backdrop-blur-2xl rounded-[1.5rem] border border-border/50 sticky top-24 z-[50] shadow-xl">
+            <TabsList className="grid grid-cols-3 h-auto p-1.5 bg-secondary/40 backdrop-blur-2xl rounded-[1.5rem] border border-border/50 sticky top-24 z-[50] shadow-xl">
               {[
                 { id: 'overview', icon: LayoutDashboard, label: 'Overview' },
                 { id: 'staging', icon: ShoppingCart, label: 'Staging' },
-                { id: 'setup', icon: Wrench, label: 'Integration' },
                 { id: 'activation', icon: Zap, label: 'Activation' },
               ].map((tab) => (
                 <TabsTrigger 
@@ -307,17 +375,23 @@ export default function DashboardPage() {
                   </CardHeader>
                   <CardContent className="p-8 pt-0 flex-grow flex flex-col justify-between">
                     <p className="text-sm text-muted-foreground font-light leading-relaxed">
-                      {!profile?.deviceId 
-                        ? "Your Command Center is operational, but no hardware nodes are linked. Proceed to Staging to initialize your first device."
-                        : !profile?.subscriptionActive 
-                          ? "Node linked successfully. Finalize your strategic activation to begin receiving live telemetry and distress alerts."
-                          : "All systems operational. Monitoring active security mesh."}
+                      {!profile?.purchaseStatus || profile?.purchaseStatus === 'none'
+                        ? "Your Command Center is operational. Initialize setup for your staged services to acquire hardware."
+                        : !profile?.deviceId 
+                          ? "Hardware acquired. Link your physical node using the Register Device portal to begin monitoring."
+                          : !profile?.subscriptionActive 
+                            ? "Node linked successfully. Finalize your strategic activation to begin receiving live alerts."
+                            : "All systems operational. Monitoring active security mesh."}
                     </p>
                     <Button 
-                      onClick={() => setActiveTab(profile?.deviceId ? 'activation' : 'staging')}
+                      onClick={() => {
+                        if (!profile?.purchaseStatus || profile.purchaseStatus === 'none') setActiveTab('staging');
+                        else if (!profile?.deviceId) setIsRegisterOpen(true);
+                        else setActiveTab('activation');
+                      }}
                       className="w-full mt-6 rounded-2xl h-14 font-black uppercase tracking-widest text-xs bg-primary shadow-xl shadow-primary/20"
                     >
-                      {profile?.deviceId ? 'Go to Activation' : 'Initialize Setup'}
+                      {(!profile?.purchaseStatus || profile.purchaseStatus === 'none') ? 'Go to Staging' : profile?.deviceId ? 'Go to Activation' : 'Register Device'}
                     </Button>
                   </CardContent>
                 </Card>
@@ -352,16 +426,16 @@ export default function DashboardPage() {
                                 <Shield className="w-7 h-7 text-primary" />
                               </div>
                               <h4 className="font-black text-xl capitalize mb-3 tracking-tight">{serviceId.replace('-', ' ')}</h4>
-                              <p className="text-[10px] text-muted-foreground leading-relaxed font-bold uppercase tracking-widest mb-8 opacity-60">Status: Staged for Deployment</p>
+                              <p className="text-[10px] text-muted-foreground leading-relaxed font-bold uppercase tracking-widest mb-8 opacity-60">Status: {profile?.purchaseStatus !== 'none' ? 'Procured' : 'Staged for Deployment'}</p>
                             </div>
                             <Button 
                               onClick={() => {
                                 setSelectedServiceId(serviceId);
-                                setStagingStep('instructions');
+                                setStagingStep(profile?.purchaseStatus !== 'none' ? 'setup' : 'procurement');
                               }}
                               className="w-full rounded-xl bg-primary/10 text-primary hover:bg-primary hover:text-white border-none text-[10px] font-black tracking-widest uppercase px-3 py-1"
                             >
-                              Initialize Setup
+                              {profile?.purchaseStatus !== 'none' ? 'View Setup Manual' : 'Initialize Setup'}
                             </Button>
                           </div>
                         ))
@@ -378,64 +452,11 @@ export default function DashboardPage() {
                 </Card>
               )}
 
-              {stagingStep === 'instructions' && selectedServiceId && (
-                <Card className="bg-card/60 backdrop-blur-xl border-border rounded-[3rem] overflow-hidden shadow-2xl shadow-black/5 animate-reveal">
-                  <CardHeader className="p-12 pb-6 border-b border-border/50">
-                    <Button variant="ghost" className="w-fit mb-6 rounded-xl gap-2 font-bold" onClick={() => setStagingStep('list')}>
-                      <ChevronLeft className="w-4 h-4" /> Back to Staging
-                    </Button>
-                    <div className="flex items-center gap-4">
-                      <div className="p-4 rounded-[1.5rem] bg-primary/10 text-primary border border-primary/10 shadow-inner">
-                        <FileText className="w-8 h-8" />
-                      </div>
-                      <div>
-                        <CardTitle className="text-4xl font-black tracking-tighter uppercase">Deployment Protocol</CardTitle>
-                        <CardDescription className="text-lg font-light">Service ID: {selectedServiceId.toUpperCase()}</CardDescription>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="p-12 space-y-12">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                      <div className="space-y-8">
-                        <h3 className="text-2xl font-black tracking-tight">How It Works</h3>
-                        <div className="space-y-6">
-                          {[
-                            { step: "01", title: "Hardware Procurement", desc: "Select between strategic ownership or flexible leasing for your IoT node." },
-                            { step: "02", title: "Physical Integration", desc: "Follow the provided manual to mount and power your physical node." },
-                            { step: "03", title: "Node Registry", desc: "Link your device serial ID to the command center to verify integrity." },
-                            { step: "04", title: "Distress Configuration", desc: "Define your alert contacts to receive real-time notifications." }
-                          ].map((item, i) => (
-                            <div key={i} className="flex gap-6 items-start">
-                              <span className="text-primary font-black text-3xl opacity-20">{item.step}</span>
-                              <div>
-                                <h4 className="font-bold text-lg mb-1">{item.title}</h4>
-                                <p className="text-sm text-muted-foreground font-light">{item.desc}</p>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                        <Button className="h-14 px-8 rounded-xl font-bold bg-secondary text-foreground hover:bg-primary hover:text-white transition-all gap-2">
-                          <Download className="w-5 h-5" /> Download Strategic Manual (PDF)
-                        </Button>
-                      </div>
-                      <div className="bg-primary/5 rounded-[2.5rem] border border-primary/10 p-10 flex flex-col justify-center text-center">
-                        <Cpu className="w-20 h-20 text-primary mx-auto mb-6 opacity-20" />
-                        <h4 className="text-2xl font-black tracking-tight mb-4">Ready for Hardware?</h4>
-                        <p className="text-sm text-muted-foreground font-light mb-8">Proceeding to procurement will allow you to select your node model and shipping protocols.</p>
-                        <Button onClick={() => setStagingStep('procurement')} className="h-16 rounded-2xl font-black uppercase tracking-widest text-xs bg-primary shadow-2xl shadow-primary/30">
-                          Proceed to Procurement
-                        </Button>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-
               {stagingStep === 'procurement' && selectedServiceId && (
                 <div className="space-y-12 animate-reveal">
                   <div className="flex items-center justify-between">
-                    <Button variant="ghost" className="rounded-xl gap-2 font-bold" onClick={() => setStagingStep('instructions')}>
-                      <ChevronLeft className="w-4 h-4" /> Back to Instructions
+                    <Button variant="ghost" className="rounded-xl gap-2 font-bold" onClick={() => setStagingStep('list')}>
+                      <ChevronLeft className="w-4 h-4" /> Back to Staging
                     </Button>
                     <Badge className="bg-primary text-white font-black tracking-widest px-4 py-1 uppercase">{selectedServiceId.replace('-', ' ')}</Badge>
                   </div>
@@ -445,7 +466,7 @@ export default function DashboardPage() {
                     <Card className={cn(
                       "rounded-[3.5rem] overflow-hidden border-4 transition-all cursor-pointer group hover:-translate-y-2 relative shadow-2xl",
                       profile?.purchaseStatus === 'purchased' ? 'border-primary bg-primary/[0.03]' : 'border-border bg-card/60'
-                    )} onClick={() => updateProfileData({ purchaseStatus: 'purchased', hasPaidSetupFee: true })}>
+                    )} onClick={() => handleProcurementSelection('purchased')}>
                       <div className="relative h-64 w-full">
                         <Image src={HARDWARE_CATALOG[selectedServiceId]?.image} alt="Hardware" fill className="object-cover brightness-75 group-hover:scale-105 transition-transform duration-700" />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
@@ -476,7 +497,7 @@ export default function DashboardPage() {
                     <Card className={cn(
                       "rounded-[3.5rem] overflow-hidden border-4 transition-all cursor-pointer group hover:-translate-y-2 relative shadow-2xl",
                       profile?.purchaseStatus === 'leased' ? 'border-accent bg-accent/[0.03]' : 'border-border bg-card/60'
-                    )} onClick={() => updateProfileData({ purchaseStatus: 'leased', hasPaidSetupFee: false })}>
+                    )} onClick={() => handleProcurementSelection('leased')}>
                       <div className="relative h-64 w-full">
                         <Image src={HARDWARE_CATALOG[selectedServiceId]?.image} alt="Hardware" fill className="object-cover brightness-75 group-hover:scale-105 transition-transform duration-700" />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
@@ -503,111 +524,65 @@ export default function DashboardPage() {
                       </CardContent>
                     </Card>
                   </div>
-                  
-                  {profile?.purchaseStatus !== 'none' && (
-                    <div className="flex justify-center mt-12">
-                      <Button onClick={() => setActiveTab('setup')} className="h-16 px-12 rounded-[1.5rem] font-black uppercase tracking-widest text-xs bg-primary shadow-2xl shadow-primary/30 flex items-center gap-4 group">
-                        Proceed to Node Integration <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                      </Button>
-                    </div>
-                  )}
                 </div>
+              )}
+
+              {stagingStep === 'setup' && selectedServiceId && (
+                <Card className="bg-card/60 backdrop-blur-xl border-border rounded-[3rem] overflow-hidden shadow-2xl shadow-black/5 animate-reveal">
+                  <CardHeader className="p-12 pb-6 border-b border-border/50 bg-secondary/20">
+                    <Button variant="ghost" className="w-fit mb-6 rounded-xl gap-2 font-bold" onClick={() => setStagingStep('list')}>
+                      <ChevronLeft className="w-4 h-4" /> Back to Staging
+                    </Button>
+                    <div className="flex items-center gap-4">
+                      <div className="p-4 rounded-[1.5rem] bg-rwanda-green/10 text-rwanda-green border border-rwanda-green/10 shadow-inner">
+                        <Wrench className="w-8 h-8" />
+                      </div>
+                      <div>
+                        <CardTitle className="text-4xl font-black tracking-tighter uppercase">Deployment Protocol</CardTitle>
+                        <CardDescription className="text-lg font-light">Service ID: {selectedServiceId.toUpperCase()}</CardDescription>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="p-12 space-y-12">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                      <div className="space-y-8">
+                        <h3 className="text-2xl font-black tracking-tight">Setup Instructions</h3>
+                        <div className="space-y-6">
+                          {[
+                            { step: "01", title: "Physical Integration", desc: "Follow the provided manual to mount and power your physical node." },
+                            { step: "02", title: "Verify Connectivity", desc: "Ensure your device is within range of the SafeRwanda mesh gateway." },
+                            { step: "03", title: "Node Registry", desc: "Link your device serial ID using the Register Device portal in the dashboard header." },
+                            { step: "04", title: "Distress Configuration", desc: "Authorize your alert contacts to receive real-time distess notifications." }
+                          ].map((item, i) => (
+                            <div key={i} className="flex gap-6 items-start">
+                              <span className="text-primary font-black text-3xl opacity-20">{item.step}</span>
+                              <div>
+                                <h4 className="font-bold text-lg mb-1">{item.title}</h4>
+                                <p className="text-sm text-muted-foreground font-light">{item.desc}</p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="bg-primary/5 rounded-[2.5rem] border border-primary/10 p-10 flex flex-col justify-center text-center">
+                        <FileText className="w-20 h-20 text-primary mx-auto mb-6 opacity-20" />
+                        <h4 className="text-2xl font-black tracking-tight mb-4">Strategic Manual</h4>
+                        <p className="text-sm text-muted-foreground font-light mb-8">
+                          {profile?.hasPaidSetupFee 
+                            ? "SafeRwanda technicians will handle the installation. Download this manual to understand the hardware capabilities."
+                            : "Download the official deployment protocol to begin your DIY hardware integration."}
+                        </p>
+                        <Button className="h-16 rounded-2xl font-black uppercase tracking-widest text-xs bg-primary shadow-2xl shadow-primary/30 gap-2">
+                          <Download className="w-5 h-5" /> Download Manual (PDF)
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
               )}
             </TabsContent>
 
-            {/* TAB 3: SETUP & REGISTRY */}
-            <TabsContent value="setup" className="space-y-10 animate-reveal outline-none">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-                <Card className="rounded-[3rem] bg-card/60 backdrop-blur-xl border-border overflow-hidden shadow-2xl shadow-black/5">
-                  <CardHeader className="p-10 pb-8 border-b border-border/50 bg-secondary/20">
-                    <div className="flex items-center gap-4 mb-6">
-                      <div className="w-16 h-16 rounded-[1.5rem] bg-rwanda-green/10 flex items-center justify-center shadow-inner border border-rwanda-green/5">
-                        <Wrench className="w-8 h-8 text-rwanda-green" />
-                      </div>
-                      <Badge className="bg-rwanda-green/10 text-rwanda-green border-none text-[10px] font-black tracking-widest uppercase py-1 px-4">Tactical Manual</Badge>
-                    </div>
-                    <CardTitle className="text-4xl font-black tracking-tighter">Setup Protocol</CardTitle>
-                    <CardDescription className="text-lg mt-2 font-light">Deploy your nodes with strategic precision across your zone.</CardDescription>
-                  </CardHeader>
-                  <CardContent className="p-10 space-y-8">
-                    <div className="p-8 rounded-[2.5rem] bg-background/50 border border-border leading-relaxed text-muted-foreground font-light italic text-base relative overflow-hidden">
-                       <div className="absolute top-0 left-0 w-1 h-full bg-rwanda-green/40" />
-                      {profile?.hasPaidSetupFee 
-                        ? "SafeRwanda technicians have been dispatched to your zone. They will handle all physical node linking and perimeter verification. Operation pending technician arrival."
-                        : "Initialize your mesh network by following the official SafeRwanda Deployment Guide. This protocol ensures optimal node density and signal integrity across your secure location."}
-                    </div>
-
-                    {!profile?.hasPaidSetupFee && (
-                      <Button variant="secondary" className="w-full h-20 rounded-[1.75rem] font-black uppercase tracking-[0.2em] text-xs gap-3 shadow-xl group">
-                        <Download className="w-6 h-6 group-hover:translate-y-1 transition-transform" /> Download Strategic Manual
-                      </Button>
-                    )}
-                  </CardContent>
-                </Card>
-
-                <Card className="rounded-[3rem] bg-card/60 backdrop-blur-xl border-primary/20 shadow-2xl shadow-primary/5">
-                  <CardHeader className="p-10 pb-8 border-b border-border/50">
-                    <div className="w-16 h-16 rounded-[1.5rem] bg-primary/10 flex items-center justify-center mb-8 border border-primary/5 shadow-inner">
-                      <Smartphone className="w-8 h-8 text-primary" />
-                    </div>
-                    <CardTitle className="text-4xl font-black tracking-tighter">Node Registry</CardTitle>
-                    <CardDescription className="text-lg mt-2 font-light">Link your physical node serial ID to the Command Center.</CardDescription>
-                  </CardHeader>
-                  <CardContent className="p-10 space-y-10">
-                    <div className="space-y-8">
-                      <div className="space-y-4">
-                        <Label htmlFor="nodeId" className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground ml-2">Node Serial Identifier</Label>
-                        <Input 
-                          id="nodeId" 
-                          placeholder="SR-NODE-XXXX-XXXX" 
-                          value={deviceIdInput} 
-                          onChange={(e) => setDeviceIdInput(e.target.value)}
-                          className="h-16 rounded-[1.25rem] px-8 bg-background/50 border-border text-xl font-mono tracking-widest focus:ring-primary/20 focus:border-primary/40 transition-all"
-                        />
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div className="space-y-4">
-                          <Label htmlFor="alertPhone" className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground ml-2">Alert Phone</Label>
-                          <div className="relative">
-                            <Phone className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground opacity-50" />
-                            <Input 
-                              id="alertPhone" 
-                              placeholder="+250 7XX XXX XXX" 
-                              value={alertPhone} 
-                              onChange={(e) => setAlertPhone(e.target.value)}
-                              className="h-16 rounded-[1.25rem] pl-16 bg-background/50 border-border font-bold tracking-tight"
-                            />
-                          </div>
-                        </div>
-                        <div className="space-y-4">
-                          <Label htmlFor="alertEmail" className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground ml-2">Alert Email</Label>
-                          <div className="relative">
-                            <Mail className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground opacity-50" />
-                            <Input 
-                              id="alertEmail" 
-                              type="email"
-                              placeholder="agent.alerts@safe.rw" 
-                              value={alertEmail} 
-                              onChange={(e) => setAlertEmail(e.target.value)}
-                              className="h-16 rounded-[1.25rem] pl-16 bg-background/50 border-border font-bold tracking-tight"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <Button 
-                      onClick={() => updateProfileData({ deviceId: deviceIdInput, alertPhone, alertEmail })}
-                      className="w-full h-20 rounded-[1.75rem] font-black text-sm uppercase tracking-[0.2em] bg-primary shadow-2xl shadow-primary/30 hover:scale-[1.01] active:scale-[0.99] transition-all"
-                      disabled={updating || !deviceIdInput || !alertPhone || !alertEmail}
-                    >
-                      {updating ? <Loader2 className="w-6 h-6 animate-spin" /> : "Authenticate & Link Node"}
-                    </Button>
-                  </CardContent>
-                </Card>
-              </div>
-            </TabsContent>
-
-            {/* TAB 4: ACTIVATION */}
+            {/* TAB 3: ACTIVATION */}
             <TabsContent value="activation" className="animate-reveal outline-none">
               <Card className="max-w-4xl mx-auto rounded-[4rem] border-rwanda-green/20 overflow-hidden shadow-2xl shadow-black/10">
                 <CardHeader className="p-16 text-center bg-gradient-to-b from-rwanda-green/[0.05] to-transparent border-b border-rwanda-green/10">
@@ -658,7 +633,7 @@ export default function DashboardPage() {
                   </Button>
                   {!profile?.deviceId && (
                     <div className="flex items-center justify-center gap-3 text-destructive font-black uppercase tracking-[0.3em] text-[10px] bg-destructive/10 py-5 px-10 rounded-[1.5rem] border border-destructive/20 animate-pulse">
-                      <AlertTriangle className="w-5 h-5" /> Authenticate hardware before system activation
+                      <AlertTriangle className="w-5 h-5" /> Register hardware before system activation
                     </div>
                   )}
                 </CardFooter>
