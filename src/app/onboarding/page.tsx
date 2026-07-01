@@ -10,12 +10,12 @@ import { useUser, useFirestore } from '@/firebase';
 import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
 
 const ALL_SERVICES = [
-  { id: "child-protection", title: "Child Protection", note: "Real-time school tracking, geofencing & SOS buttons." },
-  { id: "elderly-care", title: "Elderly Care", note: "Fall detection, vitals monitoring & instant family alerts." },
-  { id: "fire-prevention", title: "Fire Prevention", note: "Smart heat, gas & thermal leak detection protocols." },
-  { id: "property-security", title: "Property Security", note: "Smart locks, perimeter breach & residential audit logs." },
-  { id: "asset-protection", title: "Asset Protection", note: "High-precision GPS nodes for equipment & vehicles." },
-  { id: "neighborhood-surveillance", title: "Neighborhood Surveillance", note: "Community mesh network & AI pattern detection." }
+  { id: "child-protection", title: "Child Protection", note: "Keep track of your child at school and in emergencies." },
+  { id: "elderly-care", title: "Elderly Care", note: "Get alerts if a senior family member falls or feels unwell." },
+  { id: "fire-prevention", title: "Fire Prevention", note: "Sensors that warn you about home fires and gas leaks." },
+  { id: "property-security", title: "Home Security", note: "Smart locks and alarms to keep your house safe from intruders." },
+  { id: "asset-protection", title: "Asset Protection", note: "Track your car or expensive equipment at all times." },
+  { id: "neighborhood-surveillance", title: "Neighborhood Safety", note: "Join a local safety group to watch out for each other." }
 ];
 
 function OnboardingContent() {
@@ -66,7 +66,7 @@ function OnboardingContent() {
         
         const userData = {
           uid: user.uid,
-          fullName: user.displayName || 'Security Agent',
+          fullName: user.displayName || 'SafeRwanda User',
           email: user.email || '',
           servicesSelected: selectedIds,
           isOnboarded: true,
@@ -103,11 +103,11 @@ function OnboardingContent() {
           <div className="text-center mb-12 animate-fade-in">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-widest mb-4">
               <ListChecks className="w-3 h-3" />
-              Service Customization
+              Pick Your Services
             </div>
-            <h1 className="text-4xl md:text-5xl font-headline font-extrabold mb-4 tracking-tight">Personalize Your Security</h1>
+            <h1 className="text-4xl md:text-5xl font-headline font-extrabold mb-4 tracking-tight">What do you want to protect?</h1>
             <p className="text-lg text-muted-foreground font-light max-w-2xl mx-auto">
-              Review and select all SafeRwanda protocols you want active. Our IoT mesh network will prioritize these domains for your account.
+              Select the safety services that are right for you and your family. You can add more later in your dashboard.
             </p>
           </div>
 
@@ -118,7 +118,7 @@ function OnboardingContent() {
                 onClick={() => toggleService(service.id)}
                 className={`relative group p-6 rounded-2xl border transition-all cursor-pointer select-none ${
                   selectedIds.includes(service.id) 
-                    ? "bg-primary/5 border-primary shadow-lg shadow-primary/10" 
+                    ? "bg-primary/5 border-primary shadow-lg" 
                     : "bg-card border-border hover:border-primary/50"
                 }`}
               >
@@ -149,21 +149,21 @@ function OnboardingContent() {
                   <Shield className={`w-6 h-6 text-accent transition-transform duration-500 ${selectedIds.length > 0 ? "scale-110 rotate-12" : ""}`} />
                 </div>
                 <div>
-                  <p className="text-sm font-black uppercase tracking-widest">{selectedIds.length} Protocols Selected</p>
+                  <p className="text-sm font-black uppercase tracking-widest">{selectedIds.length} Services Selected</p>
                   <p className="text-xs text-muted-foreground italic">
-                    {user ? "Initialize your secure dashboard now." : "Create your account to activate these protocols."}
+                    {user ? "Go to your dashboard now." : "Create your account to start."}
                   </p>
                 </div>
               </div>
               <Button 
                 disabled={selectedIds.length === 0 || submitting}
                 onClick={handleContinue}
-                className="w-full md:w-auto h-14 px-10 rounded-xl bg-primary hover:bg-primary/90 font-bold shadow-xl shadow-primary/20 active:scale-95 transition-all"
+                className="w-full md:w-auto h-14 px-10 rounded-xl bg-primary hover:bg-primary/90 font-bold shadow-xl active:scale-95 transition-all"
               >
                 {submitting ? (
                   <Loader2 className="w-5 h-5 animate-spin" />
                 ) : (
-                  user ? "Go to Dashboard" : "Register Node Profile"
+                  user ? "Go to Dashboard" : "Create Account"
                 )}
                 {!submitting && <ArrowRight className="w-4 h-4 ml-2" />}
               </Button>

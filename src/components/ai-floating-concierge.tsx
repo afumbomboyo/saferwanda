@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useRef, useEffect } from 'react';
@@ -43,30 +44,19 @@ export default function AIFoatingConcierge() {
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (!isDragging || !dragRef.current) return;
-      
       const deltaX = e.clientX - dragRef.current.startX;
       const deltaY = e.clientY - dragRef.current.startY;
-      
-      if (Math.abs(deltaX) > 5 || Math.abs(deltaY) > 5) {
-        dragRef.current.moved = true;
-      }
-
+      if (Math.abs(deltaX) > 5 || Math.abs(deltaY) > 5) dragRef.current.moved = true;
       const newX = dragRef.current.initialX + deltaX;
       const newY = dragRef.current.initialY + deltaY;
-
       const maxX = window.innerWidth - 64;
       const maxY = window.innerHeight - 64;
-      
       setPosition({
         x: Math.max(0, Math.min(newX, maxX)),
         y: Math.max(0, Math.min(newY, maxY))
       });
     };
-
-    const handleMouseUp = () => {
-      setIsDragging(false);
-    };
-
+    const handleMouseUp = () => setIsDragging(false);
     if (isDragging) {
       window.addEventListener('mousemove', handleMouseMove);
       window.addEventListener('mouseup', handleMouseUp);
@@ -86,7 +76,6 @@ export default function AIFoatingConcierge() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!query.trim()) return;
-
     setLoading(true);
     try {
       const result = await aiChatServiceRecommendation({ query });
@@ -113,27 +102,26 @@ export default function AIFoatingConcierge() {
             onMouseDown={handleMouseDown}
             onClick={handleButtonClick}
             className={cn(
-              "w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-accent text-white shadow-[0_0_40px_rgba(37,99,235,0.4)] flex items-center justify-center transition-all hover:scale-110 active:scale-95",
-              isDragging ? "cursor-grabbing scale-105 rotate-6 shadow-primary/60" : "cursor-grab animate-bounce-subtle"
+              "w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-accent text-white shadow-xl flex items-center justify-center transition-all hover:scale-110 active:scale-95",
+              isDragging ? "cursor-grabbing" : "cursor-grab animate-bounce-subtle"
             )}
           >
             <MessageSquare className="w-8 h-8" />
-            <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-4 border-background animate-pulse" />
           </button>
         </div>
       </div>
 
       {isOpen && (
         <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-background/60 backdrop-blur-xl animate-in fade-in duration-300">
-          <Card className="w-full max-w-[500px] h-[700px] max-h-[90vh] shadow-[0_0_100px_rgba(0,0,0,0.5)] flex flex-col overflow-hidden border-white/10 glass-card animate-in zoom-in-95 slide-in-from-bottom-8 duration-500 rounded-[2.5rem]">
+          <Card className="w-full max-w-[500px] h-[700px] max-h-[90vh] shadow-2xl flex flex-col overflow-hidden glass-card animate-in zoom-in-95 rounded-[2.5rem]">
             <CardHeader className="bg-gradient-to-r from-primary to-accent text-white p-8 flex flex-row items-center justify-between space-y-0">
               <div className="flex items-center gap-4">
                 <div className="p-3 rounded-2xl bg-white/20 backdrop-blur-md">
                   <Shield className="w-6 h-6" />
                 </div>
                 <div>
-                  <CardTitle className="text-xl font-headline font-bold">AI Concierge</CardTitle>
-                  <CardDescription className="text-white/70 text-xs font-bold uppercase tracking-widest">Expert Safety Protocol</CardDescription>
+                  <CardTitle className="text-xl font-headline font-bold">Safety Assistant</CardTitle>
+                  <CardDescription className="text-white/70 text-xs font-bold uppercase tracking-widest">Help With Your Security</CardDescription>
                 </div>
               </div>
               <Button 
@@ -150,7 +138,7 @@ export default function AIFoatingConcierge() {
               <ScrollArea className="h-full p-8">
                 <div className="space-y-6">
                   <div className="bg-white/5 border border-white/5 p-4 rounded-3xl rounded-tl-none max-w-[90%] text-sm leading-relaxed">
-                    System initialized. I am your SafeRwanda Strategic Intelligence unit. How can I architect your security roadmap today?
+                    Hello! I'm your SafeRwanda helper. How can I help you pick the best protection for your home today?
                   </div>
 
                   {response && (
@@ -158,15 +146,15 @@ export default function AIFoatingConcierge() {
                       <div className="bg-primary/10 border border-primary/20 p-6 rounded-3xl text-sm leading-relaxed shadow-inner">
                         <div className="flex items-center gap-2 mb-4 font-bold text-primary uppercase tracking-widest text-xs">
                           <Sparkles className="w-4 h-4" />
-                          Strategic Insight
+                          My Advice
                         </div>
                         {response.advice}
                       </div>
 
                       <div className="space-y-3">
-                        <p className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground font-black px-1">Hardware Deployments</p>
+                        <p className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground font-black px-1">Recommended Devices</p>
                         {response.recommendedServices.map((service, idx) => (
-                          <div key={idx} className="flex items-center gap-4 p-4 bg-white/5 border border-white/5 rounded-2xl text-sm hover:border-primary/40 transition-all hover:translate-x-1">
+                          <div key={idx} className="flex items-center gap-4 p-4 bg-white/5 border border-white/5 rounded-2xl text-sm hover:border-primary/40 transition-all">
                             <CheckCircle2 className="w-5 h-5 text-primary shrink-0" />
                             <span className="font-bold">{service}</span>
                           </div>
@@ -177,7 +165,7 @@ export default function AIFoatingConcierge() {
                   {loading && (
                     <div className="flex items-center gap-3 text-primary text-xs font-bold tracking-widest animate-pulse p-4">
                       <Loader2 className="w-5 h-5 animate-spin" />
-                      SYNCHRONIZING PROTOCOLS...
+                      FINDING ANSWERS...
                     </div>
                   )}
                 </div>
@@ -187,7 +175,7 @@ export default function AIFoatingConcierge() {
             <CardFooter className="p-6 border-t border-white/5 bg-background/50">
               <form onSubmit={handleSubmit} className="flex w-full gap-3">
                 <Input
-                  placeholder="Inquire about a safety domain..."
+                  placeholder="Ask me a question about safety..."
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   disabled={loading}
