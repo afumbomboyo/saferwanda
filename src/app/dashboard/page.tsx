@@ -466,7 +466,7 @@ export default function DashboardPage() {
                       onClick={() => setStagingStep('procurement')}
                       className="w-full h-16 rounded-2xl bg-primary hover:bg-primary/90 font-black uppercase tracking-widest text-sm"
                     >
-                      Continue to Procurement
+                      Continue to Get Device
                     </Button>
                   </CardContent>
                 </Card>
