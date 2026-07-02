@@ -123,17 +123,32 @@ export default function DashboardPage() {
   const [alertEmail, setAlertEmail] = useState('');
   const [subType, setSubType] = useState('monthly');
 
+  // Handle intersection observer for reveal animations
   useEffect(() => {
-    const observerOptions = { threshold: 0.05, rootMargin: '0px 0px -50px 0px' };
+    const observerOptions = { threshold: 0.05, rootMargin: '0px' };
+    
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
-        if (entry.isIntersecting) entry.target.classList.add('reveal-visible');
+        if (entry.isIntersecting) {
+          entry.target.classList.add('reveal-visible');
+        }
       });
     }, observerOptions);
-    const revealElements = document.querySelectorAll('.animate-reveal');
-    revealElements.forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
-  }, [activeTab, loading, stagingStep]);
+
+    // Using a timeout to ensure DOM has settled after tab/step changes
+    const timer = setTimeout(() => {
+      const revealElements = document.querySelectorAll('.animate-reveal');
+      revealElements.forEach((el) => {
+        // If switching tabs, we want to re-evaluate visibility
+        observer.observe(el);
+      });
+    }, 100);
+
+    return () => {
+      clearTimeout(timer);
+      observer.disconnect();
+    };
+  }, [activeTab, loading, stagingStep, selectedServiceId]);
 
   useEffect(() => {
     if (userLoading) return;
@@ -233,7 +248,7 @@ export default function DashboardPage() {
                 <DialogTrigger asChild>
                   <Button className="rounded-xl font-bold px-6 h-10 gap-2 bg-primary hover:bg-primary/90 shadow-lg">
                     <Plus className="w-4 h-4" />
-                    Connect Your Device
+                    Register Your Device
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[520px] p-0 overflow-hidden border-border/50 bg-background shadow-2xl rounded-[2.5rem]">
@@ -360,7 +375,7 @@ export default function DashboardPage() {
                       {!profile?.purchaseStatus || profile?.purchaseStatus === 'none'
                         ? "You haven't set up your devices yet. Go to 'My Services' to start the process."
                         : !profile?.deviceId 
-                          ? "Your hardware is being prepared. Once it arrives, use 'Connect Your Device' at the top."
+                          ? "Your hardware is being prepared. Once it arrives, use 'Register Your Device' at the top."
                           : !profile?.subscriptionActive 
                             ? "Your device is connected! Now choose a plan to start the 24/7 monitoring."
                             : "Everything is set up! We are monitoring your safety around the clock."}
@@ -380,9 +395,9 @@ export default function DashboardPage() {
               </div>
             </TabsContent>
 
-            <TabsContent value="staging" className="space-y-8 animate-reveal outline-none">
+            <TabsContent value="staging" className="space-y-8 outline-none">
               {stagingStep === 'list' && (
-                <Card className="bg-card/60 border-border rounded-[3rem] shadow-2xl">
+                <Card className="bg-card/60 border-border rounded-[3rem] shadow-2xl animate-reveal">
                   <CardHeader className="p-12 pb-6 border-b border-border/50">
                     <CardTitle className="text-4xl font-black">My Selected Services</CardTitle>
                     <CardDescription className="text-lg font-light">Pick a service below to start your set up.</CardDescription>
@@ -549,7 +564,7 @@ export default function DashboardPage() {
                           {[
                             { step: "01", title: "Mount & Power On", desc: "Use the wall mount or stand to place your device and plug it in." },
                             { step: "02", title: "Check the Light", desc: "A green light means your device is connected to our network." },
-                            { step: "03", title: "Link Your App", desc: "Click 'Connect Your Device' at the top of this page to enter your Device ID." },
+                            { step: "03", title: "Link Your App", desc: "Click 'Register Your Device' at the top of this page to enter your Device ID." },
                             { step: "04", title: "Start Monitoring", desc: "Once linked, we'll watch over your home and family 24/7." }
                           ].map((item, i) => (
                             <div key={i} className="flex gap-6 items-start">
@@ -580,8 +595,8 @@ export default function DashboardPage() {
               )}
             </TabsContent>
 
-            <TabsContent value="activation" className="animate-reveal outline-none">
-              <Card className="max-w-4xl mx-auto rounded-[4rem] border-rwanda-green/20 overflow-hidden shadow-2xl">
+            <TabsContent value="activation" className="outline-none">
+              <Card className="max-w-4xl mx-auto rounded-[4rem] border-rwanda-green/20 overflow-hidden shadow-2xl animate-reveal">
                 <CardHeader className="p-16 text-center bg-gradient-to-b from-rwanda-green/[0.05] to-transparent border-b border-rwanda-green/10">
                   <div className="w-24 h-24 rounded-[2.5rem] bg-rwanda-green/10 flex items-center justify-center mx-auto mb-8">
                     <Zap className="w-12 h-12 text-rwanda-green" />
