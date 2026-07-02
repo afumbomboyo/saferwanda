@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
@@ -428,7 +429,7 @@ export default function DashboardPage() {
                 <Card className="max-w-4xl mx-auto rounded-[3rem] border-border bg-card/60 shadow-2xl animate-reveal">
                   <CardHeader className="p-12 pb-6 border-b border-border/50 bg-primary/5">
                     <Button variant="ghost" className="w-fit mb-6 rounded-xl gap-2 font-bold" onClick={() => setStagingStep('list')}>
-                      <ChevronLeft className="w-4 h-4" /> Back
+                      <ChevronLeft className="w-4 h-4" /> Back to My Services
                     </Button>
                     <CardTitle className="text-4xl font-black">How it Works</CardTitle>
                     <CardDescription className="text-lg font-light mt-2">Here is a simple look at how we get you protected.</CardDescription>
@@ -455,7 +456,7 @@ export default function DashboardPage() {
                              </div>
                            ))}
                         </div>
-                        <Button variant="outline" className="rounded-xl h-12 gap-2 border-primary/20 hover:bg-primary/5 w-full md:w-auto">
+                        <Button className="h-16 rounded-2xl font-black uppercase tracking-widest text-xs bg-primary gap-2 w-full md:w-auto">
                           <Download className="w-4 h-4" /> Download Branded Guide (PDF)
                         </Button>
                       </div>
