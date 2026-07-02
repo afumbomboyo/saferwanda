@@ -350,10 +350,10 @@ export default function DashboardPage() {
 
                 <Card className="bg-gradient-to-br from-primary/10 to-transparent border-primary/20 rounded-[2.5rem] flex flex-col">
                   <CardHeader className="p-8 pb-4">
-                    <CardTitle className="text-xl font-black flex items-center gap-2">
+                    <div className="flex items-center gap-2">
                       <Target className="w-5 h-5 text-primary" />
-                      Next Step
-                    </CardTitle>
+                      <span className="text-xl font-black">Next Step</span>
+                    </div>
                   </CardHeader>
                   <CardContent className="p-8 pt-0 flex-grow flex flex-col justify-between">
                     <p className="text-sm text-muted-foreground font-light leading-relaxed">
@@ -401,11 +401,7 @@ export default function DashboardPage() {
                             <Button 
                               onClick={() => {
                                 setSelectedServiceId(serviceId);
-                                if (profile?.purchaseStatus !== 'none') {
-                                  setStagingStep('setup');
-                                } else {
-                                  setStagingStep('instructions');
-                                }
+                                setStagingStep('instructions');
                               }}
                               className="w-full rounded-xl bg-primary/10 text-primary hover:bg-primary hover:text-white border-none font-black text-[10px] uppercase tracking-widest h-12"
                             >
@@ -456,7 +452,7 @@ export default function DashboardPage() {
                              </div>
                            ))}
                         </div>
-                        <Button className="h-16 rounded-2xl font-black uppercase tracking-widest text-xs bg-primary gap-2 w-full md:w-auto">
+                        <Button className="h-16 rounded-2xl font-black uppercase tracking-widest text-xs bg-primary gap-2 w-full">
                           <Download className="w-4 h-4" /> Download Branded Guide (PDF)
                         </Button>
                       </div>
