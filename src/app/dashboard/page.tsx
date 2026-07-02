@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
@@ -354,7 +353,7 @@ export default function DashboardPage() {
                     <CardTitle className="text-xl font-black flex items-center gap-2">
                       <Target className="w-5 h-5 text-primary" />
                       Next Step
-                    </CardTitle>
+                    </Target>
                   </CardHeader>
                   <CardContent className="p-8 pt-0 flex-grow flex flex-col justify-between">
                     <p className="text-sm text-muted-foreground font-light leading-relaxed">
@@ -435,45 +434,49 @@ export default function DashboardPage() {
                     <CardTitle className="text-4xl font-black">How it Works</CardTitle>
                     <CardDescription className="text-lg font-light mt-2">Here is a simple look at how we get you protected.</CardDescription>
                   </CardHeader>
-                  <CardContent className="p-12 space-y-10">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                       {[
-                         { step: "1. Pick Your Plan", desc: "Decide if you want to buy your gadget or rent it for a small monthly fee." },
-                         { step: "2. Fast Delivery", desc: "We ship your SafeRwanda device directly to your home or office." },
-                         { step: "3. Easy Install", desc: "Follow our simple guide to turn it on and place it in the right spot." },
-                         { step: "4. Digital Link", desc: "Enter your Device ID in this dashboard to start receiving alerts." }
-                       ].map((item, i) => (
-                         <div key={i} className="flex gap-4">
-                           <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                             <span className="text-primary font-bold text-sm">{i+1}</span>
-                           </div>
-                           <div className="space-y-1">
-                             <h4 className="font-bold text-base">{item.step}</h4>
-                             <p className="text-xs text-muted-foreground leading-relaxed">{item.desc}</p>
-                           </div>
-                         </div>
-                       ))}
-                    </div>
-
-                    <div className="p-8 rounded-3xl bg-secondary/30 border border-border flex flex-col md:flex-row items-center justify-between gap-6">
-                      <div className="flex items-center gap-4">
-                        <FileText className="w-10 h-10 text-primary opacity-50" />
-                        <div>
-                           <h4 className="font-black text-sm uppercase">SafeRwanda Branded Guide</h4>
-                           <p className="text-xs text-muted-foreground">Download the full instructions for your records.</p>
+                  <CardContent className="p-12">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                      <div className="space-y-8">
+                        <h3 className="text-2xl font-black">Steps to Install</h3>
+                        <div className="space-y-6">
+                           {[
+                             { step: "1. Pick Your Plan", desc: "Decide if you want to buy your gadget or rent it for a small monthly fee." },
+                             { step: "2. Fast Delivery", desc: "We ship your SafeRwanda device directly to your home or office." },
+                             { step: "3. Easy Install", desc: "Follow our simple guide to turn it on and place it in the right spot." },
+                             { step: "4. Digital Link", desc: "Enter your Device ID in this dashboard to start receiving alerts." }
+                           ].map((item, i) => (
+                             <div key={i} className="flex gap-4">
+                               <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                                 <span className="text-primary font-bold text-sm">{i+1}</span>
+                               </div>
+                               <div className="space-y-1">
+                                 <h4 className="font-bold text-base">{item.step}</h4>
+                                 <p className="text-xs text-muted-foreground leading-relaxed">{item.desc}</p>
+                               </div>
+                             </div>
+                           ))}
                         </div>
+                        <Button variant="outline" className="rounded-xl h-12 gap-2 border-primary/20 hover:bg-primary/5 w-full md:w-auto">
+                          <Download className="w-4 h-4" /> Download Branded Guide (PDF)
+                        </Button>
                       </div>
-                      <Button variant="outline" className="rounded-xl h-12 gap-2 border-primary/20 hover:bg-primary/5">
-                        <Download className="w-4 h-4" /> Download Guide (PDF)
-                      </Button>
-                    </div>
 
-                    <Button 
-                      onClick={() => setStagingStep('get-device')}
-                      className="w-full h-16 rounded-2xl bg-primary hover:bg-primary/90 font-black uppercase tracking-widest text-sm"
-                    >
-                      Continue to Get Device
-                    </Button>
+                      <div className="bg-primary/5 rounded-[2.5rem] border border-primary/10 p-10 flex flex-col justify-center text-center">
+                        <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-6">
+                          <ShoppingCart className="w-8 h-8 text-primary" />
+                        </div>
+                        <h4 className="text-2xl font-black mb-4">Start Your Protection</h4>
+                        <p className="text-sm text-muted-foreground mb-8 leading-relaxed">
+                          Once you have reviewed the steps above and downloaded your manual, proceed to choose the procurement plan that fits your needs.
+                        </p>
+                        <Button 
+                          onClick={() => setStagingStep('get-device')}
+                          className="w-full h-16 rounded-2xl bg-primary hover:bg-primary/90 font-black uppercase tracking-widest text-sm shadow-xl"
+                        >
+                          Continue to Get Device
+                        </Button>
+                      </div>
+                    </div>
                   </CardContent>
                 </Card>
               )}
@@ -562,18 +565,18 @@ export default function DashboardPage() {
                             </div>
                           ))}
                         </div>
+                        <Button className="h-16 rounded-2xl font-black uppercase tracking-widest text-xs bg-primary gap-2 w-full md:w-auto">
+                          <Download className="w-5 h-5" /> Download Branded Guide (PDF)
+                        </Button>
                       </div>
                       <div className="bg-primary/5 rounded-[2.5rem] border border-primary/10 p-10 flex flex-col justify-center text-center">
                         <FileText className="w-20 h-20 text-primary mx-auto mb-6 opacity-20" />
-                        <h4 className="text-2xl font-black mb-4">SafeRwanda Branded Guide</h4>
+                        <h4 className="text-2xl font-black mb-4">You're on the Right Track</h4>
                         <p className="text-sm text-muted-foreground mb-8">
                           {profile?.hasPaidSetupFee 
-                            ? "SafeRwanda staff will handle this install. Download this guide to see how the system works."
-                            : "Download this guide to help you set up the device and connect it to your dashboard."}
+                            ? "SafeRwanda staff will handle this install. Use the guide on the left to see how the system works."
+                            : "Follow the steps on the left to set up the device and connect it to your dashboard."}
                         </p>
-                        <Button className="h-16 rounded-2xl font-black uppercase tracking-widest text-xs bg-primary gap-2">
-                          <Download className="w-5 h-5" /> Download Guide (PDF)
-                        </Button>
                       </div>
                     </div>
                   </CardContent>
