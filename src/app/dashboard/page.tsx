@@ -4,7 +4,6 @@ import { useEffect, useState, useRef } from 'react';
 import { useUser, useFirestore, useAuth } from '@/firebase';
 import { useRouter } from 'next/navigation';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import { signOut } from 'firebase/auth';
 import { 
   Shield, 
   Loader2, 
@@ -353,7 +352,7 @@ export default function DashboardPage() {
                     <CardTitle className="text-xl font-black flex items-center gap-2">
                       <Target className="w-5 h-5 text-primary" />
                       Next Step
-                    </Target>
+                    </CardTitle>
                   </CardHeader>
                   <CardContent className="p-8 pt-0 flex-grow flex flex-col justify-between">
                     <p className="text-sm text-muted-foreground font-light leading-relaxed">
@@ -467,7 +466,7 @@ export default function DashboardPage() {
                         </div>
                         <h4 className="text-2xl font-black mb-4">Start Your Protection</h4>
                         <p className="text-sm text-muted-foreground mb-8 leading-relaxed">
-                          Once you have reviewed the steps above and downloaded your manual, proceed to choose the procurement plan that fits your needs.
+                          Ready to get started? Once you've looked through the steps and have your guide, you can choose whether to buy or rent your security device.
                         </p>
                         <Button 
                           onClick={() => setStagingStep('get-device')}
