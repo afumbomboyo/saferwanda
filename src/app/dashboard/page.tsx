@@ -59,7 +59,7 @@ const DEVICE_CATALOG: Record<string, any> = {
     name: "SafeLink D44S GPS Watch",
     image: "https://picsum.photos/seed/elder1/600/400",
     buyPrice: "85,000 RWF",
-    leasePrice: "8,500 RWF/mo",
+    leasePrice: "42,500 RWF",
     description: "The D44S 4G elderly GPS watch is tailored for seniors' safety and health, featuring IP67 waterproofing, 4G full-network connectivity, and GPS+LBS+WiFi triple positioning (≤5M). It highlights a medicine reminder, SOS emergency call, heart rate monitoring, and 830mAh long battery life.",
     specifications: {
       "Chipset": "ASR3603S",
@@ -579,13 +579,23 @@ function DashboardContent() {
                         <Image src={DEVICE_CATALOG[selectedServiceId]?.image} alt="Device" fill className="object-cover" />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
                         <div className="absolute bottom-8 left-8">
-                          <h4 className="text-3xl font-black text-white">Rent Hardware</h4>
-                          <p className="text-white/60 text-xs font-bold uppercase tracking-widest">Flexible Monthly Leasing</p>
+                          <h4 className="text-3xl font-black text-white">
+                            {selectedServiceId === 'elderly-care' ? 'Lease to Own' : 'Rent Hardware'}
+                          </h4>
+                          <p className="text-white/60 text-xs font-bold uppercase tracking-widest">
+                            {selectedServiceId === 'elderly-care' ? 'Quarterly Installments' : 'Flexible Monthly Leasing'}
+                          </p>
                         </div>
                       </div>
                       <CardContent className="p-10 space-y-6">
                         <p className="text-sm text-muted-foreground leading-relaxed font-bold">{DEVICE_CATALOG[selectedServiceId]?.description}</p>
                         
+                        {selectedServiceId === 'elderly-care' && (
+                          <div className="p-4 rounded-2xl bg-primary/5 border border-primary/10 text-xs font-bold text-primary leading-relaxed">
+                            It's a lease with option to buy and the elderly care price is 42,500 per 3 months for a year (that's a 4 time installment payment), after that they own the device.
+                          </div>
+                        )}
+
                         {DEVICE_CATALOG[selectedServiceId]?.specifications && (
                           <div className="space-y-3 bg-secondary/20 p-6 rounded-2xl">
                             <p className="text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-2">
@@ -618,11 +628,15 @@ function DashboardContent() {
 
                         <div className="flex justify-between items-center p-6 rounded-3xl bg-background border border-border">
                           <div>
-                            <p className="text-[8px] font-black uppercase text-muted-foreground">Monthly Service Fee</p>
+                            <p className="text-[8px] font-black uppercase text-muted-foreground">
+                              {selectedServiceId === 'elderly-care' ? 'Quarterly Payment' : 'Monthly Service Fee'}
+                            </p>
                             <p className="text-2xl font-black">{DEVICE_CATALOG[selectedServiceId]?.leasePrice}</p>
                           </div>
                         </div>
-                        <Button variant="outline" className="w-full h-16 rounded-2xl font-black uppercase tracking-widest text-xs">Activate Lease</Button>
+                        <Button variant="outline" className="w-full h-16 rounded-2xl font-black uppercase tracking-widest text-xs">
+                          {selectedServiceId === 'elderly-care' ? 'Start Lease to Own' : 'Activate Lease'}
+                        </Button>
                       </CardContent>
                     </Card>
                   </div>
