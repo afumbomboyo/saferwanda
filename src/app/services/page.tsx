@@ -40,7 +40,7 @@ export default function ServicesPage() {
       id: "child-protection",
       title: "Protect Your Child",
       shortNote: "Smart wearables for school safety.",
-      description: "Option 1: Real-time tracking and geofencing for safe school commutes. Includes a one-touch SOS panic button for immediate distress alerts and a silent audio callback to instantly hear your child’s surroundings.<br/> Option 2: Option 1 + Advanced health monitoring for temperature and oxygen saturation, specifically targeting early malaria detection.",
+      description: "Option 1: Real-time tracking and geofencing for safe school commutes. Includes a one-touch SOS panic button for immediate distress alerts and a silent audio callback.<br/> Option 2: Advanced health monitoring specifically targeting early malaria detection.",
       icon: <Shield className="w-10 h-10 text-accent" />,
       imageUrl: "/images/child.png",
       imageHint: "child safety tracker",
@@ -51,7 +51,7 @@ export default function ServicesPage() {
       id: "elderly-care",
       title: "Elderly Care",
       shortNote: "Fall detection & health monitors.",
-      description: "Dedicated fall detection and health monitoring for seniors. Features automatic alerts for body temperature, blood pressure, and heart rate irregularities, instantly notifying family contacts.",
+      description: "Dedicated fall detection and health monitoring for seniors using the professional D44S GPS Watch. Features automatic alerts for body temperature, blood pressure, and heart rate irregularities.",
       icon: <Heart className="w-10 h-10 text-primary" />,
       imageUrl: "/images/elder.png",
       imageHint: "elderly health monitor",
@@ -119,22 +119,20 @@ export default function ServicesPage() {
     if (user && db) {
       try {
         const userDocRef = doc(db, 'users', user.uid);
-        const userDoc = await getDoc(userDocRef);
-        if (userDoc.exists()) {
-          await updateDoc(userDocRef, {
-            servicesSelected: arrayUnion(serviceId),
-            isOnboarded: true
-          });
-        }
+        await updateDoc(userDocRef, {
+          servicesSelected: arrayUnion(serviceId),
+          isOnboarded: true
+        });
         router.push('/dashboard?tab=staging');
         return;
       } catch (err) {
         console.error("Error updating profile:", err);
+        router.push('/dashboard?tab=staging');
       }
+    } else {
+      localStorage.setItem('temp_initial_service', serviceId);
+      router.push('/auth?signup=true');
     }
-    
-    localStorage.setItem('temp_initial_service', serviceId);
-    router.push('/auth?signup=true');
   };
 
   return (
@@ -143,13 +141,13 @@ export default function ServicesPage() {
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mb-16 animate-reveal text-center mx-auto">
             <Badge variant="outline" className="mb-4 px-3 py-1 border-primary text-primary font-bold text-xs uppercase tracking-widest bg-primary/5">
-              Secure Your Piece of Tomorrow
+              Strategic Security Infrastructure
             </Badge>
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-headline font-extrabold mb-6 tracking-tighter leading-tight">
-              Our <span className="text-gradient">Core Services</span>
+              Our <span className="text-gradient">Security Tiers</span>
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground font-light max-w-2xl mx-auto leading-relaxed">
-              SafeRwanda offers specialized protection tiers engineered for modern safety needs. Select a primary service to begin your onboarding.
+              SafeRwanda offers specialized protection tiers engineered for modern safety needs. Select a primary service to begin your strategic onboarding.
             </p>
           </div>
 

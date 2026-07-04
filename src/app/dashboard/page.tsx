@@ -25,7 +25,8 @@ import {
   ShoppingCart,
   Plus,
   ChevronLeft,
-  FileText
+  FileText,
+  Info
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
@@ -58,15 +59,34 @@ const DEVICE_CATALOG: Record<string, any> = {
   "elderly-care": {
     name: "SafeLink D44S GPS Watch",
     image: "https://picsum.photos/seed/elder1/600/400",
-    buyPrice: "35,000 RWF",
-    leasePrice: "3,500 RWF/mo",
-    description: "Professional care companion with ≤5M precision positioning and 4G HD calls for instant emergency connection. Tailored for safety and health management.",
+    buyPrice: "38,000 RWF",
+    leasePrice: "3,800 RWF/mo",
+    description: "The D44S 4G elderly GPS watch is tailored for seniors' safety and health, featuring IP67 waterproofing, 4G full-network connectivity, and GPS+LBS+WiFi triple positioning (≤5M). It highlights a medicine reminder, SOS emergency call, heart rate monitoring, and 750mAh long battery life.",
+    specifications: {
+      "Chipset": "ASR3603S",
+      "Material": "PC+ABS",
+      "Operation System": "RT system",
+      "Positioning": "GPS+LBS+Wifi hotspots",
+      "Battery Capacity": "830mAh polymer",
+      "Memory": "128MB+128MB",
+      "Network": "4G/3G/2G",
+      "Waterproof": "IP67",
+      "Screen": "1.83inch IPS (240*284px)"
+    },
     features: [
-      "Health Monitoring (HR, BP, SPO2, Temp)",
-      "Triple Positioning (GPS+LBS+WiFi)",
-      "Fall Detection with Instant Alerts",
-      "Medicine & Sedentary Reminders",
-      "IP67 Waterproof & Long Battery Life"
+      "All-Round Health Monitoring (HR, BP, SPO2, Temp)",
+      "Precise Multi-Mode Positioning (GPS+WiFi+LBS)",
+      "3-second Long-Press SOS Button",
+      "Fall Down Detection with Alerts",
+      "Customizable Medicine Reminders",
+      "Two-way Voice/Video Calls",
+      "Unknown Call Rejection",
+      "Remote Snapshot/Caregiver Control"
+    ],
+    faq: [
+      { q: "How does the SOS button work?", a: "Press and hold for 3 seconds to auto-dial pre-set contacts and send SMS alerts." },
+      { q: "What metrics does it track?", a: "Real-time heart rate, blood pressure, oxygen (SPO2), and body temperature." },
+      { q: "Can it detect falls?", a: "Yes, it triggers immediate SMS alerts to contacts and the caregiver app." }
     ]
   },
   "fire-prevention": {
@@ -137,28 +157,14 @@ function DashboardContent() {
   }, [searchParams]);
 
   useEffect(() => {
-    const observerOptions = { threshold: 0.05, rootMargin: '0px' };
-    
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('reveal-visible');
-        }
-      });
-    }, observerOptions);
-
     const timer = setTimeout(() => {
       const revealElements = document.querySelectorAll('.animate-reveal');
       revealElements.forEach((el) => {
-        observer.observe(el);
+        el.classList.add('reveal-visible');
       });
     }, 100);
-
-    return () => {
-      clearTimeout(timer);
-      observer.disconnect();
-    };
-  }, [activeTab, loading, stagingStep, selectedServiceId]);
+    return () => clearTimeout(timer);
+  }, [activeTab, stagingStep]);
 
   useEffect(() => {
     if (userLoading) return;
@@ -410,7 +416,7 @@ function DashboardContent() {
                 <Card className="bg-card/60 border-border rounded-[3rem] shadow-2xl animate-reveal">
                   <CardHeader className="p-12 pb-6 border-b border-border/50">
                     <CardTitle className="text-4xl font-black">My Services</CardTitle>
-                    <CardDescription className="text-lg font-light">Pick a service below to start your set up.</CardDescription>
+                    <CardDescription className="text-lg font-light">Pick a service below to initialize setup.</CardDescription>
                   </CardHeader>
                   <CardContent className="p-12">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -420,7 +426,7 @@ function DashboardContent() {
                             <div className="relative z-10">
                               <h4 className="font-black text-xl capitalize mb-3">{serviceId.replace('-', ' ')}</h4>
                               <p className="text-[10px] text-muted-foreground uppercase tracking-widest mb-8">
-                                Status: {profile?.purchaseStatus !== 'none' ? 'Ready for Connection' : 'Needs Set Up'}
+                                Status: {profile?.purchaseStatus !== 'none' ? 'Hardware Pending' : 'Initialization Required'}
                               </p>
                             </div>
                             <Button 
@@ -430,7 +436,7 @@ function DashboardContent() {
                               }}
                               className="w-full rounded-xl bg-primary/10 text-primary hover:bg-primary hover:text-white border-none font-black text-[10px] uppercase tracking-widest h-12"
                             >
-                              Start Set Up
+                              Initialize Setup
                             </Button>
                           </div>
                         ))
@@ -453,7 +459,7 @@ function DashboardContent() {
                       <ChevronLeft className="w-4 h-4" /> Back to My Services
                     </Button>
                     <CardTitle className="text-4xl font-black">How it Works</CardTitle>
-                    <CardDescription className="text-lg font-light mt-2">Here is a simple look at how we get you protected.</CardDescription>
+                    <CardDescription className="text-lg font-light mt-2">Professional guidance for your security journey.</CardDescription>
                   </CardHeader>
                   <CardContent className="p-12">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
@@ -461,10 +467,10 @@ function DashboardContent() {
                         <h3 className="text-2xl font-black">Steps to Install</h3>
                         <div className="space-y-6">
                            {[
-                             { step: "1. Pick Your Plan", desc: "Decide if you want to buy your device or rent it for a small monthly fee." },
-                             { step: "2. Fast Delivery", desc: "We ship your SafeRwanda device directly to your home or office." },
-                             { step: "3. Easy Install", desc: "Follow our simple guide to turn it on and place it in the right spot." },
-                             { step: "4. Digital Link", desc: "Enter your Device ID in this dashboard to start receiving alerts." }
+                             { step: "1. Hardware Acquisition", desc: "Select whether to buy or lease your professional SafeRwanda device." },
+                             { step: "2. Strategic Delivery", desc: "Your hardware is shipped via secured courier to your registered location." },
+                             { step: "3. Deployment", desc: "Follow the technical guide to mount and activate your sensor node." },
+                             { step: "4. Network Link", desc: "Connect your device to our 24/7 monitoring grid using your Device ID." }
                            ].map((item, i) => (
                              <div key={i} className="flex gap-4">
                                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
@@ -488,7 +494,7 @@ function DashboardContent() {
                         </div>
                         <h4 className="text-2xl font-black mb-4">Start Your Protection</h4>
                         <p className="text-sm text-muted-foreground mb-8 leading-relaxed">
-                          Ready to get started? Once you've looked through the steps and have your guide, you can choose whether to buy or rent your security device.
+                          Your security is our priority. Once you have reviewed the instructions, proceed to select your hardware options.
                         </p>
                         <Button 
                           onClick={() => setStagingStep('get-device')}
@@ -509,82 +515,103 @@ function DashboardContent() {
                       <ChevronLeft className="w-4 h-4" /> Back to Instructions
                     </Button>
                     <h2 className="text-4xl font-black">Get Your Device</h2>
-                    <p className="text-muted-foreground">Select how you would like to receive your {DEVICE_CATALOG[selectedServiceId]?.name}.</p>
+                    <p className="text-muted-foreground">Select your hardware for {selectedServiceId.replace('-', ' ')}.</p>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-6xl mx-auto">
+                    {/* Buy Option */}
                     <Card className="rounded-[3.5rem] overflow-hidden border-4 border-border bg-card/60 cursor-pointer hover:-translate-y-2 transition-all shadow-2xl" onClick={() => handleDeviceSelection('purchased')}>
                       <div className="relative h-72 w-full">
                         <Image src={DEVICE_CATALOG[selectedServiceId]?.image} alt="Device" fill className="object-cover" />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
                         <div className="absolute bottom-8 left-8">
-                          <h4 className="text-3xl font-black text-white">Buy Device</h4>
-                          <p className="text-white/60 text-xs font-bold uppercase tracking-widest">Own it + Professional Shipping</p>
+                          <h4 className="text-3xl font-black text-white">Buy Hardware</h4>
+                          <p className="text-white/60 text-xs font-bold uppercase tracking-widest">Ownership + Secured Shipping</p>
                         </div>
                       </div>
                       <CardContent className="p-10 space-y-6">
                         <p className="text-sm text-muted-foreground leading-relaxed font-bold">{DEVICE_CATALOG[selectedServiceId]?.description}</p>
                         
-                        {DEVICE_CATALOG[selectedServiceId]?.features && (
-                          <div className="space-y-3">
-                            <p className="text-[10px] font-black uppercase tracking-widest text-primary">Core Features</p>
-                            <ul className="space-y-2">
-                              {DEVICE_CATALOG[selectedServiceId].features.map((feature: string, fIdx: number) => (
-                                <li key={fIdx} className="flex items-start gap-2 text-[10px] text-muted-foreground font-medium">
-                                  <CheckCircle2 className="w-3 h-3 text-primary mt-0.5 shrink-0" />
-                                  {feature}
-                                </li>
+                        {DEVICE_CATALOG[selectedServiceId]?.specifications && (
+                          <div className="space-y-3 bg-secondary/20 p-6 rounded-2xl">
+                            <p className="text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-2">
+                              <Info className="w-3 h-3" /> Technical Specifications
+                            </p>
+                            <div className="grid grid-cols-2 gap-x-4 gap-y-1">
+                              {Object.entries(DEVICE_CATALOG[selectedServiceId].specifications).map(([k, v]: [any, any]) => (
+                                <div key={k} className="flex flex-col">
+                                  <span className="text-[8px] uppercase text-muted-foreground font-black">{k}</span>
+                                  <span className="text-[10px] font-bold">{v}</span>
+                                </div>
                               ))}
-                            </ul>
+                            </div>
                           </div>
                         )}
 
                         <div className="flex justify-between items-center p-6 rounded-3xl bg-background border border-border">
                           <div>
-                            <p className="text-[8px] font-black uppercase text-muted-foreground">One-Time Price + Delivery</p>
+                            <p className="text-[8px] font-black uppercase text-muted-foreground">Unit Price + Delivery</p>
                             <p className="text-2xl font-black">{DEVICE_CATALOG[selectedServiceId]?.buyPrice}</p>
                           </div>
                         </div>
-                        <Button className="w-full h-16 rounded-2xl font-black uppercase tracking-widest text-xs bg-primary">Select & Buy</Button>
+                        <Button className="w-full h-16 rounded-2xl font-black uppercase tracking-widest text-xs bg-primary">Order & Buy</Button>
                       </CardContent>
                     </Card>
 
+                    {/* Lease Option */}
                     <Card className="rounded-[3.5rem] overflow-hidden border-4 border-border bg-card/60 cursor-pointer hover:-translate-y-2 transition-all shadow-2xl" onClick={() => handleDeviceSelection('leased')}>
                       <div className="relative h-72 w-full">
                         <Image src={DEVICE_CATALOG[selectedServiceId]?.image} alt="Device" fill className="object-cover" />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
                         <div className="absolute bottom-8 left-8">
-                          <h4 className="text-3xl font-black text-white">Rent Device</h4>
-                          <p className="text-white/60 text-xs font-bold uppercase tracking-widest">Low Cost Monthly Plan</p>
+                          <h4 className="text-3xl font-black text-white">Rent Hardware</h4>
+                          <p className="text-white/60 text-xs font-bold uppercase tracking-widest">Flexible Monthly Leasing</p>
                         </div>
                       </div>
                       <CardContent className="p-10 space-y-6">
-                        <p className="text-sm text-muted-foreground leading-relaxed">Save money upfront. Use the professional SafeRwanda hardware for a small monthly fee instead of buying.</p>
-                        
-                        {DEVICE_CATALOG[selectedServiceId]?.features && (
-                          <div className="space-y-3">
-                            <p className="text-[10px] font-black uppercase tracking-widest text-primary">Service Benefits</p>
-                            <ul className="space-y-2">
-                              {DEVICE_CATALOG[selectedServiceId].features.slice(0, 3).map((feature: string, fIdx: number) => (
-                                <li key={fIdx} className="flex items-start gap-2 text-[10px] text-muted-foreground font-medium">
-                                  <CheckCircle2 className="w-3 h-3 text-primary mt-0.5 shrink-0" />
-                                  {feature}
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
+                        <div className="space-y-4">
+                          <p className="text-sm text-muted-foreground font-bold leading-relaxed">Professional hardware access with minimal upfront cost. Includes lifetime app access and cloud tracking.</p>
+                          
+                          {DEVICE_CATALOG[selectedServiceId]?.features && (
+                            <div className="space-y-3">
+                              <p className="text-[10px] font-black uppercase tracking-widest text-primary">Core Capabilities</p>
+                              <ul className="grid grid-cols-1 gap-2">
+                                {DEVICE_CATALOG[selectedServiceId].features.slice(0, 5).map((feature: string, fIdx: number) => (
+                                  <li key={fIdx} className="flex items-start gap-2 text-[10px] text-muted-foreground font-medium">
+                                    <CheckCircle2 className="w-3 h-3 text-primary mt-0.5 shrink-0" />
+                                    {feature}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                        </div>
 
                         <div className="flex justify-between items-center p-6 rounded-3xl bg-background border border-border">
                           <div>
-                            <p className="text-[8px] font-black uppercase text-muted-foreground">Monthly Rent</p>
+                            <p className="text-[8px] font-black uppercase text-muted-foreground">Monthly Service Fee</p>
                             <p className="text-2xl font-black">{DEVICE_CATALOG[selectedServiceId]?.leasePrice}</p>
                           </div>
                         </div>
-                        <Button variant="outline" className="w-full h-16 rounded-2xl font-black uppercase tracking-widest text-xs">Select & Rent</Button>
+                        <Button variant="outline" className="w-full h-16 rounded-2xl font-black uppercase tracking-widest text-xs">Activate Lease</Button>
                       </CardContent>
                     </Card>
                   </div>
+
+                  {/* FAQ Section for Hardware */}
+                  {DEVICE_CATALOG[selectedServiceId]?.faq && (
+                    <Card className="max-w-4xl mx-auto rounded-[2.5rem] border-border bg-card/40 p-10">
+                      <h3 className="text-2xl font-black mb-8">Hardware FAQ</h3>
+                      <div className="space-y-6">
+                        {DEVICE_CATALOG[selectedServiceId].faq.map((item: any, i: number) => (
+                          <div key={i} className="space-y-2">
+                            <h4 className="font-bold text-sm text-primary">Q: {item.q}</h4>
+                            <p className="text-sm text-muted-foreground">A: {item.a}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </Card>
+                  )}
                 </div>
               )}
 
@@ -599,13 +626,13 @@ function DashboardContent() {
                   <CardContent className="p-12 space-y-12">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
                       <div className="space-y-8">
-                        <h3 className="text-2xl font-black">Steps to Install</h3>
+                        <h3 className="text-2xl font-black">Final Steps to Protect</h3>
                         <div className="space-y-6">
                           {[
-                            { step: "01", title: "Mount & Power On", desc: "Use the wall mount or stand to place your device and plug it in." },
-                            { step: "02", title: "Check the Light", desc: "A green light means your device is connected to our network." },
-                            { step: "03", title: "Link Your App", desc: "Click 'Connect Device' at the top of this page to enter your Device ID." },
-                            { step: "04", title: "Start Monitoring", desc: "Once linked, we'll watch over your home and family 24/7." }
+                            { step: "01", title: "Deployment", desc: "Mount your hardware in the recommended tactical position." },
+                            { step: "02", title: "Activation", desc: "Power on the device and wait for the green network link light." },
+                            { step: "03", title: "Digital Link", desc: "Use the 'Connect Device' button at the top to register your Device ID." },
+                            { step: "04", title: "Grid Sync", desc: "Once linked, our central monitor will begin tracking 24/7." }
                           ].map((item, i) => (
                             <div key={i} className="flex gap-6 items-start">
                               <span className="text-primary font-black text-3xl opacity-20">{item.step}</span>
@@ -617,16 +644,16 @@ function DashboardContent() {
                           ))}
                         </div>
                         <Button className="h-16 rounded-2xl font-black uppercase tracking-widest text-xs bg-primary gap-2 w-full md:w-auto">
-                          <Download className="w-5 h-5" /> Download Branded Guide (PDF)
+                          <Download className="w-5 h-5" /> Download Technical Guide (PDF)
                         </Button>
                       </div>
                       <div className="bg-primary/5 rounded-[2.5rem] border border-primary/10 p-10 flex flex-col justify-center text-center">
                         <FileText className="w-20 h-20 text-primary mx-auto mb-6 opacity-20" />
-                        <h4 className="text-2xl font-black mb-4">You're on the Right Track</h4>
-                        <p className="text-sm text-muted-foreground mb-8">
+                        <h4 className="text-2xl font-black mb-4">Strategic Onboarding</h4>
+                        <p className="text-sm text-muted-foreground mb-8 leading-relaxed">
                           {profile?.hasPaidSetupFee 
-                            ? "SafeRwanda staff will handle this install. Use the guide on the left to see how the system works."
-                            : "Follow the steps on the left to set up the device and connect it to your dashboard."}
+                            ? "SafeRwanda Technical Staff will handle the physical deployment. Use the guide on the left to understand your system."
+                            : "Follow the technical steps to link your hardware. Once connected, monitoring begins immediately."}
                         </p>
                       </div>
                     </div>
@@ -641,15 +668,15 @@ function DashboardContent() {
                   <div className="w-24 h-24 rounded-[2.5rem] bg-rwanda-green/10 flex items-center justify-center mx-auto mb-8">
                     <Zap className="w-12 h-12 text-rwanda-green" />
                   </div>
-                  <CardTitle className="text-6xl font-black">Choose a Plan</CardTitle>
-                  <CardDescription className="text-xl mt-6 font-light max-w-lg mx-auto">Select a plan to start your 24/7 security monitoring.</CardDescription>
+                  <CardTitle className="text-6xl font-black">Subscription Plan</CardTitle>
+                  <CardDescription className="text-xl mt-6 font-light max-w-lg mx-auto">Select a plan to start your 24/7 strategic security monitoring.</CardDescription>
                 </CardHeader>
                 <CardContent className="p-16">
                   <RadioGroup value={subType} onValueChange={setSubType} className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     {[
-                      { id: 'weekly', label: 'Weekly Plan', price: 'RWF 5,000', note: 'Flexible Monitoring' },
-                      { id: 'monthly', label: 'Monthly Plan', price: 'RWF 18,000', note: 'Standard Protection' },
-                      { id: 'yearly', label: 'Yearly Plan', price: 'RWF 180,000', note: 'Best Value' }
+                      { id: 'weekly', label: 'Weekly Guard', price: 'RWF 5,000', note: 'Flexible Protection' },
+                      { id: 'monthly', label: 'Standard Guard', price: 'RWF 18,000', note: 'Full Coverage' },
+                      { id: 'yearly', label: 'Elite Guard', price: 'RWF 180,000', note: 'Strategic Value' }
                     ].map((plan) => (
                       <div 
                         key={plan.id}
@@ -674,11 +701,11 @@ function DashboardContent() {
                     className="w-full h-24 rounded-[2rem] bg-primary text-3xl font-black shadow-xl"
                     disabled={updating || !profile?.deviceId}
                   >
-                    {updating ? <Loader2 className="w-8 h-8 animate-spin" /> : "Activate Now"}
+                    {updating ? <Loader2 className="w-8 h-8 animate-spin" /> : "Activate Guard"}
                   </Button>
                   {!profile?.deviceId && (
                     <div className="flex items-center justify-center gap-3 text-destructive font-black uppercase text-[10px] bg-destructive/10 py-5 px-10 rounded-[1.5rem] border border-destructive/20">
-                      <AlertTriangle className="w-5 h-5" /> Connect your device first to start monitoring
+                      <AlertTriangle className="w-5 h-5" /> Link your hardware node first to activate monitoring
                     </div>
                   )}
                 </CardFooter>
@@ -692,7 +719,7 @@ function DashboardContent() {
       <footer className="py-16 border-t border-border/50 bg-background/50 backdrop-blur-md relative z-10">
         <div className="container mx-auto px-4 text-center">
            <p className="text-[10px] text-muted-foreground font-black tracking-[0.2em] uppercase opacity-30">
-             © {new Date().getFullYear()} SafeRwanda Security. All Rights Reserved.
+             © {new Date().getFullYear()} SafeRwanda Security. Strategic Operations Grid.
            </p>
         </div>
       </footer>
