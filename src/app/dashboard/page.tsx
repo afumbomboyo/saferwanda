@@ -416,7 +416,7 @@ function DashboardContent() {
                 <Card className="bg-card/60 border-border rounded-[3rem] shadow-2xl animate-reveal">
                   <CardHeader className="p-12 pb-6 border-b border-border/50">
                     <CardTitle className="text-4xl font-black">My Services</CardTitle>
-                    <CardDescription className="text-lg font-light">Pick a service below to initialize setup.</CardDescription>
+                    <CardDescription className="text-lg font-light">Pick a service below to start set up.</CardDescription>
                   </CardHeader>
                   <CardContent className="p-12">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -436,7 +436,7 @@ function DashboardContent() {
                               }}
                               className="w-full rounded-xl bg-primary/10 text-primary hover:bg-primary hover:text-white border-none font-black text-[10px] uppercase tracking-widest h-12"
                             >
-                              Initialize Setup
+                              Start Set Up
                             </Button>
                           </div>
                         ))
@@ -548,6 +548,20 @@ function DashboardContent() {
                           </div>
                         )}
 
+                        {DEVICE_CATALOG[selectedServiceId]?.features && (
+                          <div className="space-y-3">
+                            <p className="text-[10px] font-black uppercase tracking-widest text-primary">Core Capabilities</p>
+                            <ul className="grid grid-cols-1 gap-2">
+                              {DEVICE_CATALOG[selectedServiceId].features.map((feature: string, fIdx: number) => (
+                                <li key={fIdx} className="flex items-start gap-2 text-[10px] text-muted-foreground font-medium">
+                                  <CheckCircle2 className="w-3 h-3 text-primary mt-0.5 shrink-0" />
+                                  {feature}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+
                         <div className="flex justify-between items-center p-6 rounded-3xl bg-background border border-border">
                           <div>
                             <p className="text-[8px] font-black uppercase text-muted-foreground">Unit Price + Delivery</p>
@@ -569,23 +583,37 @@ function DashboardContent() {
                         </div>
                       </div>
                       <CardContent className="p-10 space-y-6">
-                        <div className="space-y-4">
-                          <p className="text-sm text-muted-foreground font-bold leading-relaxed">Professional hardware access with minimal upfront cost. Includes lifetime app access and cloud tracking.</p>
-                          
-                          {DEVICE_CATALOG[selectedServiceId]?.features && (
-                            <div className="space-y-3">
-                              <p className="text-[10px] font-black uppercase tracking-widest text-primary">Core Capabilities</p>
-                              <ul className="grid grid-cols-1 gap-2">
-                                {DEVICE_CATALOG[selectedServiceId].features.slice(0, 5).map((feature: string, fIdx: number) => (
-                                  <li key={fIdx} className="flex items-start gap-2 text-[10px] text-muted-foreground font-medium">
-                                    <CheckCircle2 className="w-3 h-3 text-primary mt-0.5 shrink-0" />
-                                    {feature}
-                                  </li>
-                                ))}
-                              </ul>
+                        <p className="text-sm text-muted-foreground leading-relaxed font-bold">{DEVICE_CATALOG[selectedServiceId]?.description}</p>
+                        
+                        {DEVICE_CATALOG[selectedServiceId]?.specifications && (
+                          <div className="space-y-3 bg-secondary/20 p-6 rounded-2xl">
+                            <p className="text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-2">
+                              <Info className="w-3 h-3" /> Technical Specifications
+                            </p>
+                            <div className="grid grid-cols-2 gap-x-4 gap-y-1">
+                              {Object.entries(DEVICE_CATALOG[selectedServiceId].specifications).map(([k, v]: [any, any]) => (
+                                <div key={k} className="flex flex-col">
+                                  <span className="text-[8px] uppercase text-muted-foreground font-black">{k}</span>
+                                  <span className="text-[10px] font-bold">{v}</span>
+                                </div>
+                              ))}
                             </div>
-                          )}
-                        </div>
+                          </div>
+                        )}
+
+                        {DEVICE_CATALOG[selectedServiceId]?.features && (
+                          <div className="space-y-3">
+                            <p className="text-[10px] font-black uppercase tracking-widest text-primary">Core Capabilities</p>
+                            <ul className="grid grid-cols-1 gap-2">
+                              {DEVICE_CATALOG[selectedServiceId].features.map((feature: string, fIdx: number) => (
+                                <li key={fIdx} className="flex items-start gap-2 text-[10px] text-muted-foreground font-medium">
+                                  <CheckCircle2 className="w-3 h-3 text-primary mt-0.5 shrink-0" />
+                                  {feature}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
 
                         <div className="flex justify-between items-center p-6 rounded-3xl bg-background border border-border">
                           <div>
