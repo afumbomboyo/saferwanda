@@ -7,9 +7,13 @@ import { useRouter } from 'next/navigation';
 import { Shield, Heart, Flame, Home, Box, Eye, ArrowRight, Network } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { useUser, useFirestore } from '@/firebase';
+import { doc, getDoc, updateDoc, arrayUnion } from 'firebase/firestore';
 
 export default function ServicesPage() {
   const router = useRouter();
+  const { user } = useUser();
+  const db = useFirestore();
 
   useEffect(() => {
     const observerOptions = {
@@ -111,9 +115,26 @@ export default function ServicesPage() {
     }
   ];
 
-  const handleGetStarted = (serviceId: string) => {
+  const handleGetStarted = async (serviceId: string) => {
+    if (user && db) {
+      try {
+        const userDocRef = doc(db, 'users', user.uid);
+        const userDoc = await getDoc(userDocRef);
+        if (userDoc.exists()) {
+          await updateDoc(userDocRef, {
+            servicesSelected: arrayUnion(serviceId),
+            isOnboarded: true
+          });
+        }
+        router.push('/dashboard?tab=staging');
+        return;
+      } catch (err) {
+        console.error("Error updating profile:", err);
+      }
+    }
+    
     localStorage.setItem('temp_initial_service', serviceId);
-    router.push(`/onboarding?id=${serviceId}`);
+    router.push('/auth?signup=true');
   };
 
   return (

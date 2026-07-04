@@ -3,7 +3,7 @@
 
 import { useState, useEffect, Suspense, useRef } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { Shield, Mail, Lock, User, Loader2, AlertTriangle, ArrowLeft } from 'lucide-react';
+import { Shield, Mail, Lock, User, Loader2, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
@@ -17,8 +17,7 @@ import {
   getRedirectResult,
   updateProfile
 } from 'firebase/auth';
-import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
-import Link from 'next/link';
+import { doc, setDoc, getDoc, updateDoc, arrayUnion, serverTimestamp } from 'firebase/firestore';
 
 function AuthPageContent() {
   const router = useRouter();
@@ -43,6 +42,16 @@ function AuthPageContent() {
     setIsSignUp(isSignUpDefault);
   }, [isSignUpDefault]);
 
+  const mergeSelections = () => {
+    const tempInitial = localStorage.getItem('temp_initial_service');
+    const tempSelected = localStorage.getItem('temp_selected_services');
+    let services: string[] = tempSelected ? JSON.parse(tempSelected) : [];
+    if (tempInitial && !services.includes(tempInitial)) {
+      services.push(tempInitial);
+    }
+    return services;
+  };
+
   // Handle Google Redirect Result
   useEffect(() => {
     if (!auth || !db) return;
@@ -62,11 +71,9 @@ function AuthPageContent() {
         const user = result.user;
         const userDocRef = doc(db, 'users', user.uid);
         const userDoc = await getDoc(userDocRef);
+        const services = mergeSelections();
 
         if (!userDoc.exists()) {
-          const savedServices = localStorage.getItem('temp_selected_services');
-          const services = savedServices ? JSON.parse(savedServices) : [];
-
           await setDoc(userDocRef, {
             uid: user.uid,
             fullName: user.displayName || 'Security Agent',
@@ -75,18 +82,19 @@ function AuthPageContent() {
             isOnboarded: services.length > 0,
             createdAt: serverTimestamp(),
           });
-
-          localStorage.removeItem('temp_selected_services');
-          
-          if (services.length > 0) {
-            router.replace('/dashboard');
-          } else {
-            router.replace('/onboarding');
-          }
         } else {
-          const data = userDoc.data();
-          router.replace(data?.isOnboarded ? '/dashboard' : '/onboarding');
+          if (services.length > 0) {
+            await updateDoc(userDocRef, {
+              servicesSelected: arrayUnion(...services),
+              isOnboarded: true
+            });
+          }
         }
+
+        localStorage.removeItem('temp_selected_services');
+        localStorage.removeItem('temp_initial_service');
+        
+        router.replace('/dashboard?tab=staging');
       } catch (err: any) {
         console.error("Redirect Error:", err);
         setError({ message: err.message, code: err.code });
@@ -109,8 +117,19 @@ function AuthPageContent() {
       const userDocRef = doc(db, 'users', currentUser.uid);
       const userDoc = await getDoc(userDocRef);
       if (userDoc.exists()) {
-        const data = userDoc.data();
-        router.replace(data?.isOnboarded ? '/dashboard' : '/onboarding');
+        const services = mergeSelections();
+        if (services.length > 0) {
+          await updateDoc(userDocRef, {
+            servicesSelected: arrayUnion(...services),
+            isOnboarded: true
+          });
+          localStorage.removeItem('temp_selected_services');
+          localStorage.removeItem('temp_initial_service');
+          router.replace('/dashboard?tab=staging');
+        } else {
+          const data = userDoc.data();
+          router.replace(data?.isOnboarded ? '/dashboard' : '/onboarding');
+        }
       } else {
         router.replace('/onboarding');
       }
@@ -132,8 +151,7 @@ function AuthPageContent() {
         const res = await createUserWithEmailAndPassword(auth, email, password);
         await updateProfile(res.user, { displayName: fullName });
         
-        const savedServices = localStorage.getItem('temp_selected_services');
-        const services = savedServices ? JSON.parse(savedServices) : [];
+        const services = mergeSelections();
 
         await setDoc(doc(db, 'users', res.user.uid), {
           uid: res.user.uid,
@@ -145,9 +163,11 @@ function AuthPageContent() {
         });
 
         localStorage.removeItem('temp_selected_services');
-        router.replace(services.length > 0 ? '/dashboard' : '/onboarding');
+        localStorage.removeItem('temp_initial_service');
+        router.replace(services.length > 0 ? '/dashboard?tab=staging' : '/onboarding');
       } else {
         await signInWithEmailAndPassword(auth, email, password);
+        // Note: The background listener above handles the redirect and service merging for existing users
       }
     } catch (err: any) {
       setError({ message: err.message, code: err.code });
@@ -185,7 +205,7 @@ function AuthPageContent() {
       <main className="flex-grow flex items-center justify-center p-4 pt-24 pb-12">
         <div className="w-full max-w-md animate-fade-in">
 
-          <Card className="bg-card border-border shadow-2xl relative overflow-hidden">
+          <Card className="glass-card shadow-2xl relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary via-accent to-rwanda-green" />
             
             <CardHeader className="text-center pb-2">

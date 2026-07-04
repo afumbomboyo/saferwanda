@@ -1,9 +1,9 @@
 
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, Suspense } from 'react';
 import { useUser, useFirestore, useAuth } from '@/firebase';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { 
   Shield, 
@@ -17,26 +17,22 @@ import {
   AlertTriangle,
   Mail,
   Phone,
-  ArrowRight,
   Wrench,
   Wifi,
   Zap,
-  Globe,
   Target,
   LayoutDashboard,
   ShoppingCart,
-  Cpu,
-  FileText,
-  ChevronLeft,
   Plus,
-  Info
+  ChevronLeft,
+  FileText
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { RadioGroup } from '@/components/ui/radio-group';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Dialog,
@@ -45,7 +41,6 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  DialogFooter,
 } from "@/components/ui/dialog";
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
@@ -103,10 +98,10 @@ const DEVICE_CATALOG: Record<string, any> = {
   }
 };
 
-export default function DashboardPage() {
+function DashboardContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { user, loading: userLoading } = useUser();
-  const auth = useAuth();
   const db = useFirestore();
   
   const [profile, setProfile] = useState<any>(null);
@@ -114,7 +109,7 @@ export default function DashboardPage() {
   const [updating, setUpdating] = useState(false);
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
   
-  const [activeTab, setActiveTab] = useState<string>('overview');
+  const [activeTab, setActiveTab] = useState<string>(searchParams.get('tab') || 'overview');
   const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null);
   const [stagingStep, setStagingStep] = useState<'list' | 'instructions' | 'get-device' | 'setup'>('list');
 
@@ -123,7 +118,11 @@ export default function DashboardPage() {
   const [alertEmail, setAlertEmail] = useState('');
   const [subType, setSubType] = useState('monthly');
 
-  // Handle intersection observer for reveal animations
+  useEffect(() => {
+    const tab = searchParams.get('tab');
+    if (tab) setActiveTab(tab);
+  }, [searchParams]);
+
   useEffect(() => {
     const observerOptions = { threshold: 0.05, rootMargin: '0px' };
     
@@ -135,11 +134,9 @@ export default function DashboardPage() {
       });
     }, observerOptions);
 
-    // Using a timeout to ensure DOM has settled after tab/step changes
     const timer = setTimeout(() => {
       const revealElements = document.querySelectorAll('.animate-reveal');
       revealElements.forEach((el) => {
-        // If switching tabs, we want to re-evaluate visibility
         observer.observe(el);
       });
     }, 100);
@@ -657,5 +654,17 @@ export default function DashboardPage() {
         </div>
       </footer>
     </div>
+  );
+}
+
+export default function DashboardPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-background">
+        <Loader2 className="w-10 h-10 animate-spin text-primary mb-4" />
+      </div>
+    }>
+      <DashboardContent />
+    </Suspense>
   );
 }
