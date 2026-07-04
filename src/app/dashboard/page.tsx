@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useEffect, useState, useRef, Suspense } from 'react';
@@ -59,14 +58,14 @@ const DEVICE_CATALOG: Record<string, any> = {
   "elderly-care": {
     name: "SafeLink D44S GPS Watch",
     image: "https://picsum.photos/seed/elder1/600/400",
-    buyPrice: "38,000 RWF",
-    leasePrice: "3,800 RWF/mo",
-    description: "The D44S 4G elderly GPS watch is tailored for seniors' safety and health, featuring IP67 waterproofing, 4G full-network connectivity, and GPS+LBS+WiFi triple positioning (≤5M). It highlights a medicine reminder, SOS emergency call, heart rate monitoring, and 750mAh long battery life.",
+    buyPrice: "85,000 RWF",
+    leasePrice: "8,500 RWF/mo",
+    description: "The D44S 4G elderly GPS watch is tailored for seniors' safety and health, featuring IP67 waterproofing, 4G full-network connectivity, and GPS+LBS+WiFi triple positioning (≤5M). It highlights a medicine reminder, SOS emergency call, heart rate monitoring, and 830mAh long battery life.",
     specifications: {
       "Chipset": "ASR3603S",
       "Material": "PC+ABS",
       "Operation System": "RT system",
-      "Positioning": "GPS+LBS+Wifi hotspots",
+      "Positioning": "GPS+LBS+WiFi hotspots",
       "Battery Capacity": "830mAh polymer",
       "Charging Time": "4-5 hours",
       "Battery Life": "2-3 days",
