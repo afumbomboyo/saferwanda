@@ -52,49 +52,62 @@ const DEVICE_CATALOG: Record<string, any> = {
     image: "https://picsum.photos/seed/child1/600/400",
     buyPrice: "45,000 RWF",
     leasePrice: "4,000 RWF/mo",
-    description: "A smart GPS watch with an emergency button and health tracking for kids."
+    description: "A smart GPS watch with an emergency button and health tracking for kids.",
+    features: ["Real-time Tracking", "SOS Panic Button", "Geofencing Alerts", "Health Monitoring"]
   },
   "elderly-care": {
-    name: "SafeLink Vital",
+    name: "SafeLink D44S GPS Watch",
     image: "https://picsum.photos/seed/elder1/600/400",
-    buyPrice: "38,000 RWF",
+    buyPrice: "35,000 RWF",
     leasePrice: "3,500 RWF/mo",
-    description: "A medical alert neckpiece with fall detection and heart monitoring."
+    description: "Professional care companion with ≤5M precision positioning and 4G HD calls for instant emergency connection. Tailored for safety and health management.",
+    features: [
+      "Health Monitoring (HR, BP, SPO2, Temp)",
+      "Triple Positioning (GPS+LBS+WiFi)",
+      "Fall Detection with Instant Alerts",
+      "Medicine & Sedentary Reminders",
+      "IP67 Waterproof & Long Battery Life"
+    ]
   },
   "fire-prevention": {
     name: "SafeHome Heat Sensor",
     image: "https://picsum.photos/seed/fire1/600/400",
     buyPrice: "25,000 RWF",
     leasePrice: "2,500 RWF/mo",
-    description: "A smart smoke and gas leak detector for your kitchen and home."
+    description: "A smart smoke and gas leak detector for your kitchen and home.",
+    features: ["Gas Leak Detection", "Thermal Monitoring", "Instant App Alerts", "Loud Alarm Siren"]
   },
   "property-security": {
     name: "SafeGuard Smart Lock",
     image: "https://picsum.photos/seed/prop1/600/400",
     buyPrice: "55,000 RWF",
     leasePrice: "5,000 RWF/mo",
-    description: "A secure smart lock for your main gate and doors."
+    description: "A secure smart lock for your main gate and doors.",
+    features: ["Remote Unlock", "Entry Logs", "Tamper Alerts", "Bluetooth Connectivity"]
   },
   "asset-protection": {
     name: "SafeTrack Asset",
     image: "https://picsum.photos/seed/asset1/600/400",
     buyPrice: "60,000 RWF",
     leasePrice: "5,500 RWF/mo",
-    description: "A heavy-duty GPS tracker for vehicles and high-value equipment."
+    description: "A heavy-duty GPS tracker for vehicles and high-value equipment.",
+    features: ["4G LTE Tracking", "Movement History", "Magnetic Mount", "Long Battery Life"]
   },
   "neighborhood-surveillance": {
     name: "SafeMesh Hub",
     image: "https://picsum.photos/seed/neigh1/600/400",
     buyPrice: "75,000 RWF",
     leasePrice: "7,000 RWF/mo",
-    description: "A security hub that connects you with your neighbors' safety network."
+    description: "A security hub that connects you with your neighbors' safety network.",
+    features: ["Community Alerts", "Camera Integration", "Emergency Broadcast", "Night Vision Support"]
   },
   "smart-community": {
     name: "SafeCity Node",
     image: "https://picsum.photos/seed/smart1/600/400",
     buyPrice: "85,000 RWF",
     leasePrice: "8,000 RWF/mo",
-    description: "A community device for smart street lighting and hazard tracking."
+    description: "A community device for smart street lighting and hazard tracking.",
+    features: ["Streetlight Control", "Waste Analytics", "Environmental Sensors", "Mesh Network"]
   }
 };
 
@@ -245,7 +258,7 @@ function DashboardContent() {
                 <DialogTrigger asChild>
                   <Button className="rounded-xl font-bold px-6 h-10 gap-2 bg-primary hover:bg-primary/90 shadow-lg">
                     <Plus className="w-4 h-4" />
-                    Register Your Device
+                    Connect Device
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[520px] p-0 overflow-hidden border-border/50 bg-background shadow-2xl rounded-[2.5rem]">
@@ -339,7 +352,7 @@ function DashboardContent() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <Card className="md:col-span-2 bg-card/40 border-border rounded-[2.5rem] shadow-2xl shadow-black/5">
                   <CardHeader className="p-8 pb-4">
-                    <CardTitle className="text-2xl font-black">Status Dashboard</CardTitle>
+                    <CardTitle className="text-2xl font-black">Status</CardTitle>
                     <CardDescription>A live look at your security network.</CardDescription>
                   </CardHeader>
                   <CardContent className="p-8 pt-0">
@@ -372,7 +385,7 @@ function DashboardContent() {
                       {!profile?.purchaseStatus || profile?.purchaseStatus === 'none'
                         ? "You haven't set up your devices yet. Go to 'My Services' to start the process."
                         : !profile?.deviceId 
-                          ? "Your hardware is being prepared. Once it arrives, use 'Register Your Device' at the top."
+                          ? "Your hardware is being prepared. Once it arrives, use 'Connect Device' at the top."
                           : !profile?.subscriptionActive 
                             ? "Your device is connected! Now choose a plan to start the 24/7 monitoring."
                             : "Everything is set up! We are monitoring your safety around the clock."}
@@ -385,7 +398,7 @@ function DashboardContent() {
                       }}
                       className="w-full mt-6 rounded-2xl h-14 font-black uppercase tracking-widest text-xs bg-primary"
                     >
-                      {(!profile?.purchaseStatus || profile.purchaseStatus === 'none') ? 'Go to My Services' : profile?.deviceId ? 'See Subscription Plans' : 'Connect Device'}
+                      {(!profile?.purchaseStatus || profile.purchaseStatus === 'none') ? 'Go to My Services' : profile?.deviceId ? 'See Plans' : 'Connect Device'}
                     </Button>
                   </CardContent>
                 </Card>
@@ -396,7 +409,7 @@ function DashboardContent() {
               {stagingStep === 'list' && (
                 <Card className="bg-card/60 border-border rounded-[3rem] shadow-2xl animate-reveal">
                   <CardHeader className="p-12 pb-6 border-b border-border/50">
-                    <CardTitle className="text-4xl font-black">My Selected Services</CardTitle>
+                    <CardTitle className="text-4xl font-black">My Services</CardTitle>
                     <CardDescription className="text-lg font-light">Pick a service below to start your set up.</CardDescription>
                   </CardHeader>
                   <CardContent className="p-12">
@@ -448,7 +461,7 @@ function DashboardContent() {
                         <h3 className="text-2xl font-black">Steps to Install</h3>
                         <div className="space-y-6">
                            {[
-                             { step: "1. Pick Your Plan", desc: "Decide if you want to buy your gadget or rent it for a small monthly fee." },
+                             { step: "1. Pick Your Plan", desc: "Decide if you want to buy your device or rent it for a small monthly fee." },
                              { step: "2. Fast Delivery", desc: "We ship your SafeRwanda device directly to your home or office." },
                              { step: "3. Easy Install", desc: "Follow our simple guide to turn it on and place it in the right spot." },
                              { step: "4. Digital Link", desc: "Enter your Device ID in this dashboard to start receiving alerts." }
@@ -510,7 +523,22 @@ function DashboardContent() {
                         </div>
                       </div>
                       <CardContent className="p-10 space-y-6">
-                        <p className="text-sm text-muted-foreground leading-relaxed">{DEVICE_CATALOG[selectedServiceId]?.description}</p>
+                        <p className="text-sm text-muted-foreground leading-relaxed font-bold">{DEVICE_CATALOG[selectedServiceId]?.description}</p>
+                        
+                        {DEVICE_CATALOG[selectedServiceId]?.features && (
+                          <div className="space-y-3">
+                            <p className="text-[10px] font-black uppercase tracking-widest text-primary">Core Features</p>
+                            <ul className="space-y-2">
+                              {DEVICE_CATALOG[selectedServiceId].features.map((feature: string, fIdx: number) => (
+                                <li key={fIdx} className="flex items-start gap-2 text-[10px] text-muted-foreground font-medium">
+                                  <CheckCircle2 className="w-3 h-3 text-primary mt-0.5 shrink-0" />
+                                  {feature}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+
                         <div className="flex justify-between items-center p-6 rounded-3xl bg-background border border-border">
                           <div>
                             <p className="text-[8px] font-black uppercase text-muted-foreground">One-Time Price + Delivery</p>
@@ -532,6 +560,21 @@ function DashboardContent() {
                       </div>
                       <CardContent className="p-10 space-y-6">
                         <p className="text-sm text-muted-foreground leading-relaxed">Save money upfront. Use the professional SafeRwanda hardware for a small monthly fee instead of buying.</p>
+                        
+                        {DEVICE_CATALOG[selectedServiceId]?.features && (
+                          <div className="space-y-3">
+                            <p className="text-[10px] font-black uppercase tracking-widest text-primary">Service Benefits</p>
+                            <ul className="space-y-2">
+                              {DEVICE_CATALOG[selectedServiceId].features.slice(0, 3).map((feature: string, fIdx: number) => (
+                                <li key={fIdx} className="flex items-start gap-2 text-[10px] text-muted-foreground font-medium">
+                                  <CheckCircle2 className="w-3 h-3 text-primary mt-0.5 shrink-0" />
+                                  {feature}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+
                         <div className="flex justify-between items-center p-6 rounded-3xl bg-background border border-border">
                           <div>
                             <p className="text-[8px] font-black uppercase text-muted-foreground">Monthly Rent</p>
@@ -561,7 +604,7 @@ function DashboardContent() {
                           {[
                             { step: "01", title: "Mount & Power On", desc: "Use the wall mount or stand to place your device and plug it in." },
                             { step: "02", title: "Check the Light", desc: "A green light means your device is connected to our network." },
-                            { step: "03", title: "Link Your App", desc: "Click 'Register Your Device' at the top of this page to enter your Device ID." },
+                            { step: "03", title: "Link Your App", desc: "Click 'Connect Device' at the top of this page to enter your Device ID." },
                             { step: "04", title: "Start Monitoring", desc: "Once linked, we'll watch over your home and family 24/7." }
                           ].map((item, i) => (
                             <div key={i} className="flex gap-6 items-start">
