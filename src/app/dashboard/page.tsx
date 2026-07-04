@@ -68,6 +68,8 @@ const DEVICE_CATALOG: Record<string, any> = {
       "Operation System": "RT system",
       "Positioning": "GPS+LBS+Wifi hotspots",
       "Battery Capacity": "830mAh polymer",
+      "Charging Time": "4-5 hours",
+      "Battery Life": "2-3 days",
       "Memory": "128MB+128MB",
       "Network": "4G/3G/2G",
       "Waterproof": "IP67",
