@@ -42,6 +42,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
 
@@ -49,7 +56,7 @@ import Image from 'next/image';
 const DEVICE_CATALOG: Record<string, any> = {
   "child-protection": {
     name: "SafeWatch Pro",
-    image: "https://picsum.photos/seed/child1/600/400",
+    images: ["https://picsum.photos/seed/child1/600/400"],
     buyPrice: "45,000 RWF",
     leasePrice: "4,000 RWF/mo",
     description: "A smart GPS watch with an emergency button and health tracking for kids.",
@@ -57,11 +64,16 @@ const DEVICE_CATALOG: Record<string, any> = {
   },
   "elderly-care": {
     name: "SafeLink D44S GPS Watch",
-    image: "https://picsum.photos/seed/elder1/600/400",
+    images: [
+      "/images/Elderly-Health-Monitoring-Device.png",
+      "/images/Elderly-Health-Monitoring-Device-Features.png",
+      "/images/Elderly-Health-Monitoring-Device-Label.png"
+    ],
     buyPrice: "85,000 RWF",
     leasePrice: "42,500 RWF",
     description: "The D44S 4G elderly GPS watch is tailored for seniors' safety and health, featuring IP67 waterproofing, 4G full-network connectivity, and GPS+LBS+WiFi triple positioning (≤5M). It highlights a medicine reminder, SOS emergency call, heart rate monitoring, and 830mAh long battery life.",
     specifications: {
+      "Color": "Black only",
       "Chipset": "ASR3603S",
       "Material": "PC+ABS",
       "Operation System": "RT system",
@@ -92,7 +104,7 @@ const DEVICE_CATALOG: Record<string, any> = {
   },
   "fire-prevention": {
     name: "SafeHome Heat Sensor",
-    image: "https://picsum.photos/seed/fire1/600/400",
+    images: ["https://picsum.photos/seed/fire1/600/400"],
     buyPrice: "25,000 RWF",
     leasePrice: "2,500 RWF/mo",
     description: "A smart smoke and gas leak detector for your kitchen and home.",
@@ -100,7 +112,7 @@ const DEVICE_CATALOG: Record<string, any> = {
   },
   "property-security": {
     name: "SafeGuard Smart Lock",
-    image: "https://picsum.photos/seed/prop1/600/400",
+    images: ["https://picsum.photos/seed/prop1/600/400"],
     buyPrice: "55,000 RWF",
     leasePrice: "5,000 RWF/mo",
     description: "A secure smart lock for your main gate and doors.",
@@ -108,7 +120,7 @@ const DEVICE_CATALOG: Record<string, any> = {
   },
   "asset-protection": {
     name: "SafeTrack Asset",
-    image: "https://picsum.photos/seed/asset1/600/400",
+    images: ["https://picsum.photos/seed/asset1/600/400"],
     buyPrice: "60,000 RWF",
     leasePrice: "5,500 RWF/mo",
     description: "A heavy-duty GPS tracker for vehicles and high-value equipment.",
@@ -116,7 +128,7 @@ const DEVICE_CATALOG: Record<string, any> = {
   },
   "neighborhood-surveillance": {
     name: "SafeMesh Hub",
-    image: "https://picsum.photos/seed/neigh1/600/400",
+    images: ["https://picsum.photos/seed/neigh1/600/400"],
     buyPrice: "75,000 RWF",
     leasePrice: "7,000 RWF/mo",
     description: "A security hub that connects you with your neighbors' safety network.",
@@ -124,7 +136,7 @@ const DEVICE_CATALOG: Record<string, any> = {
   },
   "smart-community": {
     name: "SafeCity Node",
-    image: "https://picsum.photos/seed/smart1/600/400",
+    images: ["https://picsum.photos/seed/smart1/600/400"],
     buyPrice: "85,000 RWF",
     leasePrice: "8,000 RWF/mo",
     description: "A community device for smart street lighting and hazard tracking.",
@@ -522,10 +534,26 @@ function DashboardContent() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-6xl mx-auto">
                     {/* Buy Option */}
                     <Card className="rounded-[3.5rem] overflow-hidden border-4 border-border bg-card/60 cursor-pointer hover:-translate-y-2 transition-all shadow-2xl" onClick={() => handleDeviceSelection('purchased')}>
-                      <div className="relative h-72 w-full">
-                        <Image src={DEVICE_CATALOG[selectedServiceId]?.image} alt="Device" fill className="object-cover" />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
-                        <div className="absolute bottom-8 left-8">
+                      <div className="relative h-[500px] w-full">
+                        <Carousel className="w-full h-full">
+                          <CarouselContent>
+                            {(DEVICE_CATALOG[selectedServiceId]?.images || []).map((imgUrl: string, idx: number) => (
+                              <CarouselItem key={idx}>
+                                <div className="relative h-[500px] w-full">
+                                  <Image src={imgUrl} alt={`${DEVICE_CATALOG[selectedServiceId]?.name} view ${idx + 1}`} fill className="object-cover" />
+                                </div>
+                              </CarouselItem>
+                            ))}
+                          </CarouselContent>
+                          {(DEVICE_CATALOG[selectedServiceId]?.images?.length > 1) && (
+                            <>
+                              <CarouselPrevious className="left-4" />
+                              <CarouselNext className="right-4" />
+                            </>
+                          )}
+                        </Carousel>
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent pointer-events-none" />
+                        <div className="absolute bottom-8 left-8 pointer-events-none">
                           <h4 className="text-3xl font-black text-white">Buy Hardware</h4>
                           <p className="text-white/60 text-xs font-bold uppercase tracking-widest">Ownership + Secured Shipping</p>
                         </div>
@@ -575,10 +603,26 @@ function DashboardContent() {
 
                     {/* Lease Option */}
                     <Card className="rounded-[3.5rem] overflow-hidden border-4 border-border bg-card/60 cursor-pointer hover:-translate-y-2 transition-all shadow-2xl" onClick={() => handleDeviceSelection('leased')}>
-                      <div className="relative h-72 w-full">
-                        <Image src={DEVICE_CATALOG[selectedServiceId]?.image} alt="Device" fill className="object-cover" />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
-                        <div className="absolute bottom-8 left-8">
+                      <div className="relative h-[500px] w-full">
+                        <Carousel className="w-full h-full">
+                          <CarouselContent>
+                            {(DEVICE_CATALOG[selectedServiceId]?.images || []).map((imgUrl: string, idx: number) => (
+                              <CarouselItem key={idx}>
+                                <div className="relative h-[500px] w-full">
+                                  <Image src={imgUrl} alt={`${DEVICE_CATALOG[selectedServiceId]?.name} view ${idx + 1}`} fill className="object-cover" />
+                                </div>
+                              </CarouselItem>
+                            ))}
+                          </CarouselContent>
+                          {(DEVICE_CATALOG[selectedServiceId]?.images?.length > 1) && (
+                            <>
+                              <CarouselPrevious className="left-4" />
+                              <CarouselNext className="right-4" />
+                            </>
+                          )}
+                        </Carousel>
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent pointer-events-none" />
+                        <div className="absolute bottom-8 left-8 pointer-events-none">
                           <h4 className="text-3xl font-black text-white">
                             {selectedServiceId === 'elderly-care' ? 'Lease to Own' : 'Rent Hardware'}
                           </h4>
