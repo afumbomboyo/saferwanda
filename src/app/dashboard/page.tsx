@@ -533,7 +533,7 @@ function DashboardContent() {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-6xl mx-auto">
                     {/* Buy Option */}
-                    <Card className="rounded-[3.5rem] overflow-hidden border-4 border-border bg-card/60 cursor-pointer hover:-translate-y-2 transition-all shadow-2xl" onClick={() => handleDeviceSelection('purchased')}>
+                    <Card className="rounded-[3.5rem] overflow-hidden border-4 border-border bg-card/60 transition-all shadow-2xl">
                       <div className="relative h-[500px] w-full">
                         <Carousel className="w-full h-full">
                           <CarouselContent>
@@ -597,12 +597,17 @@ function DashboardContent() {
                             <p className="text-2xl font-black">{DEVICE_CATALOG[selectedServiceId]?.buyPrice}</p>
                           </div>
                         </div>
-                        <Button className="w-full h-16 rounded-2xl font-black uppercase tracking-widest text-xs bg-primary">Order & Buy</Button>
+                        <Button 
+                          onClick={() => handleDeviceSelection('purchased')}
+                          className="w-full h-16 rounded-2xl font-black uppercase tracking-widest text-xs bg-primary"
+                        >
+                          Order & Buy
+                        </Button>
                       </CardContent>
                     </Card>
 
                     {/* Lease Option */}
-                    <Card className="rounded-[3.5rem] overflow-hidden border-4 border-border bg-card/60 cursor-pointer hover:-translate-y-2 transition-all shadow-2xl" onClick={() => handleDeviceSelection('leased')}>
+                    <Card className="rounded-[3.5rem] overflow-hidden border-4 border-border bg-card/60 transition-all shadow-2xl">
                       <div className="relative h-[500px] w-full">
                         <Carousel className="w-full h-full">
                           <CarouselContent>
@@ -678,7 +683,11 @@ function DashboardContent() {
                             <p className="text-2xl font-black">{DEVICE_CATALOG[selectedServiceId]?.leasePrice}</p>
                           </div>
                         </div>
-                        <Button variant="outline" className="w-full h-16 rounded-2xl font-black uppercase tracking-widest text-xs">
+                        <Button 
+                          variant="outline" 
+                          onClick={() => handleDeviceSelection('leased')}
+                          className="w-full h-16 rounded-2xl font-black uppercase tracking-widest text-xs"
+                        >
                           {selectedServiceId === 'elderly-care' ? 'Start Lease to Own' : 'Activate Lease'}
                         </Button>
                       </CardContent>
