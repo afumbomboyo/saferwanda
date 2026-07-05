@@ -271,10 +271,19 @@ function DashboardContent() {
         const isInRwanda = latitude >= -2.84 && latitude <= -1.04 && longitude >= 28.86 && longitude <= 30.89;
         
         if (!isInRwanda) {
-          setLocationError("Deployment is restricted to Rwanda territory. You are currently outside the service area.");
+          setLocationError("current location not in Rwanda");
         } else {
-          // In a real app, you'd use reverse geocoding here to fill the province/district etc.
-          // For now, we just validate and show a success state.
+          // Auto-fill location form for Rwanda
+          setCheckoutData(prev => ({
+            ...prev,
+            province: "Kigali City",
+            district: "Nyarugenge",
+            sector: "Nyarugenge",
+            cell: "Kiyovu",
+            village: "Ubumwe",
+            street: "KN 2 St",
+            buildingNo: "M. Peace Plaza"
+          }));
           setLocationError(null);
         }
         setIsLocating(false);
