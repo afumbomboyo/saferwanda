@@ -941,6 +941,25 @@ function DashboardContent() {
                       </div>
                     </div>
 
+                    {/* Summary Section */}
+                    <div className="bg-primary/5 border border-primary/10 rounded-2xl p-6 mb-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+                      <div className="text-center sm:text-left">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">Transaction Type</p>
+                        <p className="text-lg font-black text-primary capitalize">
+                          {tempSelection === 'purchased' ? 'Full Purchase' : 'Lease to Own'}
+                        </p>
+                      </div>
+                      <div className="h-px w-full sm:h-12 sm:w-px bg-primary/10" />
+                      <div className="text-center sm:text-right">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">Total Amount Due</p>
+                        <p className="text-2xl font-black text-primary">
+                          {tempSelection === 'purchased' 
+                            ? DEVICE_CATALOG[selectedServiceId]?.buyPrice 
+                            : DEVICE_CATALOG[selectedServiceId]?.leasePrice}
+                        </p>
+                      </div>
+                    </div>
+
                     <div className="pt-8">
                       <Button 
                         onClick={handleCompleteCheckout}
@@ -956,7 +975,7 @@ function DashboardContent() {
                         }
                         className="w-full h-16 rounded-2xl bg-primary hover:bg-primary/90 font-black uppercase tracking-widest text-sm shadow-xl"
                       >
-                        Complete Order & Proceed
+                        Proceed to Payment
                       </Button>
                       <p className="text-[9px] text-center text-muted-foreground mt-4 uppercase font-bold tracking-widest">
                         By clicking complete, you agree to our terms of hardware service and deployment.
