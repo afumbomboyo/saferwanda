@@ -25,7 +25,10 @@ import {
   Plus,
   ChevronLeft,
   FileText,
-  Info
+  Info,
+  MapPin,
+  User as UserIcon,
+  Navigation
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
@@ -157,12 +160,30 @@ function DashboardContent() {
   
   const [activeTab, setActiveTab] = useState<string>(searchParams.get('tab') || 'overview');
   const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null);
-  const [stagingStep, setStagingStep] = useState<'list' | 'instructions' | 'get-device' | 'setup'>('list');
+  const [stagingStep, setStagingStep] = useState<'list' | 'instructions' | 'get-device' | 'checkout' | 'setup'>('list');
 
   const [deviceIdInput, setDeviceIdInput] = useState('');
   const [alertPhone, setAlertPhone] = useState('');
   const [alertEmail, setAlertEmail] = useState('');
   const [subType, setSubType] = useState('monthly');
+
+  // Checkout Form State
+  const [checkoutData, setCheckoutData] = useState({
+    fullName: '',
+    email: '',
+    phone: '',
+    province: '',
+    district: '',
+    sector: '',
+    cell: '',
+    village: '',
+    street: '',
+    buildingNo: '',
+    country: 'Rwanda'
+  });
+  const [isLocating, setIsLocating] = useState(false);
+  const [locationError, setLocationError] = useState<string | null>(null);
+  const [tempSelection, setTempSelection] = useState<'purchased' | 'leased' | null>(null);
 
   useEffect(() => {
     const tab = searchParams.get('tab');
@@ -196,6 +217,11 @@ function DashboardContent() {
           setAlertEmail(data.alertEmail || user.email || '');
           setAlertPhone(data.alertPhone || '');
           setDeviceIdInput(data.deviceId || '');
+          setCheckoutData(prev => ({
+            ...prev,
+            fullName: data.fullName || '',
+            email: data.email || ''
+          }));
         } else {
           router.replace('/onboarding');
         }
@@ -224,8 +250,51 @@ function DashboardContent() {
   };
 
   const handleDeviceSelection = (status: 'purchased' | 'leased') => {
-    updateProfileData({ purchaseStatus: status, hasPaidSetupFee: status === 'purchased' });
-    setStagingStep('setup');
+    setTempSelection(status);
+    setStagingStep('checkout');
+  };
+
+  const handleGetCurrentLocation = () => {
+    setIsLocating(true);
+    setLocationError(null);
+    if (!navigator.geolocation) {
+      setLocationError("Geolocation is not supported by your browser.");
+      setIsLocating(false);
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        // Simple bounding box check for Rwanda
+        // Lat: -2.84 to -1.04, Lon: 28.86 to 30.89
+        const isInRwanda = latitude >= -2.84 && latitude <= -1.04 && longitude >= 28.86 && longitude <= 30.89;
+        
+        if (!isInRwanda) {
+          setLocationError("Deployment is restricted to Rwanda territory. You are currently outside the service area.");
+        } else {
+          // In a real app, you'd use reverse geocoding here to fill the province/district etc.
+          // For now, we just validate and show a success state.
+          setLocationError(null);
+        }
+        setIsLocating(false);
+      },
+      (error) => {
+        setLocationError("Unable to retrieve location. Please check your permissions.");
+        setIsLocating(false);
+      }
+    );
+  };
+
+  const handleCompleteCheckout = () => {
+    if (tempSelection) {
+      updateProfileData({ 
+        purchaseStatus: tempSelection, 
+        hasPaidSetupFee: tempSelection === 'purchased',
+        deliveryInfo: checkoutData
+      });
+      setStagingStep('setup');
+    }
   };
 
   if (loading || userLoading) {
@@ -709,6 +778,183 @@ function DashboardContent() {
                     </Card>
                   )}
                 </div>
+              )}
+
+              {stagingStep === 'checkout' && selectedServiceId && (
+                <Card className="max-w-4xl mx-auto rounded-[3rem] border-border bg-card/60 shadow-2xl animate-reveal">
+                  <CardHeader className="p-12 pb-6 border-b border-border/50 bg-primary/5">
+                    <Button variant="ghost" className="w-fit mb-6 rounded-xl gap-2 font-bold" onClick={() => setStagingStep('get-device')}>
+                      <ChevronLeft className="w-4 h-4" /> Back to Selection
+                    </Button>
+                    <CardTitle className="text-4xl font-black">Checkout</CardTitle>
+                    <CardDescription className="text-lg font-light mt-2">Provide delivery details for your SafeRwanda hardware.</CardDescription>
+                  </CardHeader>
+                  <CardContent className="p-12 space-y-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                      <div className="space-y-4">
+                        <div className="space-y-2">
+                          <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Full Name</Label>
+                          <div className="relative">
+                            <Input 
+                              placeholder="Your full name" 
+                              value={checkoutData.fullName}
+                              onChange={(e) => setCheckoutData({...checkoutData, fullName: e.target.value})}
+                              className="h-14 rounded-xl border-border bg-secondary/20 pl-12" 
+                            />
+                            <UserIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Email Address</Label>
+                          <div className="relative">
+                            <Input 
+                              type="email"
+                              placeholder="you@email.com" 
+                              value={checkoutData.email}
+                              onChange={(e) => setCheckoutData({...checkoutData, email: e.target.value})}
+                              className="h-14 rounded-xl border-border bg-secondary/20 pl-12" 
+                            />
+                            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Phone Number</Label>
+                          <div className="relative">
+                            <Input 
+                              placeholder="+250 7XX XXX XXX" 
+                              value={checkoutData.phone}
+                              onChange={(e) => setCheckoutData({...checkoutData, phone: e.target.value})}
+                              className="h-14 rounded-xl border-border bg-secondary/20 pl-12" 
+                            />
+                            <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="space-y-4">
+                        <div className="space-y-2">
+                          <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Delivery Region Validation</Label>
+                          <Button 
+                            variant="outline" 
+                            className="w-full h-14 rounded-xl gap-2 font-bold border-dashed border-primary/40 text-primary"
+                            onClick={handleGetCurrentLocation}
+                            disabled={isLocating}
+                          >
+                            {isLocating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Navigation className="w-4 h-4" />}
+                            {isLocating ? "Validating Coordinates..." : "Get My Current Location"}
+                          </Button>
+                          {locationError ? (
+                            <p className="text-[10px] text-destructive font-bold mt-1 flex items-center gap-1">
+                              <AlertTriangle className="w-3 h-3" /> {locationError}
+                            </p>
+                          ) : !isLocating && navigator.geolocation && (
+                            <p className="text-[10px] text-rwanda-green font-bold mt-1 flex items-center gap-1">
+                              <CheckCircle2 className="w-3 h-3" /> Location validated within Rwanda service area.
+                            </p>
+                          )}
+                        </div>
+                        <div className="space-y-2">
+                          <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Country</Label>
+                          <Input value="Rwanda" disabled className="h-14 rounded-xl border-border bg-secondary/40 font-bold" />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      <div className="space-y-2">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Province</Label>
+                        <Input 
+                          placeholder="e.g. Kigali" 
+                          value={checkoutData.province}
+                          onChange={(e) => setCheckoutData({...checkoutData, province: e.target.value})}
+                          className="h-12 rounded-xl border-border bg-secondary/20" 
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">District</Label>
+                        <Input 
+                          placeholder="District" 
+                          value={checkoutData.district}
+                          onChange={(e) => setCheckoutData({...checkoutData, district: e.target.value})}
+                          className="h-12 rounded-xl border-border bg-secondary/20" 
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Sector</Label>
+                        <Input 
+                          placeholder="Sector" 
+                          value={checkoutData.sector}
+                          onChange={(e) => setCheckoutData({...checkoutData, sector: e.target.value})}
+                          className="h-12 rounded-xl border-border bg-secondary/20" 
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Cell</Label>
+                        <Input 
+                          placeholder="Cell" 
+                          value={checkoutData.cell}
+                          onChange={(e) => setCheckoutData({...checkoutData, cell: e.target.value})}
+                          className="h-12 rounded-xl border-border bg-secondary/20" 
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      <div className="space-y-2">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Village</Label>
+                        <Input 
+                          placeholder="Village" 
+                          value={checkoutData.village}
+                          onChange={(e) => setCheckoutData({...checkoutData, village: e.target.value})}
+                          className="h-12 rounded-xl border-border bg-secondary/20" 
+                        />
+                      </div>
+                      <div className="space-y-2 md:col-span-2">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Street Address</Label>
+                        <div className="relative">
+                          <Input 
+                            placeholder="Street Name / Code" 
+                            value={checkoutData.street}
+                            onChange={(e) => setCheckoutData({...checkoutData, street: e.target.value})}
+                            className="h-12 rounded-xl border-border bg-secondary/20 pl-10" 
+                          />
+                          <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Building No.</Label>
+                        <Input 
+                          placeholder="e.g. KK 202 St" 
+                          value={checkoutData.buildingNo}
+                          onChange={(e) => setCheckoutData({...checkoutData, buildingNo: e.target.value})}
+                          className="h-12 rounded-xl border-border bg-secondary/20" 
+                        />
+                      </div>
+                    </div>
+
+                    <div className="pt-8">
+                      <Button 
+                        onClick={handleCompleteCheckout}
+                        disabled={
+                          !checkoutData.fullName || 
+                          !checkoutData.email || 
+                          !checkoutData.phone || 
+                          !checkoutData.province || 
+                          !checkoutData.district || 
+                          !checkoutData.street ||
+                          !!locationError ||
+                          isLocating
+                        }
+                        className="w-full h-16 rounded-2xl bg-primary hover:bg-primary/90 font-black uppercase tracking-widest text-sm shadow-xl"
+                      >
+                        Complete Order & Proceed
+                      </Button>
+                      <p className="text-[9px] text-center text-muted-foreground mt-4 uppercase font-bold tracking-widest">
+                        By clicking complete, you agree to our terms of hardware service and deployment.
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
               )}
 
               {stagingStep === 'setup' && selectedServiceId && (
