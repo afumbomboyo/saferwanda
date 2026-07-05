@@ -28,7 +28,8 @@ import {
   Info,
   MapPin,
   User as UserIcon,
-  Navigation
+  Navigation,
+  CreditCard
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
@@ -677,7 +678,7 @@ function DashboardContent() {
                         </div>
                         <Button 
                           onClick={() => handleDeviceSelection('purchased')}
-                          className="w-full h-16 rounded-2xl font-black uppercase tracking-widest text-xs bg-primary"
+                          className="w-full h-16 rounded-2xl font-black uppercase tracking-widest text-sm bg-primary"
                         >
                           Order & Buy
                         </Button>
@@ -764,7 +765,7 @@ function DashboardContent() {
                         <Button 
                           variant="outline" 
                           onClick={() => handleDeviceSelection('leased')}
-                          className="w-full h-16 rounded-2xl font-black uppercase tracking-widest text-xs"
+                          className="w-full h-16 rounded-2xl font-black uppercase tracking-widest text-sm"
                         >
                           {selectedServiceId === 'elderly-care' ? 'Start Lease to Own' : 'Activate Lease'}
                         </Button>
@@ -942,21 +943,50 @@ function DashboardContent() {
                     </div>
 
                     {/* Summary Section */}
-                    <div className="bg-primary/5 border border-primary/10 rounded-2xl p-6 mb-8 flex flex-col sm:flex-row justify-between items-center gap-4">
-                      <div className="text-center sm:text-left">
-                        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">Transaction Type</p>
-                        <p className="text-lg font-black text-primary capitalize">
-                          {tempSelection === 'purchased' ? 'Full Purchase' : 'Lease to Own'}
-                        </p>
+                    <div className="bg-primary/5 border border-primary/10 rounded-[2rem] p-8 mb-8 space-y-6">
+                      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                        <div>
+                          <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">Service Tier</p>
+                          <p className="text-xl font-black capitalize">{selectedServiceId.replace('-', ' ')}</p>
+                        </div>
+                        <div className="text-left md:text-right">
+                          <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">Transaction Type</p>
+                          <Badge variant="outline" className="border-primary text-primary font-bold px-3 py-1">
+                            {tempSelection === 'purchased' ? 'Full Purchase' : 'Lease to Own'}
+                          </Badge>
+                        </div>
                       </div>
-                      <div className="h-px w-full sm:h-12 sm:w-px bg-primary/10" />
-                      <div className="text-center sm:text-right">
-                        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">Total Amount Due</p>
-                        <p className="text-2xl font-black text-primary">
-                          {tempSelection === 'purchased' 
-                            ? DEVICE_CATALOG[selectedServiceId]?.buyPrice 
-                            : DEVICE_CATALOG[selectedServiceId]?.leasePrice}
-                        </p>
+
+                      <div className="h-px w-full bg-primary/10" />
+
+                      <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+                        <div className="text-center sm:text-left">
+                          <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">
+                            {tempSelection === 'purchased' ? 'One-time Payment' : 'Payment Schedule'}
+                          </p>
+                          <p className="text-sm font-bold">
+                            {tempSelection === 'purchased' 
+                              ? 'Full ownership upon delivery' 
+                              : selectedServiceId === 'elderly-care' 
+                                ? '4 Installments (1 Year Plan)' 
+                                : 'Monthly Subscription'}
+                          </p>
+                        </div>
+                        <div className="text-center sm:text-right">
+                          <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">
+                            {tempSelection === 'purchased' ? 'Total Amount' : 'Amount per Installment'}
+                          </p>
+                          <p className="text-3xl font-black text-primary">
+                            {tempSelection === 'purchased' 
+                              ? DEVICE_CATALOG[selectedServiceId]?.buyPrice 
+                              : selectedServiceId === 'elderly-care'
+                                ? '42,500 RWF'
+                                : DEVICE_CATALOG[selectedServiceId]?.leasePrice}
+                          </p>
+                          {tempSelection === 'leased' && selectedServiceId === 'elderly-care' && (
+                            <p className="text-[10px] text-muted-foreground font-bold mt-1">Pay every 3 months</p>
+                          )}
+                        </div>
                       </div>
                     </div>
 
