@@ -29,7 +29,9 @@ import {
   MapPin,
   User as UserIcon,
   Navigation,
-  CreditCard
+  CreditCard,
+  Heart,
+  Signal
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
@@ -161,7 +163,7 @@ function DashboardContent() {
   
   const [activeTab, setActiveTab] = useState<string>(searchParams.get('tab') || 'overview');
   const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null);
-  const [stagingStep, setStagingStep] = useState<'list' | 'instructions' | 'get-device' | 'checkout' | 'setup'>('list');
+  const [stagingStep, setStagingStep] = useState<'list' | 'instructions' | 'child-options' | 'get-device' | 'checkout' | 'setup'>('list');
 
   const [deviceIdInput, setDeviceIdInput] = useState('');
   const [alertPhone, setAlertPhone] = useState('');
@@ -192,7 +194,6 @@ function DashboardContent() {
   }, [searchParams]);
 
   useEffect(() => {
-    // We add a short timeout to ensure elements are in DOM before applying the animation class
     const timer = setTimeout(() => {
       const revealElements = document.querySelectorAll('.animate-reveal');
       revealElements.forEach((el) => {
@@ -200,7 +201,7 @@ function DashboardContent() {
       });
     }, 100);
     return () => clearTimeout(timer);
-  }, [activeTab, stagingStep, loading]); // Added loading to dependencies to re-trigger after Suspense/Loading finishes
+  }, [activeTab, stagingStep, loading]);
 
   useEffect(() => {
     if (userLoading) return;
@@ -268,14 +269,11 @@ function DashboardContent() {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
-        // Simple bounding box check for Rwanda
-        // Lat: -2.84 to -1.04, Lon: 28.86 to 30.89
         const isInRwanda = latitude >= -2.84 && latitude <= -1.04 && longitude >= 28.86 && longitude <= 30.89;
         
         if (!isInRwanda) {
           setLocationError("current location not in Rwanda");
         } else {
-          // Auto-fill location form for Rwanda
           setCheckoutData(prev => ({
             ...prev,
             province: "Kigali City",
@@ -590,7 +588,10 @@ function DashboardContent() {
                           Your security is our priority. Once you have reviewed the instructions, proceed to select your hardware options.
                         </p>
                         <Button 
-                          onClick={() => setStagingStep('get-device')}
+                          onClick={() => {
+                            if (selectedServiceId === 'child-protection') setStagingStep('child-options');
+                            else setStagingStep('get-device');
+                          }}
                           className="w-full h-16 rounded-2xl bg-primary hover:bg-primary/90 font-black uppercase tracking-widest text-sm shadow-xl"
                         >
                           Continue to Get Device
@@ -601,11 +602,60 @@ function DashboardContent() {
                 </Card>
               )}
 
-              {stagingStep === 'get-device' && selectedServiceId && (
+              {stagingStep === 'child-options' && (
                 <div className="space-y-12 animate-reveal">
                   <div className="flex flex-col items-center text-center max-w-2xl mx-auto space-y-4">
                     <Button variant="ghost" className="rounded-xl gap-2 font-bold" onClick={() => setStagingStep('instructions')}>
                       <ChevronLeft className="w-4 h-4" /> Back to Instructions
+                    </Button>
+                    <h2 className="text-4xl font-black">Child Protection Options</h2>
+                    <p className="text-muted-foreground">Select the protection tier for your SafeWatch node.</p>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                    <Card 
+                      className="group cursor-pointer hover:border-primary transition-all p-10 rounded-[2.5rem] bg-card/60 border-2 border-border shadow-xl flex flex-col justify-between"
+                      onClick={() => setStagingStep('get-device')}
+                    >
+                      <div>
+                        <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6">
+                          <Signal className="w-6 h-6 text-primary" />
+                        </div>
+                        <h3 className="text-2xl font-black mb-4">Option 1: Standard</h3>
+                        <p className="text-sm text-muted-foreground leading-relaxed">
+                          Real-time tracking and geofencing for safe school commutes. Includes a one-touch SOS panic button and a silent audio callback to instantly hear your child's surroundings.
+                        </p>
+                      </div>
+                      <Button className="mt-8 w-full rounded-xl font-bold bg-primary/5 text-primary group-hover:bg-primary group-hover:text-white border-none">Select Option 1</Button>
+                    </Card>
+
+                    <Card 
+                      className="group cursor-pointer hover:border-accent transition-all p-10 rounded-[2.5rem] bg-card/60 border-2 border-border shadow-xl flex flex-col justify-between"
+                      onClick={() => setStagingStep('get-device')}
+                    >
+                      <div>
+                        <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center mb-6">
+                          <Heart className="w-6 h-6 text-accent" />
+                        </div>
+                        <h3 className="text-2xl font-black mb-4">Option 2: Advanced</h3>
+                        <p className="text-sm text-muted-foreground leading-relaxed">
+                          Includes everything in Option 1 plus advanced health monitoring for temperature and oxygen saturation, specifically targeting early malaria detection and wellness tracking.
+                        </p>
+                      </div>
+                      <Button className="mt-8 w-full rounded-xl font-bold bg-accent/5 text-accent group-hover:bg-accent group-hover:text-accent-foreground border-none">Select Option 2</Button>
+                    </Card>
+                  </div>
+                </div>
+              )}
+
+              {stagingStep === 'get-device' && selectedServiceId && (
+                <div className="space-y-12 animate-reveal">
+                  <div className="flex flex-col items-center text-center max-w-2xl mx-auto space-y-4">
+                    <Button variant="ghost" className="rounded-xl gap-2 font-bold" onClick={() => {
+                      if (selectedServiceId === 'child-protection') setStagingStep('child-options');
+                      else setStagingStep('instructions');
+                    }}>
+                      <ChevronLeft className="w-4 h-4" /> Back to Selection
                     </Button>
                     <h2 className="text-4xl font-black">Get Your Device</h2>
                     <p className="text-muted-foreground">Select your hardware for {selectedServiceId.replace('-', ' ')}.</p>
