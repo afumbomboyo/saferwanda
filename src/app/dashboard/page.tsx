@@ -192,6 +192,7 @@ function DashboardContent() {
   }, [searchParams]);
 
   useEffect(() => {
+    // We add a short timeout to ensure elements are in DOM before applying the animation class
     const timer = setTimeout(() => {
       const revealElements = document.querySelectorAll('.animate-reveal');
       revealElements.forEach((el) => {
@@ -199,7 +200,7 @@ function DashboardContent() {
       });
     }, 100);
     return () => clearTimeout(timer);
-  }, [activeTab, stagingStep]);
+  }, [activeTab, stagingStep, loading]); // Added loading to dependencies to re-trigger after Suspense/Loading finishes
 
   useEffect(() => {
     if (userLoading) return;
@@ -434,7 +435,7 @@ function DashboardContent() {
           </div>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full space-y-12">
-            <TabsList className="grid grid-cols-3 h-auto p-1.5 bg-secondary/40 rounded-[1.5rem] border border-border/50 sticky top-24 z-[50] shadow-xl">
+            <TabsList className="grid grid-cols-3 h-auto p-1.5 bg-secondary/40 rounded-[1.5rem] border border-border/50 shadow-xl">
               <TabsTrigger value="overview" className="rounded-xl py-3 data-[state=active]:bg-primary data-[state=active]:text-white font-bold text-[10px] md:text-sm">
                 <LayoutDashboard className="w-4 h-4 mr-2" /> Overview
               </TabsTrigger>
