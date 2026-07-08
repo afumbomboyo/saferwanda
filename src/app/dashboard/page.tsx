@@ -62,7 +62,11 @@ import Image from 'next/image';
 const DEVICE_CATALOG: Record<string, any> = {
   "child-protection": {
     name: "SafeWatch Pro",
-    images: ["https://picsum.photos/seed/child1/600/400"],
+    images: [
+      "/images/Child-GPS-&-Health-Monitoring-Device.png",
+      "/images/Child-GPS-&-Health-Monitoring-Device-Features.png",
+      "/images/Child-GPS-&-Health-Monitoring-Device-Label.png"
+    ],
     buyPrice: "45,000 RWF",
     leasePrice: "4,000 RWF/mo",
     description: "A smart GPS watch with an emergency button and health tracking for kids.",
