@@ -141,13 +141,13 @@ export default function ServicesPage() {
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mb-16 animate-reveal text-center mx-auto">
             <Badge variant="outline" className="mb-4 px-3 py-1 border-primary text-primary font-bold text-xs uppercase tracking-widest bg-primary/5">
-              Strategic Security Infrastructure
+              Secure your piece of tomorrow
             </Badge>
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-headline font-extrabold mb-6 tracking-tighter leading-tight">
-              Our <span className="text-gradient">Security Tiers</span>
+              Our <span className="text-gradient">Core Services</span>
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground font-light max-w-2xl mx-auto leading-relaxed">
-              SafeRwanda offers specialized protection tiers engineered for modern safety needs. Select a primary service to begin your strategic onboarding.
+              SafeRwanda offers specialized protection tiers engineered for modern safety needs. Select a primary service to begin your safe and secured journey.
             </p>
           </div>
 
