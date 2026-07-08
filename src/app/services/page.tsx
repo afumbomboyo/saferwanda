@@ -51,7 +51,7 @@ export default function ServicesPage() {
       id: "elderly-care",
       title: "Elderly Care",
       shortNote: "Fall detection & health monitors.",
-      description: "Dedicated fall detection and health monitoring for seniors using the professional D44S GPS Watch. Features automatic alerts for body temperature, blood pressure, and heart rate irregularities.",
+      description: "Smart sensors monitoring body temperature, blood pressure, and heart rate. Features automatic fall-detection alerts and instant panic buttons and notifications to family contacts the moment a health check drops.",
       icon: <Heart className="w-10 h-10 text-primary" />,
       imageUrl: "/images/elder.png",
       imageHint: "elderly health monitor",

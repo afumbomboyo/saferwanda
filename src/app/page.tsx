@@ -83,26 +83,25 @@ export default function Home() {
         
         {/* 1. The Hero Section (Cinematic First Impression) */}
         <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-          <div className="absolute inset-0 z-0">
-            {heroImg && (
-              <Image
-                src={heroImg.imageUrl}
-                alt="SafeRwanda Vision"
-                fill
-                className="object-cover opacity-45 brightness-15 scale-105"
-                priority
-              />
-            )}
+        <div className="absolute inset-0 z-0">
+          {heroImg && (
+            <Image
+              src="/images/SafeRwanda-Hero-BG.png"
+              alt="SafeRwanda Vision"
+              fill
+              className="object-cover opacity-60 scale-105"
+              priority
+            />
+          )}
             <div className="absolute inset-0 bg-gradient-to-b from-background/0 via-background/60 to-background" />
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/20 via-transparent to-transparent" />
           </div>
-
           <div className="container mx-auto px-4 z-10 text-center">
             <div className="max-w-4xl mx-auto animate-reveal">
-              <Badge variant="outline" className="mb-6 px-4 py-1.5 border-primary/30 text-primary font-bold bg-primary/5 backdrop-blur-md">
-                <Signal className="w-3.5 h-3.5 mr-2 animate-pulse text-primary" />
-                Next-Gen IoT Infrastructure
-              </Badge>
+            <Badge variant="outline" className="mb-6 px-4 py-1.5 border-slate-300 text-slate-900 font-extrabold bg-white/90 shadow-sm backdrop-blur-md">
+              <Signal className="w-3.5 h-3.5 mr-2 animate-pulse text-sky-600" />
+              Next-Gen IoT Infrastructure
+            </Badge>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-headline font-extrabold mb-6 leading-tight tracking-tighter">
                 Building a <span className="text-gradient">Smarter, Safer Rwanda</span> From the Ground Up.
               </h1>
