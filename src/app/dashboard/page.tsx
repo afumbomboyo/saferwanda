@@ -62,7 +62,12 @@ import Image from 'next/image';
 const DEVICE_CATALOG: Record<string, any> = {
   "child-protection": {
     name: "SafeWatch Pro",
-    images: [
+    standardImages: [
+      "/images/Child-GPS-Device.png",
+      "/images/Child-GPS-Device-Features.png",
+      "/images/Child-GPS-Device-Label.png"
+    ],
+    advancedImages: [
       "/images/Child-GPS-&-Health-Monitoring-Device.png",
       "/images/Child-GPS-&-Health-Monitoring-Device-Features.png",
       "/images/Child-GPS-&-Health-Monitoring-Device-Label.png"
@@ -167,6 +172,7 @@ function DashboardContent() {
   
   const [activeTab, setActiveTab] = useState<string>(searchParams.get('tab') || 'overview');
   const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null);
+  const [childOption, setChildOption] = useState<'option1' | 'option2' | null>(null);
   const [stagingStep, setStagingStep] = useState<'list' | 'instructions' | 'child-options' | 'get-device' | 'checkout' | 'setup'>('list');
 
   const [deviceIdInput, setDeviceIdInput] = useState('');
@@ -198,14 +204,16 @@ function DashboardContent() {
   }, [searchParams]);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      const revealElements = document.querySelectorAll('.animate-reveal');
-      revealElements.forEach((el) => {
-        el.classList.add('reveal-visible');
-      });
-    }, 100);
-    return () => clearTimeout(timer);
-  }, [activeTab, stagingStep, loading]);
+    if (!loading && !userLoading) {
+      const timer = setTimeout(() => {
+        const revealElements = document.querySelectorAll('.animate-reveal');
+        revealElements.forEach((el) => {
+          el.classList.add('reveal-visible');
+        });
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [activeTab, stagingStep, loading, userLoading]);
 
   useEffect(() => {
     if (userLoading) return;
@@ -619,7 +627,10 @@ function DashboardContent() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
                     <Card 
                       className="group cursor-pointer hover:border-primary transition-all p-10 rounded-[2.5rem] bg-card/60 border-2 border-border shadow-xl flex flex-col justify-between"
-                      onClick={() => setStagingStep('get-device')}
+                      onClick={() => {
+                        setChildOption('option1');
+                        setStagingStep('get-device');
+                      }}
                     >
                       <div>
                         <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6">
@@ -635,7 +646,10 @@ function DashboardContent() {
 
                     <Card 
                       className="group cursor-pointer hover:border-accent transition-all p-10 rounded-[2.5rem] bg-card/60 border-2 border-border shadow-xl flex flex-col justify-between"
-                      onClick={() => setStagingStep('get-device')}
+                      onClick={() => {
+                        setChildOption('option2');
+                        setStagingStep('get-device');
+                      }}
                     >
                       <div>
                         <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center mb-6">
@@ -671,7 +685,7 @@ function DashboardContent() {
                       <div className="relative h-[500px] w-full">
                         <Carousel className="w-full h-full">
                           <CarouselContent>
-                            {(DEVICE_CATALOG[selectedServiceId]?.images || []).map((imgUrl: string, idx: number) => (
+                            {((selectedServiceId === 'child-protection' && childOption === 'option2') ? DEVICE_CATALOG[selectedServiceId]?.advancedImages : (selectedServiceId === 'child-protection' ? DEVICE_CATALOG[selectedServiceId]?.standardImages : DEVICE_CATALOG[selectedServiceId]?.images) || []).map((imgUrl: string, idx: number) => (
                               <CarouselItem key={idx}>
                                 <div className="relative h-[500px] w-full">
                                   <Image src={imgUrl} alt={`${DEVICE_CATALOG[selectedServiceId]?.name} view ${idx + 1}`} fill className="object-cover" />
@@ -679,7 +693,7 @@ function DashboardContent() {
                               </CarouselItem>
                             ))}
                           </CarouselContent>
-                          {(DEVICE_CATALOG[selectedServiceId]?.images?.length > 1) && (
+                          {((selectedServiceId === 'child-protection' && childOption === 'option2' ? DEVICE_CATALOG[selectedServiceId]?.advancedImages : (selectedServiceId === 'child-protection' ? DEVICE_CATALOG[selectedServiceId]?.standardImages : DEVICE_CATALOG[selectedServiceId]?.images))?.length > 1) && (
                             <>
                               <CarouselPrevious className="left-4" />
                               <CarouselNext className="right-4" />
@@ -745,7 +759,7 @@ function DashboardContent() {
                       <div className="relative h-[500px] w-full">
                         <Carousel className="w-full h-full">
                           <CarouselContent>
-                            {(DEVICE_CATALOG[selectedServiceId]?.images || []).map((imgUrl: string, idx: number) => (
+                            {((selectedServiceId === 'child-protection' && childOption === 'option2') ? DEVICE_CATALOG[selectedServiceId]?.advancedImages : (selectedServiceId === 'child-protection' ? DEVICE_CATALOG[selectedServiceId]?.standardImages : DEVICE_CATALOG[selectedServiceId]?.images) || []).map((imgUrl: string, idx: number) => (
                               <CarouselItem key={idx}>
                                 <div className="relative h-[500px] w-full">
                                   <Image src={imgUrl} alt={`${DEVICE_CATALOG[selectedServiceId]?.name} view ${idx + 1}`} fill className="object-cover" />
@@ -753,7 +767,7 @@ function DashboardContent() {
                               </CarouselItem>
                             ))}
                           </CarouselContent>
-                          {(DEVICE_CATALOG[selectedServiceId]?.images?.length > 1) && (
+                          {((selectedServiceId === 'child-protection' && childOption === 'option2' ? DEVICE_CATALOG[selectedServiceId]?.advancedImages : (selectedServiceId === 'child-protection' ? DEVICE_CATALOG[selectedServiceId]?.standardImages : DEVICE_CATALOG[selectedServiceId]?.images))?.length > 1) && (
                             <>
                               <CarouselPrevious className="left-4" />
                               <CarouselNext className="right-4" />
