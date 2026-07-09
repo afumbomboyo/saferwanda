@@ -688,7 +688,7 @@ function DashboardContent() {
                             {((selectedServiceId === 'child-protection' && childOption === 'option2') ? DEVICE_CATALOG[selectedServiceId]?.advancedImages : (selectedServiceId === 'child-protection' ? DEVICE_CATALOG[selectedServiceId]?.standardImages : DEVICE_CATALOG[selectedServiceId]?.images) || []).map((imgUrl: string, idx: number) => (
                               <CarouselItem key={idx}>
                                 <div className="relative h-[500px] w-full">
-                                  <Image src={imgUrl} alt={`${DEVICE_CATALOG[selectedServiceId]?.name} view ${idx + 1}`} fill className="object-cover" />
+                                  <Image src={imgUrl} alt={`${DEVICE_CATALOG[selectedServiceId]?.name} view ${idx + 1}`} fill className="object-contain" />
                                 </div>
                               </CarouselItem>
                             ))}
@@ -762,7 +762,7 @@ function DashboardContent() {
                             {((selectedServiceId === 'child-protection' && childOption === 'option2') ? DEVICE_CATALOG[selectedServiceId]?.advancedImages : (selectedServiceId === 'child-protection' ? DEVICE_CATALOG[selectedServiceId]?.standardImages : DEVICE_CATALOG[selectedServiceId]?.images) || []).map((imgUrl: string, idx: number) => (
                               <CarouselItem key={idx}>
                                 <div className="relative h-[500px] w-full">
-                                  <Image src={imgUrl} alt={`${DEVICE_CATALOG[selectedServiceId]?.name} view ${idx + 1}`} fill className="object-cover" />
+                                  <Image src={imgUrl} alt={`${DEVICE_CATALOG[selectedServiceId]?.name} view ${idx + 1}`} fill className="object-contain" />
                                 </div>
                               </CarouselItem>
                             ))}
