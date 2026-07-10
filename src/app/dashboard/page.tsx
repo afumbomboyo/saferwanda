@@ -74,7 +74,7 @@ const DEVICE_CATALOG: Record<string, any> = {
     ],
     buyPrice: "45,000 RWF",
     leasePrice: "4,000 RWF/mo",
-    standardDescription: "Give your loved ones the ultimate safety protection with the Y41 4G Mini GPS Tracker! Featuring adjustable fall down alerts, one-click SOS, real-time triple positioning and all-day two-way calls, it’s the perfect guardian for elders and kids. With IP67 waterproof, 5-6 days long battery life, wearable design and lifetime free Beesure GPS APP, it offers worry-free 24/7 monitoring.",
+    standardDescription: "Give your loved ones the ultimate safety protection with the Y41 4G Mini GPS Tracker! Featuring adjustable fall down alerts, one-click SOS, real-time triple positioning and all-day two-way calls, it’s the perfect guardian for elders and kids. With IP67 waterproof, 5-6 days long battery life, wearable design and offers worry-free 24/7 monitoring.",
     standardFeatures: [
       "Multi-network & Triple Precise Positioning (GPS+LBS+WiFi)",
       "Intelligent Safety Alerts (Fall Detection, SOS, Medicine)",
@@ -103,8 +103,7 @@ const DEVICE_CATALOG: Record<string, any> = {
       { q: "What devices is the Y41 suitable for?", a: "It's ideal for elders, kids and personal asset tracking; with 37.3g ultra-light weight and multiple options." },
       { q: "Does the Y41 support global use?", a: "Yes, it has two frequency band versions for North/South America and Europe/Asia/Africa/Oceania." },
       { q: "How does the emergency SOS work?", a: "Press and hold the one-key Power/SOS button for emergency calls to preset contacts." },
-      { q: "What is the battery life?", a: "Built-in 1000mAh polymer battery, normal use lasts 5-6 days." },
-      { q: "Is the Beesure GPS APP free?", a: "The APP and AWS cloud server service are 100% free for lifetime." }
+      { q: "What is the battery life?", a: "Built-in 1000mAh polymer battery, normal use lasts 5-6 days." }
     ],
     advancedDescription: "Everything in the standard package plus advanced health monitoring for temperature and oxygen saturation, specifically targeting early malaria detection and wellness tracking.",
     advancedFeatures: [
