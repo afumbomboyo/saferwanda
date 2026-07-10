@@ -74,8 +74,53 @@ const DEVICE_CATALOG: Record<string, any> = {
     ],
     buyPrice: "45,000 RWF",
     leasePrice: "4,000 RWF/mo",
-    description: "A smart GPS watch with an emergency button and health tracking for kids.",
-    features: ["Real-time Tracking", "SOS Panic Button", "Geofencing Alerts", "Health Monitoring"]
+    standardDescription: "Give your loved ones the ultimate safety protection with the Y41 4G Mini GPS Tracker! Featuring adjustable fall down alerts, one-click SOS, real-time triple positioning and all-day two-way calls, it’s the perfect guardian for elders and kids. With IP67 waterproof, 5-6 days long battery life, wearable design and lifetime free Beesure GPS APP, it offers worry-free 24/7 monitoring.",
+    standardFeatures: [
+      "Multi-network & Triple Precise Positioning (GPS+LBS+WiFi)",
+      "Intelligent Safety Alerts (Fall Detection, SOS, Medicine)",
+      "Two-way Voice Communication & Safe Calling",
+      "IP67 Waterproof & Durable Build",
+      "Long Battery Life (5-6 days) & Safe Charging",
+      "Compact Wearable Design (37.3g)",
+      "Lifetime Free APP & Smart Management",
+      "One-button SOS Emergency Operation"
+    ],
+    standardSpecifications: {
+      "Chipset": "ASR3603S",
+      "Material": "PC+ABS+Silicon",
+      "Size": "51.80*41.20*15.60mm",
+      "Weight": "37.3g",
+      "Positioning": "GPS+LBS+Wifi hotspots",
+      "Battery": "1000mAh polymer",
+      "Network": "4G/3G/2G",
+      "Sim": "Nano sim",
+      "Waterproof": "IP67",
+      "Working Time": "5-6 days",
+      "Accuracy": "< 5M",
+      "Charging": "1m magnetic"
+    },
+    standardFaq: [
+      { q: "What devices is the Y41 suitable for?", a: "It's ideal for elders, kids and personal asset tracking; with 37.3g ultra-light weight and multiple options." },
+      { q: "Does the Y41 support global use?", a: "Yes, it has two frequency band versions for North/South America and Europe/Asia/Africa/Oceania." },
+      { q: "How does the emergency SOS work?", a: "Press and hold the one-key Power/SOS button for emergency calls to preset contacts." },
+      { q: "What is the battery life?", a: "Built-in 1000mAh polymer battery, normal use lasts 5-6 days." },
+      { q: "Is the Beesure GPS APP free?", a: "The APP and AWS cloud server service are 100% free for lifetime." }
+    ],
+    advancedDescription: "Everything in the standard package plus advanced health monitoring for temperature and oxygen saturation, specifically targeting early malaria detection and wellness tracking.",
+    advancedFeatures: [
+      "Real-time GPS Tracking",
+      "SOS Panic Button",
+      "Geofencing Alerts",
+      "Malaria Detection (Temp + SpO2)",
+      "Health History Monitoring"
+    ],
+    advancedSpecifications: {
+      "Tracking": "GPS+WiFi+LBS",
+      "Health": "Temp, SpO2, Heart Rate",
+      "Network": "4G LTE",
+      "Battery": "1200mAh",
+      "Waterproof": "IP68"
+    }
   },
   "elderly-care": {
     name: "SafeLink D44S GPS Watch",
@@ -317,6 +362,35 @@ function DashboardContent() {
       setStagingStep('setup');
     }
   };
+
+  // Dynamic content logic for Child Protection
+  const getSelectedDeviceData = () => {
+    if (!selectedServiceId) return null;
+    const baseData = DEVICE_CATALOG[selectedServiceId];
+    if (selectedServiceId !== 'child-protection') return baseData;
+
+    if (childOption === 'option1') {
+      return {
+        ...baseData,
+        description: baseData.standardDescription,
+        features: baseData.standardFeatures,
+        specifications: baseData.standardSpecifications,
+        faq: baseData.standardFaq,
+        images: baseData.standardImages
+      };
+    } else {
+      return {
+        ...baseData,
+        description: baseData.advancedDescription,
+        features: baseData.advancedFeatures,
+        specifications: baseData.advancedSpecifications,
+        faq: baseData.standardFaq, // Use standard FAQ as base
+        images: baseData.advancedImages
+      };
+    }
+  };
+
+  const activeDeviceData = getSelectedDeviceData();
 
   if (loading || userLoading) {
     return (
@@ -666,7 +740,7 @@ function DashboardContent() {
                 </div>
               )}
 
-              {stagingStep === 'get-device' && selectedServiceId && (
+              {stagingStep === 'get-device' && selectedServiceId && activeDeviceData && (
                 <div className="space-y-12 animate-reveal">
                   <div className="flex flex-col items-center text-center max-w-2xl mx-auto space-y-4">
                     <Button variant="ghost" className="rounded-xl gap-2 font-bold" onClick={() => {
@@ -685,15 +759,15 @@ function DashboardContent() {
                       <div className="relative h-[500px] w-full">
                         <Carousel className="w-full h-full">
                           <CarouselContent>
-                            {((selectedServiceId === 'child-protection' && childOption === 'option2') ? DEVICE_CATALOG[selectedServiceId]?.advancedImages : (selectedServiceId === 'child-protection' ? DEVICE_CATALOG[selectedServiceId]?.standardImages : DEVICE_CATALOG[selectedServiceId]?.images) || []).map((imgUrl: string, idx: number) => (
+                            {activeDeviceData.images?.map((imgUrl: string, idx: number) => (
                               <CarouselItem key={idx}>
                                 <div className="relative h-[500px] w-full">
-                                  <Image src={imgUrl} alt={`${DEVICE_CATALOG[selectedServiceId]?.name} view ${idx + 1}`} fill className="object-contain" />
+                                  <Image src={imgUrl} alt={`${activeDeviceData.name} view ${idx + 1}`} fill className="object-contain" />
                                 </div>
                               </CarouselItem>
                             ))}
                           </CarouselContent>
-                          {((selectedServiceId === 'child-protection' && childOption === 'option2' ? DEVICE_CATALOG[selectedServiceId]?.advancedImages : (selectedServiceId === 'child-protection' ? DEVICE_CATALOG[selectedServiceId]?.standardImages : DEVICE_CATALOG[selectedServiceId]?.images))?.length > 1) && (
+                          {activeDeviceData.images?.length > 1 && (
                             <>
                               <CarouselPrevious className="left-4" />
                               <CarouselNext className="right-4" />
@@ -707,15 +781,15 @@ function DashboardContent() {
                         </div>
                       </div>
                       <CardContent className="p-10 space-y-6">
-                        <p className="text-sm text-muted-foreground leading-relaxed font-bold">{DEVICE_CATALOG[selectedServiceId]?.description}</p>
+                        <p className="text-sm text-muted-foreground leading-relaxed font-bold">{activeDeviceData.description}</p>
                         
-                        {DEVICE_CATALOG[selectedServiceId]?.specifications && (
+                        {activeDeviceData.specifications && (
                           <div className="space-y-3 bg-secondary/20 p-6 rounded-2xl">
                             <p className="text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-2">
                               <Info className="w-3 h-3" /> Technical Specifications
                             </p>
                             <div className="grid grid-cols-2 gap-x-4 gap-y-1">
-                              {Object.entries(DEVICE_CATALOG[selectedServiceId].specifications).map(([k, v]: [any, any]) => (
+                              {Object.entries(activeDeviceData.specifications).map(([k, v]: [any, any]) => (
                                 <div key={k} className="flex flex-col">
                                   <span className="text-[8px] uppercase text-muted-foreground font-black">{k}</span>
                                   <span className="text-[10px] font-bold">{v}</span>
@@ -725,11 +799,11 @@ function DashboardContent() {
                           </div>
                         )}
 
-                        {DEVICE_CATALOG[selectedServiceId]?.features && (
+                        {activeDeviceData.features && (
                           <div className="space-y-3">
                             <p className="text-[10px] font-black uppercase tracking-widest text-primary">Core Capabilities</p>
                             <ul className="grid grid-cols-1 gap-2">
-                              {DEVICE_CATALOG[selectedServiceId].features.map((feature: string, fIdx: number) => (
+                              {activeDeviceData.features.map((feature: string, fIdx: number) => (
                                 <li key={fIdx} className="flex items-start gap-2 text-[10px] text-muted-foreground font-medium">
                                   <CheckCircle2 className="w-3 h-3 text-primary mt-0.5 shrink-0" />
                                   {feature}
@@ -742,7 +816,7 @@ function DashboardContent() {
                         <div className="flex justify-between items-center p-6 rounded-3xl bg-background border border-border">
                           <div>
                             <p className="text-[8px] font-black uppercase text-muted-foreground">Unit Price + Delivery</p>
-                            <p className="text-2xl font-black">{DEVICE_CATALOG[selectedServiceId]?.buyPrice}</p>
+                            <p className="text-2xl font-black">{activeDeviceData.buyPrice}</p>
                           </div>
                         </div>
                         <Button 
@@ -759,15 +833,15 @@ function DashboardContent() {
                       <div className="relative h-[500px] w-full">
                         <Carousel className="w-full h-full">
                           <CarouselContent>
-                            {((selectedServiceId === 'child-protection' && childOption === 'option2') ? DEVICE_CATALOG[selectedServiceId]?.advancedImages : (selectedServiceId === 'child-protection' ? DEVICE_CATALOG[selectedServiceId]?.standardImages : DEVICE_CATALOG[selectedServiceId]?.images) || []).map((imgUrl: string, idx: number) => (
+                            {activeDeviceData.images?.map((imgUrl: string, idx: number) => (
                               <CarouselItem key={idx}>
                                 <div className="relative h-[500px] w-full">
-                                  <Image src={imgUrl} alt={`${DEVICE_CATALOG[selectedServiceId]?.name} view ${idx + 1}`} fill className="object-contain" />
+                                  <Image src={imgUrl} alt={`${activeDeviceData.name} view ${idx + 1}`} fill className="object-contain" />
                                 </div>
                               </CarouselItem>
                             ))}
                           </CarouselContent>
-                          {((selectedServiceId === 'child-protection' && childOption === 'option2' ? DEVICE_CATALOG[selectedServiceId]?.advancedImages : (selectedServiceId === 'child-protection' ? DEVICE_CATALOG[selectedServiceId]?.standardImages : DEVICE_CATALOG[selectedServiceId]?.images))?.length > 1) && (
+                          {activeDeviceData.images?.length > 1 && (
                             <>
                               <CarouselPrevious className="left-4" />
                               <CarouselNext className="right-4" />
@@ -785,7 +859,7 @@ function DashboardContent() {
                         </div>
                       </div>
                       <CardContent className="p-10 space-y-6">
-                        <p className="text-sm text-muted-foreground leading-relaxed font-bold">{DEVICE_CATALOG[selectedServiceId]?.description}</p>
+                        <p className="text-sm text-muted-foreground leading-relaxed font-bold">{activeDeviceData.description}</p>
                         
                         {selectedServiceId === 'elderly-care' && (
                           <div className="p-4 rounded-2xl bg-primary/5 border border-primary/10 text-xs font-bold text-primary leading-relaxed">
@@ -793,13 +867,13 @@ function DashboardContent() {
                           </div>
                         )}
 
-                        {DEVICE_CATALOG[selectedServiceId]?.specifications && (
+                        {activeDeviceData.specifications && (
                           <div className="space-y-3 bg-secondary/20 p-6 rounded-2xl">
                             <p className="text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-2">
                               <Info className="w-3 h-3" /> Technical Specifications
                             </p>
                             <div className="grid grid-cols-2 gap-x-4 gap-y-1">
-                              {Object.entries(DEVICE_CATALOG[selectedServiceId].specifications).map(([k, v]: [any, any]) => (
+                              {Object.entries(activeDeviceData.specifications).map(([k, v]: [any, any]) => (
                                 <div key={k} className="flex flex-col">
                                   <span className="text-[8px] uppercase text-muted-foreground font-black">{k}</span>
                                   <span className="text-[10px] font-bold">{v}</span>
@@ -809,11 +883,11 @@ function DashboardContent() {
                           </div>
                         )}
 
-                        {DEVICE_CATALOG[selectedServiceId]?.features && (
+                        {activeDeviceData.features && (
                           <div className="space-y-3">
                             <p className="text-[10px] font-black uppercase tracking-widest text-primary">Core Capabilities</p>
                             <ul className="grid grid-cols-1 gap-2">
-                              {DEVICE_CATALOG[selectedServiceId].features.map((feature: string, fIdx: number) => (
+                              {activeDeviceData.features.map((feature: string, fIdx: number) => (
                                 <li key={fIdx} className="flex items-start gap-2 text-[10px] text-muted-foreground font-medium">
                                   <CheckCircle2 className="w-3 h-3 text-primary mt-0.5 shrink-0" />
                                   {feature}
@@ -828,7 +902,7 @@ function DashboardContent() {
                             <p className="text-[8px] font-black uppercase text-muted-foreground">
                               {selectedServiceId === 'elderly-care' ? 'Quarterly Payment' : 'Monthly Service Fee'}
                             </p>
-                            <p className="text-2xl font-black">{DEVICE_CATALOG[selectedServiceId]?.leasePrice}</p>
+                            <p className="text-2xl font-black">{activeDeviceData.leasePrice}</p>
                           </div>
                         </div>
                         <Button 
@@ -843,11 +917,11 @@ function DashboardContent() {
                   </div>
 
                   {/* FAQ Section for Hardware */}
-                  {DEVICE_CATALOG[selectedServiceId]?.faq && (
+                  {activeDeviceData.faq && (
                     <Card className="max-w-4xl mx-auto rounded-[2.5rem] border-border bg-card/40 p-10">
                       <h3 className="text-2xl font-black mb-8">Hardware FAQ</h3>
                       <div className="space-y-6">
-                        {DEVICE_CATALOG[selectedServiceId].faq.map((item: any, i: number) => (
+                        {activeDeviceData.faq.map((item: any, i: number) => (
                           <div key={i} className="space-y-2">
                             <h4 className="font-bold text-sm text-primary">Q: {item.q}</h4>
                             <p className="text-sm text-muted-foreground">A: {item.a}</p>
@@ -1047,10 +1121,10 @@ function DashboardContent() {
                           </p>
                           <p className="text-3xl font-black text-primary">
                             {tempSelection === 'purchased' 
-                              ? DEVICE_CATALOG[selectedServiceId]?.buyPrice 
+                              ? activeDeviceData?.buyPrice 
                               : selectedServiceId === 'elderly-care'
                                 ? '42,500 RWF'
-                                : DEVICE_CATALOG[selectedServiceId]?.leasePrice}
+                                : activeDeviceData?.leasePrice}
                           </p>
                           {tempSelection === 'leased' && selectedServiceId === 'elderly-care' && (
                             <p className="text-[10px] text-muted-foreground font-bold mt-1">Pay every 3 months</p>
