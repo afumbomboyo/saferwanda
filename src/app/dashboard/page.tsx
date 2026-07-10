@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useEffect, useState, useRef, Suspense } from 'react';
@@ -72,8 +73,8 @@ const DEVICE_CATALOG: Record<string, any> = {
       "/images/Child-GPS-&-Health-Monitoring-Device-Features.png",
       "/images/Child-GPS-&-Health-Monitoring-Device-Label.png"
     ],
-    buyPrice: "45,000 RWF",
-    leasePrice: "4,000 RWF/mo",
+    buyPrice: "76,500 RWF",
+    leasePrice: "38,250 RWF",
     standardDescription: "Give your loved ones the ultimate safety protection with the Y41 4G Mini GPS Tracker! Featuring adjustable fall down alerts, one-click SOS, real-time triple positioning and all-day two-way calls, it’s the perfect guardian for elders and kids. With IP67 waterproof, 5-6 days long battery life, wearable design and offers worry-free 24/7 monitoring.",
     standardFeatures: [
       "Multi-network & Triple Precise Positioning (GPS+LBS+WiFi)",
@@ -103,7 +104,7 @@ const DEVICE_CATALOG: Record<string, any> = {
       { q: "What devices is the Y41 suitable for?", a: "It's ideal for elders, kids and personal asset tracking; with 37.3g ultra-light weight and multiple options." },
       { q: "Does the Y41 support global use?", a: "Yes, it has two frequency band versions for North/South America and Europe/Asia/Africa/Oceania." },
       { q: "How does the emergency SOS work?", a: "Press and hold the one-key Power/SOS button for emergency calls to preset contacts." },
-      { q: "What is the battery life?", a: "Built-in 1000mAh polymer battery, normal use lasts 5-6 days." }
+      { q: "How long does the battery last?", a: "Built-in 1000mAh polymer battery, normal use lasts 5-6 days." }
     ],
     advancedDescription: "Everything in the standard package plus advanced health monitoring for temperature and oxygen saturation, specifically targeting early malaria detection and wellness tracking.",
     advancedFeatures: [
@@ -850,19 +851,19 @@ function DashboardContent() {
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent pointer-events-none" />
                         <div className="absolute bottom-8 left-8 pointer-events-none">
                           <h4 className="text-3xl font-black text-white">
-                            {selectedServiceId === 'elderly-care' ? 'Lease to Own' : 'Rent Hardware'}
+                            {(selectedServiceId === 'elderly-care' || (selectedServiceId === 'child-protection' && childOption === 'option1')) ? 'Lease to Own' : 'Rent Hardware'}
                           </h4>
                           <p className="text-white/60 text-xs font-bold uppercase tracking-widest">
-                            {selectedServiceId === 'elderly-care' ? 'Quarterly Installments' : 'Flexible Monthly Leasing'}
+                            {(selectedServiceId === 'elderly-care' || (selectedServiceId === 'child-protection' && childOption === 'option1')) ? 'Quarterly Installments' : 'Flexible Monthly Leasing'}
                           </p>
                         </div>
                       </div>
                       <CardContent className="p-10 space-y-6">
                         <p className="text-sm text-muted-foreground leading-relaxed font-bold">{activeDeviceData.description}</p>
                         
-                        {selectedServiceId === 'elderly-care' && (
+                        {(selectedServiceId === 'elderly-care' || (selectedServiceId === 'child-protection' && childOption === 'option1')) && (
                           <div className="p-4 rounded-2xl bg-primary/5 border border-primary/10 text-xs font-bold text-primary leading-relaxed">
-                            It's a lease with option to buy and the elderly care price is 42,500 per 3 months for a year (that's a 4 time installment payment), after that they own the device.
+                            It's a lease with option to buy. The price is {activeDeviceData.leasePrice} per 3 months for a year (4 installments), after which you own the device.
                           </div>
                         )}
 
@@ -899,7 +900,7 @@ function DashboardContent() {
                         <div className="flex justify-between items-center p-6 rounded-3xl bg-background border border-border">
                           <div>
                             <p className="text-[8px] font-black uppercase text-muted-foreground">
-                              {selectedServiceId === 'elderly-care' ? 'Quarterly Payment' : 'Monthly Service Fee'}
+                              {(selectedServiceId === 'elderly-care' || (selectedServiceId === 'child-protection' && childOption === 'option1')) ? 'Quarterly Payment' : 'Monthly Service Fee'}
                             </p>
                             <p className="text-2xl font-black">{activeDeviceData.leasePrice}</p>
                           </div>
@@ -909,7 +910,7 @@ function DashboardContent() {
                           onClick={() => handleDeviceSelection('leased')}
                           className="w-full h-16 rounded-2xl font-black uppercase tracking-widest text-sm"
                         >
-                          {selectedServiceId === 'elderly-care' ? 'Start Lease to Own' : 'Activate Lease'}
+                          {(selectedServiceId === 'elderly-care' || (selectedServiceId === 'child-protection' && childOption === 'option1')) ? 'Start Lease to Own' : 'Activate Lease'}
                         </Button>
                       </CardContent>
                     </Card>
@@ -1089,7 +1090,9 @@ function DashboardContent() {
                       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                         <div>
                           <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">Service Tier</p>
-                          <p className="text-xl font-black capitalize">{selectedServiceId.replace('-', ' ')}</p>
+                          <p className="text-xl font-black capitalize">
+                            {selectedServiceId?.replace('-', ' ')} {childOption === 'option1' ? '(Standard)' : childOption === 'option2' ? '(Advanced)' : ''}
+                          </p>
                         </div>
                         <div className="text-left md:text-right">
                           <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">Transaction Type</p>
@@ -1109,7 +1112,7 @@ function DashboardContent() {
                           <p className="text-sm font-bold">
                             {tempSelection === 'purchased' 
                               ? 'Full ownership upon delivery' 
-                              : selectedServiceId === 'elderly-care' 
+                              : (selectedServiceId === 'elderly-care' || (selectedServiceId === 'child-protection' && childOption === 'option1'))
                                 ? '4 Installments (1 Year Plan)' 
                                 : 'Monthly Subscription'}
                           </p>
@@ -1121,11 +1124,9 @@ function DashboardContent() {
                           <p className="text-3xl font-black text-primary">
                             {tempSelection === 'purchased' 
                               ? activeDeviceData?.buyPrice 
-                              : selectedServiceId === 'elderly-care'
-                                ? '42,500 RWF'
-                                : activeDeviceData?.leasePrice}
+                              : activeDeviceData?.leasePrice}
                           </p>
-                          {tempSelection === 'leased' && selectedServiceId === 'elderly-care' && (
+                          {tempSelection === 'leased' && (selectedServiceId === 'elderly-care' || (selectedServiceId === 'child-protection' && childOption === 'option1')) && (
                             <p className="text-[10px] text-muted-foreground font-bold mt-1">Pay every 3 months</p>
                           )}
                         </div>
@@ -1150,7 +1151,7 @@ function DashboardContent() {
                         Proceed to Payment
                       </Button>
                       <p className="text-[9px] text-center text-muted-foreground mt-4 uppercase font-bold tracking-widest">
-                        By clicking complete, you agree to our terms of hardware service and deployment.
+                        By clicking proceed, you agree to our terms of hardware service and deployment.
                       </p>
                     </div>
                   </CardContent>
