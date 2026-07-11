@@ -130,9 +130,9 @@ const DEVICE_CATALOG: Record<string, any> = {
     },
     advancedFaq: [
       { q: "Does it support global 4G networks?", a: "Yes, it's compatible with mainstream 4G frequency bands worldwide, enabling stable calls and data transmission in most countries and regions." },
-      { q: "How to set the geo-fence and get safety alerts?", a: "Connect your device to this platform, customize safe zones (home/school) in the App; instant push alerts will be sent to your phone once the wearer crosses the fence." },
+      { q: "How to set the geo-fence and get safety alerts?", a: "Connect your device to this platform, customize safe zones (home/school); instant push alerts will be sent to your phone once the wearer crosses the fence." },
       { q: "Is the watch waterproof, and can it be worn while swimming?", a: "It has daily waterproof & shockproof performance (resists splashes/sweating/collisions), but is not suitable for swimming, bathing or long-time water immersion." },
-      { q: "What free accessories are included with the purchase?", a: "Each order comes with a complimentary EU/UL charger, dock station, tempered glass screen protector and cleaning wipes—no extra cost." },
+      { q: "What free accessories are included with the purchase?", a: "Each order comes with a complimentary EU/UL charger, dock station, tempered glass screen protector and cleaning wipes with no extra cost." },
       { q: "How does the class mode work, and can it be remotely set?", a: "Yes, set multi-period class mode via your dashboard on this platform, after connecting the device. It disables non-essential functions (avoid classroom distractions), and functions recover automatically after class." }
     ]
   },
@@ -869,17 +869,17 @@ function DashboardContent() {
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent pointer-events-none" />
                         <div className="absolute bottom-8 left-8 pointer-events-none">
                           <h4 className="text-3xl font-black text-white">
-                            {(selectedServiceId === 'elderly-care' || (selectedServiceId === 'child-protection' && childOption === 'option1')) ? 'Lease to Own' : 'Rent Hardware'}
+                            {(selectedServiceId === 'elderly-care' || selectedServiceId === 'child-protection') ? 'Lease to Own' : 'Rent Hardware'}
                           </h4>
                           <p className="text-white/60 text-xs font-bold uppercase tracking-widest">
-                            {(selectedServiceId === 'elderly-care' || (selectedServiceId === 'child-protection' && childOption === 'option1')) ? 'Quarterly Installments' : 'Flexible Monthly Leasing'}
+                            {(selectedServiceId === 'elderly-care' || selectedServiceId === 'child-protection') ? 'Quarterly Installments' : 'Flexible Monthly Leasing'}
                           </p>
                         </div>
                       </div>
                       <CardContent className="p-10 space-y-6">
                         <p className="text-sm text-muted-foreground leading-relaxed font-bold">{activeDeviceData.description}</p>
                         
-                        {(selectedServiceId === 'elderly-care' || (selectedServiceId === 'child-protection' && childOption === 'option1')) && (
+                        {(selectedServiceId === 'elderly-care' || (selectedServiceId === 'child-protection')) && (
                           <div className="p-4 rounded-2xl bg-primary/5 border border-primary/10 text-xs font-bold text-primary leading-relaxed">
                             It's a lease with option to buy. The price is {activeDeviceData.leasePrice} per 3 months for a year (4 installments), after which you own the device.
                           </div>
