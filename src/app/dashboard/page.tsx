@@ -73,8 +73,10 @@ const DEVICE_CATALOG: Record<string, any> = {
       "/images/Child-GPS-&-Health-Monitoring-Device-Features.png",
       "/images/Child-GPS-&-Health-Monitoring-Device-Label.png"
     ],
-    buyPrice: "76,500 RWF",
-    leasePrice: "38,250 RWF",
+    standardBuyPrice: "76,500 RWF",
+    standardLeasePrice: "38,250 RWF",
+    advancedBuyPrice: "112,000 RWF",
+    advancedLeasePrice: "56,000 RWF",
     standardDescription: "Give your loved ones the ultimate safety protection with the Y41 4G Mini GPS Tracker! Featuring adjustable fall down alerts, one-click SOS, real-time triple positioning and all-day two-way calls, it’s the perfect guardian for elders and kids. With IP67 waterproof, 5-6 days long battery life, wearable design and offers worry-free 24/7 monitoring.",
     standardFeatures: [
       "Multi-network & Triple Precise Positioning (GPS+LBS+WiFi)",
@@ -385,6 +387,8 @@ function DashboardContent() {
     if (childOption === 'option1') {
       return {
         ...baseData,
+        buyPrice: baseData.standardBuyPrice,
+        leasePrice: baseData.standardLeasePrice,
         description: baseData.standardDescription,
         features: baseData.standardFeatures,
         specifications: baseData.standardSpecifications,
@@ -394,6 +398,8 @@ function DashboardContent() {
     } else {
       return {
         ...baseData,
+        buyPrice: baseData.advancedBuyPrice,
+        leasePrice: baseData.advancedLeasePrice,
         description: baseData.advancedDescription,
         features: baseData.advancedFeatures,
         specifications: baseData.advancedSpecifications,
@@ -667,7 +673,7 @@ function DashboardContent() {
                                  <span className="text-primary font-bold text-sm">{i+1}</span>
                                </div>
                                <div className="space-y-1">
-                                 <h4 className="font-bold text-base">{item.step}</h4>
+                                 h4 className="font-bold text-base">{item.step}</h4>
                                  <p className="text-xs text-muted-foreground leading-relaxed">{item.desc}</p>
                                </div>
                              </div>
@@ -1125,7 +1131,7 @@ function DashboardContent() {
                           <p className="text-sm font-bold">
                             {tempSelection === 'purchased' 
                               ? 'Full ownership upon delivery' 
-                              : (selectedServiceId === 'elderly-care' || (selectedServiceId === 'child-protection' && childOption === 'option1'))
+                              : (selectedServiceId === 'elderly-care' || (selectedServiceId === 'child-protection' && (childOption === 'option1' || childOption === 'option2')))
                                 ? '4 Installments (1 Year Plan)' 
                                 : 'Monthly Subscription'}
                           </p>
@@ -1139,7 +1145,7 @@ function DashboardContent() {
                               ? activeDeviceData?.buyPrice 
                               : activeDeviceData?.leasePrice}
                           </p>
-                          {tempSelection === 'leased' && (selectedServiceId === 'elderly-care' || (selectedServiceId === 'child-protection' && childOption === 'option1')) && (
+                          {tempSelection === 'leased' && (selectedServiceId === 'elderly-care' || (selectedServiceId === 'child-protection' && (childOption === 'option1' || childOption === 'option2'))) && (
                             <p className="text-[10px] text-muted-foreground font-bold mt-1">Pay every 3 months</p>
                           )}
                         </div>
