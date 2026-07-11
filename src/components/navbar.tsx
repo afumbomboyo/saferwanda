@@ -134,7 +134,7 @@ export default function Navbar() {
                     <DropdownMenuItem asChild className="rounded-xl py-3 cursor-pointer">
                       <Link href="/dashboard" className="flex items-center">
                         <LayoutDashboard className="mr-2 h-4 w-4 text-primary" />
-                        <span>Command Center</span>
+                        <span>Dashboard</span>
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem className="rounded-xl py-3 text-destructive focus:bg-destructive/10 focus:text-destructive cursor-pointer" onClick={handleLogout}>
