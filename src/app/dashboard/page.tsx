@@ -106,21 +106,34 @@ const DEVICE_CATALOG: Record<string, any> = {
       { q: "How does the emergency SOS work?", a: "Press and hold the one-key Power/SOS button for emergency calls to preset contacts." },
       { q: "How long does the battery last?", a: "Built-in 1000mAh polymer battery, normal use lasts 5-6 days." }
     ],
-    advancedDescription: "Everything in the standard package plus advanced health monitoring for temperature and oxygen saturation, specifically targeting early malaria detection and wellness tracking.",
+    advancedDescription: "Give your kids the gift of safety, connection and smart living! Choose the Y48 4G Student Smart Watch—with precise GPS tracking, 24/7 health monitoring, parental control and free valuable perks. Order today and let every day be a safe, fun adventure for your little ones!",
     advancedFeatures: [
-      "Real-time GPS Tracking",
-      "SOS Panic Button",
-      "Geofencing Alerts",
-      "Malaria Detection (Temp + SpO2)",
-      "Health History Monitoring"
+      "4G Full-Network Connectivity & Detachable Design",
+      "High-Precision Real-Time Positioning & Geo-Fence",
+      "24/7 All-Round Health Monitoring (HR, BP, SPO2)",
+      "Intensive Parental Control & Safety Protection",
+      "HD Communication & Interactive Functions",
+      "Durable Hardware & Practical Daily Functions"
     ],
     advancedSpecifications: {
-      "Tracking": "GPS+WiFi+LBS",
-      "Health": "Temp, SpO2, Heart Rate",
-      "Network": "4G LTE",
-      "Battery": "1200mAh",
-      "Waterproof": "IP68"
-    }
+      "Chipset": "ASR8601C",
+      "OS": "Android 8.1",
+      "Positioning": "GPS+LBS+Wifi",
+      "Battery": "730mAh polymer",
+      "Memory": "1GB+8GB",
+      "Network": "4G/3G/2G",
+      "Camera": "2M",
+      "Screen": "1.76\" IPS (368*448px)",
+      "Waterproof": "IP67",
+      "Colors": "Black, Blue, Pink"
+    },
+    advancedFaq: [
+      { q: "Does it support global 4G networks?", a: "Yes, it's compatible with mainstream 4G frequency bands worldwide, enabling stable calls and data transmission in most countries and regions." },
+      { q: "How to set the geo-fence and get safety alerts?", a: "Connect your device to this platform, customize safe zones (home/school) in the App; instant push alerts will be sent to your phone once the wearer crosses the fence." },
+      { q: "Is the watch waterproof, and can it be worn while swimming?", a: "It has daily waterproof & shockproof performance (resists splashes/sweating/collisions), but is not suitable for swimming, bathing or long-time water immersion." },
+      { q: "What free accessories are included with the purchase?", a: "Each order comes with a complimentary EU/UL charger, dock station, tempered glass screen protector and cleaning wipes—no extra cost." },
+      { q: "How does the class mode work, and can it be remotely set?", a: "Yes, set multi-period class mode via your dashboard on this platform, after connecting the device. It disables non-essential functions (avoid classroom distractions), and functions recover automatically after class." }
+    ]
   },
   "elderly-care": {
     name: "SafeLink D44S GPS Watch",
@@ -384,7 +397,7 @@ function DashboardContent() {
         description: baseData.advancedDescription,
         features: baseData.advancedFeatures,
         specifications: baseData.advancedSpecifications,
-        faq: baseData.standardFaq, // Use standard FAQ as base
+        faq: baseData.advancedFaq,
         images: baseData.advancedImages
       };
     }
@@ -731,7 +744,7 @@ function DashboardContent() {
                         </div>
                         <h3 className="text-2xl font-black mb-4">Option 2: Advanced</h3>
                         <p className="text-sm text-muted-foreground leading-relaxed">
-                          Includes everything in Option 1 plus advanced health monitoring for temperature and oxygen saturation, specifically targeting early malaria detection and wellness tracking.
+                          Everything in Option 1 plus advanced health monitoring for heart rate, blood pressure, and oxygen saturation, specifically targeting early malaria detection and wellness tracking.
                         </p>
                       </div>
                       <Button className="mt-8 w-full rounded-xl font-bold bg-accent/5 text-accent group-hover:bg-accent group-hover:text-accent-foreground border-none">Select Option 2</Button>
