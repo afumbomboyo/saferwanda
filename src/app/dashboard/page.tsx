@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useEffect, useState, useRef, Suspense } from 'react';
@@ -673,7 +672,7 @@ function DashboardContent() {
                                  <span className="text-primary font-bold text-sm">{i+1}</span>
                                </div>
                                <div className="space-y-1">
-                                 h4 className="font-bold text-base">{item.step}</h4>
+                                 <h4 className="font-bold text-base">{item.step}</h4>
                                  <p className="text-xs text-muted-foreground leading-relaxed">{item.desc}</p>
                                </div>
                              </div>
