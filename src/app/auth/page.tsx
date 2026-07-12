@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, Suspense, useRef } from 'react';
@@ -149,7 +148,6 @@ function AuthPageContent() {
         router.replace(services.length > 0 ? '/dashboard?tab=staging' : '/onboarding');
       } else {
         await signInWithEmailAndPassword(auth, email, password);
-        // Note: The background listener above handles the redirect for existing users
       }
     } catch (err: any) {
       setError({ message: getFriendlyErrorMessage(err), code: err.code });
@@ -198,7 +196,7 @@ function AuthPageContent() {
                   <div className="space-y-2">
                     <Label htmlFor="name">Full Name</Label>
                     <div className="relative">
-                      <User className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
+                      <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                       <Input 
                         id="name" 
                         placeholder="Agent Name" 
@@ -214,7 +212,7 @@ function AuthPageContent() {
                 <div className="space-y-2">
                   <Label htmlFor="email">Email Address</Label>
                   <div className="relative">
-                    <Mail className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input 
                       id="email" 
                       type="email" 
@@ -230,7 +228,7 @@ function AuthPageContent() {
                 <div className="space-y-2">
                   <Label htmlFor="password">Password</Label>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input 
                       id="password" 
                       type={showPassword ? 'text' : 'password'} 
@@ -244,7 +242,7 @@ function AuthPageContent() {
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-3 text-muted-foreground hover:text-primary transition-colors"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
                       tabIndex={-1}
                     >
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -261,7 +259,7 @@ function AuthPageContent() {
                   <div className="space-y-2">
                     <Label htmlFor="confirmPassword">Confirm Password</Label>
                     <div className="relative">
-                      <Lock className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
+                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                       <Input 
                         id="confirmPassword" 
                         type={showConfirmPassword ? 'text' : 'password'} 
@@ -275,7 +273,7 @@ function AuthPageContent() {
                       <button
                         type="button"
                         onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                        className="absolute right-3 top-3 text-muted-foreground hover:text-primary transition-colors"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
                         tabIndex={-1}
                       >
                         {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
