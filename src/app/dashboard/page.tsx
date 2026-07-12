@@ -188,10 +188,13 @@ const DEVICE_CATALOG: Record<string, any> = {
   },
   "fire-prevention": {
     name: "SafeGuard Methane LW302D-CH4",
-    images: ["https://picsum.photos/seed/fire1/600/400"],
+    images: [
+      "/images/ZoneWu-LoRa-CH4-Sensor.png",
+      "/images/ZoneWu-LoRa-CH4-Sensor-Label.png"
+    ],
     buyPrice: "25,000 RWF",
     leasePrice: "2,500 RWF",
-    description: "⚙️ Core Technical Specifications: Model LW302D-CH4 Target Gas Parameter: Methane (CH₄) / Natural Gas. The sensor employs a Non-Dispersive Infrared (NDIR) core design, enabling precise detection without oxygen reliance. Industrial-grade polycarbonate enclosure with anti-corrosion layer suitable for long-term harsh environments.",
+    description: "Core Technical Specifications: Model LW302D-CH4 Target Gas Parameter: Methane (CH₄) / Natural Gas. The sensor employs a Non-Dispersive Infrared (NDIR) core design, enabling precise detection without oxygen reliance. Industrial-grade polycarbonate enclosure with anti-corrosion layer suitable for long-term harsh environments.",
     features: [
       "Zero Oxygen Reliance NDIR Detection",
       "Cross-Interference Mitigation industrial metal diffusion",
@@ -491,6 +494,7 @@ function DashboardContent() {
   // Color options logic
   const getColorOptions = () => {
     if (selectedServiceId === 'elderly-care') return ['Black'];
+    if (selectedServiceId === 'fire-prevention') return ['Cream White'];
     if (selectedServiceId === 'child-protection') {
       if (childOption === 'option1') return ['Silver on Black'];
       if (childOption === 'option2') return ['Black'];
