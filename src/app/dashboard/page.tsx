@@ -1320,7 +1320,7 @@ function DashboardContent() {
                             {tempSelection === 'purchased' ? 'Total Amount' : 'Amount per Installment'}
                           </p>
                           <p className="text-3xl font-black text-primary">
-                            {(parseInt(activeDeviceData?.buyPrice.replace(/[^0-9]/g, '')) * checkoutData.quantity).toLocaleString()} RWF
+                            {(parseInt((tempSelection === 'purchased' ? activeDeviceData?.buyPrice : activeDeviceData?.leasePrice).replace(/[^0-9]/g, '')) * checkoutData.quantity).toLocaleString()} RWF
                           </p>
                           {tempSelection === 'leased' && (selectedServiceId === 'elderly-care' || selectedServiceId === 'fire-prevention' || (selectedServiceId === 'child-protection' && (childOption === 'option1' || childOption === 'option2'))) && (
                             <p className="text-[10px] text-muted-foreground font-bold mt-1">Pay every 3 months</p>
