@@ -32,7 +32,8 @@ import {
   CreditCard,
   Heart,
   Signal,
-  Tag
+  Tag,
+  Maximize2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
@@ -190,7 +191,7 @@ const DEVICE_CATALOG: Record<string, any> = {
     name: "SafeHome Heat Sensor",
     images: ["https://picsum.photos/seed/fire1/600/400"],
     buyPrice: "25,000 RWF",
-    leasePrice: "2,500 RWF/mo",
+    leasePrice: "2,500 RWF",
     description: "A smart smoke and gas leak detector for your kitchen and home.",
     features: ["Gas Leak Detection", "Thermal Monitoring", "Instant App Alerts", "Loud Alarm Siren"]
   },
@@ -198,7 +199,7 @@ const DEVICE_CATALOG: Record<string, any> = {
     name: "SafeGuard Smart Lock",
     images: ["https://picsum.photos/seed/prop1/600/400"],
     buyPrice: "55,000 RWF",
-    leasePrice: "5,000 RWF/mo",
+    leasePrice: "5,000 RWF",
     description: "A secure smart lock for your main gate and doors.",
     features: ["Remote Unlock", "Entry Logs", "Tamper Alerts", "Bluetooth Connectivity"]
   },
@@ -206,7 +207,7 @@ const DEVICE_CATALOG: Record<string, any> = {
     name: "SafeTrack Asset",
     images: ["https://picsum.photos/seed/asset1/600/400"],
     buyPrice: "60,000 RWF",
-    leasePrice: "5,500 RWF/mo",
+    leasePrice: "5,500 RWF",
     description: "A heavy-duty GPS tracker for vehicles and high-value equipment.",
     features: ["4G LTE Tracking", "Movement History", "Magnetic Mount", "Long Battery Life"]
   },
@@ -214,7 +215,7 @@ const DEVICE_CATALOG: Record<string, any> = {
     name: "SafeMesh Hub",
     images: ["https://picsum.photos/seed/neigh1/600/400"],
     buyPrice: "75,000 RWF",
-    leasePrice: "7,000 RWF/mo",
+    leasePrice: "7,000 RWF",
     description: "A security hub that connects you with your neighbors' safety network.",
     features: ["Community Alerts", "Camera Integration", "Emergency Broadcast", "Night Vision Support"]
   },
@@ -222,7 +223,7 @@ const DEVICE_CATALOG: Record<string, any> = {
     name: "SafeCity Node",
     images: ["https://picsum.photos/seed/smart1/600/400"],
     buyPrice: "85,000 RWF",
-    leasePrice: "8,000 RWF/mo",
+    leasePrice: "8,000 RWF",
     description: "A community device for smart street lighting and hazard tracking.",
     features: ["Streetlight Control", "Waste Analytics", "Environmental Sensors", "Mesh Network"]
   }
@@ -240,6 +241,7 @@ function DashboardContent() {
   const [updating, setUpdating] = useState(false);
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
   const [isSubscriptionOpen, setIsSubscriptionOpen] = useState(false);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   
   const [activeTab, setActiveTab] = useState<string>(searchParams.get('tab') || 'overview');
   const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null);
@@ -858,7 +860,7 @@ function DashboardContent() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-6xl mx-auto">
                     {/* Buy Option */}
                     <Card className="rounded-[3.5rem] overflow-hidden border-4 border-border bg-card/60 transition-all shadow-2xl">
-                      <div className="relative h-[500px] w-full">
+                      <div className="relative h-[500px] w-full cursor-pointer group" onClick={() => setIsPreviewOpen(true)}>
                         <Carousel className="w-full h-full">
                           <CarouselContent>
                             {activeDeviceData.images?.map((imgUrl: string, idx: number) => (
@@ -881,10 +883,29 @@ function DashboardContent() {
                           <h4 className="text-3xl font-black text-white">Buy Hardware</h4>
                           <p className="text-white/60 text-xs font-bold uppercase tracking-widest">Ownership + Secured Shipping</p>
                         </div>
+                        <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <div className="bg-black/50 backdrop-blur-md p-2 rounded-full text-white">
+                            <Maximize2 className="w-5 h-5" />
+                          </div>
+                        </div>
                       </div>
                       <CardContent className="p-10 space-y-6">
                         <p className="text-sm text-muted-foreground leading-relaxed font-bold whitespace-pre-line">{activeDeviceData.description}</p>
                         
+                        {activeDeviceData.features && (
+                          <div className="space-y-2">
+                            <p className="text-[10px] font-black uppercase tracking-widest text-primary">Core Features</p>
+                            <ul className="grid grid-cols-1 gap-1">
+                              {activeDeviceData.features.map((f: string, i: number) => (
+                                <li key={i} className="flex items-start gap-2 text-[10px] font-medium text-muted-foreground">
+                                  <CheckCircle2 className="w-3 h-3 mt-0.5 text-rwanda-green shrink-0" />
+                                  {f}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+
                         {activeDeviceData.specifications && (
                           <div className="space-y-3 bg-secondary/20 p-6 rounded-2xl">
                             <p className="text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-2">
@@ -958,7 +979,7 @@ function DashboardContent() {
 
                     {/* Lease Option */}
                     <Card className="rounded-[3.5rem] overflow-hidden border-4 border-border bg-card/60 transition-all shadow-2xl">
-                      <div className="relative h-[500px] w-full">
+                      <div className="relative h-[500px] w-full cursor-pointer group" onClick={() => setIsPreviewOpen(true)}>
                         <Carousel className="w-full h-full">
                           <CarouselContent>
                             {activeDeviceData.images?.map((imgUrl: string, idx: number) => (
@@ -985,13 +1006,42 @@ function DashboardContent() {
                             {(selectedServiceId === 'elderly-care' || selectedServiceId === 'child-protection') ? 'Quarterly Installments' : 'Flexible Monthly Leasing'}
                           </p>
                         </div>
+                        <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <div className="bg-black/50 backdrop-blur-md p-2 rounded-full text-white">
+                            <Maximize2 className="w-5 h-5" />
+                          </div>
+                        </div>
                       </div>
                       <CardContent className="p-10 space-y-6">
                         <p className="text-sm text-muted-foreground leading-relaxed font-bold whitespace-pre-line">{activeDeviceData.description}</p>
                         
-                        {(selectedServiceId === 'elderly-care' || (selectedServiceId === 'child-protection')) && (
-                          <div className="p-4 rounded-2xl bg-primary/5 border border-primary/10 text-xs font-bold text-primary leading-relaxed">
-                            It's a lease with option to buy. The price is {activeDeviceData.leasePrice} per 3 months for a year (4 installments), after which you own the device.
+                        {activeDeviceData.features && (
+                          <div className="space-y-2">
+                            <p className="text-[10px] font-black uppercase tracking-widest text-primary">Core Features</p>
+                            <ul className="grid grid-cols-1 gap-1">
+                              {activeDeviceData.features.map((f: string, i: number) => (
+                                <li key={i} className="flex items-start gap-2 text-[10px] font-medium text-muted-foreground">
+                                  <CheckCircle2 className="w-3 h-3 mt-0.5 text-rwanda-green shrink-0" />
+                                  {f}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+
+                        {activeDeviceData.specifications && (
+                          <div className="space-y-3 bg-secondary/20 p-6 rounded-2xl">
+                            <p className="text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-2">
+                              <Info className="w-3 h-3" /> Technical Specifications
+                            </p>
+                            <div className="grid grid-cols-2 gap-x-4 gap-y-1">
+                              {Object.entries(activeDeviceData.specifications).map(([k, v]: [any, any]) => (
+                                <div key={k} className="flex flex-col">
+                                  <span className="text-[8px] uppercase text-muted-foreground font-black">{k}</span>
+                                  <span className="text-[10px] font-bold">{v}</span>
+                                </div>
+                              ))}
+                            </div>
                           </div>
                         )}
 
@@ -1370,6 +1420,35 @@ function DashboardContent() {
                     </Button>
                   </div>
                 </div>
+              </div>
+            </DialogContent>
+          </Dialog>
+
+          {/* Full-screen Image Preview Dialog */}
+          <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
+            <DialogContent className="max-w-[100vw] w-screen h-screen p-0 m-0 border-none bg-black/95 rounded-none flex items-center justify-center">
+              <div className="sr-only">
+                <DialogTitle>Hardware Preview</DialogTitle>
+                <DialogDescription>Viewing full-screen images of the security device.</DialogDescription>
+              </div>
+              <div className="relative w-full max-w-5xl h-[80vh] px-4">
+                <Carousel className="w-full h-full">
+                  <CarouselContent>
+                    {activeDeviceData?.images?.map((imgUrl: string, idx: number) => (
+                      <CarouselItem key={idx}>
+                        <div className="relative h-[80vh] w-full">
+                          <Image src={imgUrl} alt={`${activeDeviceData.name} preview ${idx + 1}`} fill className="object-contain" />
+                        </div>
+                      </CarouselItem>
+                    ))}
+                  </CarouselContent>
+                  {activeDeviceData?.images?.length > 1 && (
+                    <>
+                      <CarouselPrevious className="left-4 bg-white/10 hover:bg-white/20 text-white border-white/20" />
+                      <CarouselNext className="right-4 bg-white/10 hover:bg-white/20 text-white border-white/20" />
+                    </>
+                  )}
+                </Carousel>
               </div>
             </DialogContent>
           </Dialog>
