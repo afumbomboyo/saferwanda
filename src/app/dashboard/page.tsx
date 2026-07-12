@@ -763,7 +763,7 @@ function DashboardContent() {
                           onClick={handleDownloadGuide}
                           className="h-16 rounded-2xl font-black uppercase tracking-widest text-xs bg-primary gap-2 w-full"
                         >
-                          <Download className="w-4 h-4" /> Download Branded Guide (PDF)
+                          <Download className="w-4 h-4" /> Download Guide (PDF)
                         </Button>
                       </div>
 

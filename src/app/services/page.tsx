@@ -52,7 +52,7 @@ function ServicesContent() {
       id: "child-protection",
       title: "Protect Your Child",
       shortNote: "Smart wearables for school safety.",
-      description: "Option 1: Real-time tracking and geofencing for safe school commutes. Includes a one-touch SOS panic button for immediate distress alerts and a silent audio callback.<br/> Option 2: Advanced health monitoring specifically targeting early malaria detection.",
+      description: "Option 1: Real-time tracking and geofencing for safe school commutes. Includes a one-touch SOS panic button for immediate distress alerts and a silent audio callback to instantly hear your child’s surroundings. </br> Option 2: Option 1 + Advanced health monitoring for temperature and oxygen saturation, specifically targeting early malaria detection.",
       icon: <Shield className="w-10 h-10 text-accent" />,
       imageUrl: "/images/child.png",
       imageHint: "child safety tracker",
