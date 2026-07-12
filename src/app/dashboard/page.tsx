@@ -31,14 +31,15 @@ import {
   Navigation,
   CreditCard,
   Heart,
-  Signal
+  Signal,
+  Tag
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { RadioGroup } from '@/components/ui/radio-group';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Dialog,
@@ -55,8 +56,16 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from "@/components/ui/select";
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
+import { useToast } from '@/hooks/use-toast';
 
 // Device details for the shop
 const DEVICE_CATALOG: Record<string, any> = {
@@ -107,7 +116,7 @@ const DEVICE_CATALOG: Record<string, any> = {
       { q: "How does the emergency SOS work?", a: "Press and hold the one-key Power/SOS button for emergency calls to preset contacts." },
       { q: "How long does the battery last?", a: "Built-in 1000mAh polymer battery, normal use lasts 5-6 days." }
     ],
-    advancedDescription: "Give your kids the gift of safety, connection and smart living! Choose the Y48 4G Student Smart Watch—with precise GPS tracking, 24/7 health monitoring, parental control and free valuable perks. Order today and let every day be a safe, fun adventure for your little ones!",
+    advancedDescription: "Core Features\n\n4G Full-Network Connectivity & Detachable Design\nEquipped with 4G high-speed full-network communication, it supports stable voice/video calls and smooth data transmission for global use. Features an innovative detachable design for easy cleaning, maintenance and accessory replacement; ergonomic kid-friendly body with soft skin-friendly strap ensures comfortable long-time wearing.\n\nHigh-Precision Real-Time Positioning & Geo-Fence\nAdopts high-accuracy GPS real-time positioning with no delayed location updates, supporting historical track playback for checking movement routes anytime. Parents can set customizable smart geo-fence via APP, and the watch will send instant push alerts to parents' phones once the wearer crosses the safe zone boundary.\n\n24/7 All-Round Health Monitoring\nOffers 24-hour continuous heart rate (HR) monitoring with abnormal status alerts, accurate blood pressure (BP) tracking with health curve records, and real-time blood oxygen (SPO2) detection for daily health and outdoor activity safety. Also includes step counting, calorie calculation, sleep quality monitoring (deep/light sleep) and sleep report generation.\n\nIntensive Parental Control & Safety Protection\nSupports customizable multi-period class mode to disable non-essential functions and avoid classroom distractions; full remote control via dedicated APP for one-stop data sync and function management. Comes with one-key SOS emergency call (circular dialing to 3 pre-set contacts with auto location sending), anti-stranger call/message filter, and remote watch lock for anti-lost protection.\n\nHD Communication & Interactive Functions\nEnables one-click HD voice and video calls between watch and parent's phone with clear sound and smooth images. Supports real-time voice messaging, family group chat for multi-person interaction, and watch-to-watch friend matching with one-click intercom to enrich kids' daily social communication.\n\nDurable Hardware & Practical Daily Functions\nBuilt with IP-grade waterproof and shockproof design, resistant to daily water splashing, sweating and accidental collisions, adapting to kids' active lifestyles. Features large-capacity battery with long standby and fast charging, HD sensitive color touch screen with easy operation, multi-language & multi-time zone support for global users. Also includes multi-group alarms, drinking water/homework reminders and multiple sports modes (walking, running, cycling etc.) for daily activity tracking.",
     advancedFeatures: [
       "4G Full-Network Connectivity & Detachable Design",
       "High-Precision Real-Time Positioning & Geo-Fence",
@@ -223,11 +232,13 @@ function DashboardContent() {
   const searchParams = useSearchParams();
   const { user, loading: userLoading } = useUser();
   const db = useFirestore();
+  const { toast } = useToast();
   
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
+  const [isSubscriptionOpen, setIsSubscriptionOpen] = useState(false);
   
   const [activeTab, setActiveTab] = useState<string>(searchParams.get('tab') || 'overview');
   const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null);
@@ -235,6 +246,7 @@ function DashboardContent() {
   const [stagingStep, setStagingStep] = useState<'list' | 'instructions' | 'child-options' | 'get-device' | 'checkout' | 'setup'>('list');
 
   const [deviceIdInput, setDeviceIdInput] = useState('');
+  const [deviceNameInput, setDeviceNameInput] = useState('');
   const [alertPhone, setAlertPhone] = useState('');
   const [alertEmail, setAlertEmail] = useState('');
   const [subType, setSubType] = useState('monthly');
@@ -251,7 +263,9 @@ function DashboardContent() {
     village: '',
     street: '',
     buildingNo: '',
-    country: 'Rwanda'
+    country: 'Rwanda',
+    quantity: 1,
+    color: ''
   });
   const [isLocating, setIsLocating] = useState(false);
   const [locationError, setLocationError] = useState<string | null>(null);
@@ -291,6 +305,7 @@ function DashboardContent() {
           setAlertEmail(data.alertEmail || user.email || '');
           setAlertPhone(data.alertPhone || '');
           setDeviceIdInput(data.deviceId || '');
+          setDeviceNameInput(data.deviceName || '');
           setCheckoutData(prev => ({
             ...prev,
             fullName: data.fullName || '',
@@ -315,7 +330,10 @@ function DashboardContent() {
       const userDocRef = doc(db, 'users', user.uid);
       await updateDoc(userDocRef, newData);
       setProfile((prev: any) => ({ ...prev, ...newData }));
-      if (newData.deviceId) setIsRegisterOpen(false);
+      if (newData.deviceId) {
+        setIsRegisterOpen(false);
+        setIsSubscriptionOpen(true);
+      }
     } catch (err) {
       console.error("Update error:", err);
     } finally {
@@ -377,7 +395,42 @@ function DashboardContent() {
     }
   };
 
-  // Dynamic content logic for Child Protection
+  const handleDownloadGuide = () => {
+    toast({
+      title: "Generating Technical Guide",
+      description: "Preparing your branded deployment manual...",
+    });
+
+    setTimeout(() => {
+      const pdfContent = `
+        SafeRwanda Technical Deployment Guide
+        --------------------------------------
+        Service: ${selectedServiceId?.replace('-', ' ')}
+        Hardware Node ID: [Awaiting Activation]
+        
+        Steps:
+        1. Tactical Positioning
+        2. Signal Validation
+        3. Network Link Initiation
+        4. Central Monitoring Grid Sync
+      `;
+      const blob = new Blob([pdfContent], { type: 'application/pdf' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `SafeRwanda-${selectedServiceId}-Guide.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      
+      toast({
+        title: "Download Complete",
+        description: "Your guide has been successfully generated.",
+      });
+    }, 1500);
+  };
+
   const getSelectedDeviceData = () => {
     if (!selectedServiceId) return null;
     const baseData = DEVICE_CATALOG[selectedServiceId];
@@ -410,6 +463,16 @@ function DashboardContent() {
 
   const activeDeviceData = getSelectedDeviceData();
 
+  // Color options logic
+  const getColorOptions = () => {
+    if (selectedServiceId === 'elderly-care') return ['Black'];
+    if (selectedServiceId === 'child-protection') {
+      if (childOption === 'option1') return ['Silver on Black'];
+      if (childOption === 'option2') return ['Black'];
+    }
+    return ['Black', 'White', 'Silver'];
+  };
+
   if (loading || userLoading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-background">
@@ -441,7 +504,7 @@ function DashboardContent() {
                   </Badge>
                   {profile?.deviceId && (
                     <Badge variant="outline" className="border-primary/30 text-primary bg-primary/5 font-black uppercase tracking-widest text-[8px]">
-                      Device Connected
+                      {profile.deviceName || 'Device Connected'}
                     </Badge>
                   )}
                 </div>
@@ -479,6 +542,19 @@ function DashboardContent() {
                       </div>
                     </DialogHeader>
                     <div className="space-y-6">
+                      <div className="space-y-3">
+                        <Label htmlFor="deviceName" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Device Name</Label>
+                        <div className="relative">
+                          <Input 
+                            id="deviceName" 
+                            placeholder="e.g. Living Room Sensor" 
+                            value={deviceNameInput} 
+                            onChange={(e) => setDeviceNameInput(e.target.value)}
+                            className="h-16 rounded-2xl border-border bg-secondary/30 px-6 pl-12"
+                          />
+                          <Tag className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50" />
+                        </div>
+                      </div>
                       <div className="space-y-3">
                         <Label htmlFor="nodeId" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Device ID Number</Label>
                         <div className="relative">
@@ -523,9 +599,14 @@ function DashboardContent() {
                     </div>
                     <div className="mt-10">
                       <Button 
-                        onClick={() => updateProfileData({ deviceId: deviceIdInput, alertPhone, alertEmail })}
+                        onClick={() => updateProfileData({ 
+                          deviceId: deviceIdInput, 
+                          deviceName: deviceNameInput,
+                          alertPhone, 
+                          alertEmail 
+                        })}
                         className="w-full h-16 rounded-2xl bg-primary hover:bg-primary/90 font-black uppercase tracking-widest text-sm"
-                        disabled={updating || !deviceIdInput || !alertPhone || !alertEmail}
+                        disabled={updating || !deviceIdInput || !deviceNameInput || !alertPhone || !alertEmail}
                       >
                         {updating ? <Loader2 className="w-5 h-5 animate-spin" /> : "Connect Device"}
                       </Button>
@@ -537,15 +618,12 @@ function DashboardContent() {
           </div>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full space-y-12">
-            <TabsList className="grid grid-cols-3 h-auto p-1.5 bg-secondary/40 rounded-[1.5rem] border border-border/50 shadow-xl">
+            <TabsList className="grid grid-cols-2 h-auto p-1.5 bg-secondary/40 rounded-[1.5rem] border border-border/50 shadow-xl">
               <TabsTrigger value="overview" className="rounded-xl py-3 data-[state=active]:bg-primary data-[state=active]:text-white font-bold text-[10px] md:text-sm">
                 <LayoutDashboard className="w-4 h-4 mr-2" /> Overview
               </TabsTrigger>
               <TabsTrigger value="staging" className="rounded-xl py-3 data-[state=active]:bg-primary data-[state=active]:text-white font-bold text-[10px] md:text-sm">
                 <ShoppingCart className="w-4 h-4 mr-2" /> My Services
-              </TabsTrigger>
-              <TabsTrigger value="activation" className="rounded-xl py-3 data-[state=active]:bg-primary data-[state=active]:text-white font-bold text-[10px] md:text-sm">
-                <Zap className="w-4 h-4 mr-2" /> Subscription
               </TabsTrigger>
             </TabsList>
 
@@ -595,11 +673,11 @@ function DashboardContent() {
                       onClick={() => {
                         if (!profile?.purchaseStatus || profile.purchaseStatus === 'none') setActiveTab('staging');
                         else if (!profile?.deviceId) setIsRegisterOpen(true);
-                        else setActiveTab('activation');
+                        else setIsSubscriptionOpen(true);
                       }}
                       className="w-full mt-6 rounded-2xl h-14 font-black uppercase tracking-widest text-xs bg-primary"
                     >
-                      {(!profile?.purchaseStatus || profile.purchaseStatus === 'none') ? 'Go to My Services' : profile?.deviceId ? 'See Plans' : 'Connect Device'}
+                      {(!profile?.purchaseStatus || profile.purchaseStatus === 'none') ? 'Go to My Services' : profile?.deviceId ? 'Activate Monitoring' : 'Connect Device'}
                     </Button>
                   </CardContent>
                 </Card>
@@ -678,7 +756,10 @@ function DashboardContent() {
                              </div>
                            ))}
                         </div>
-                        <Button className="h-16 rounded-2xl font-black uppercase tracking-widest text-xs bg-primary gap-2 w-full">
+                        <Button 
+                          onClick={handleDownloadGuide}
+                          className="h-16 rounded-2xl font-black uppercase tracking-widest text-xs bg-primary gap-2 w-full"
+                        >
                           <Download className="w-4 h-4" /> Download Branded Guide (PDF)
                         </Button>
                       </div>
@@ -799,7 +880,7 @@ function DashboardContent() {
                         </div>
                       </div>
                       <CardContent className="p-10 space-y-6">
-                        <p className="text-sm text-muted-foreground leading-relaxed font-bold">{activeDeviceData.description}</p>
+                        <p className="text-sm text-muted-foreground leading-relaxed font-bold whitespace-pre-line">{activeDeviceData.description}</p>
                         
                         {activeDeviceData.specifications && (
                           <div className="space-y-3 bg-secondary/20 p-6 rounded-2xl">
@@ -817,28 +898,52 @@ function DashboardContent() {
                           </div>
                         )}
 
-                        {activeDeviceData.features && (
-                          <div className="space-y-3">
-                            <p className="text-[10px] font-black uppercase tracking-widest text-primary">Core Capabilities</p>
-                            <ul className="grid grid-cols-1 gap-2">
-                              {activeDeviceData.features.map((feature: string, fIdx: number) => (
-                                <li key={fIdx} className="flex items-start gap-2 text-[10px] text-muted-foreground font-medium">
-                                  <CheckCircle2 className="w-3 h-3 text-primary mt-0.5 shrink-0" />
-                                  {feature}
-                                </li>
-                              ))}
-                            </ul>
+                        <div className="space-y-4 p-6 rounded-3xl bg-background border border-border">
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                              <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Quantity</Label>
+                              <Select 
+                                value={checkoutData.quantity.toString()} 
+                                onValueChange={(v) => setCheckoutData({...checkoutData, quantity: parseInt(v)})}
+                              >
+                                <SelectTrigger>
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {[1, 2, 3, 4, 5].map(n => (
+                                    <SelectItem key={n} value={n.toString()}>{n}</SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </div>
+                            <div className="space-y-2">
+                              <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Color</Label>
+                              <Select 
+                                value={checkoutData.color} 
+                                onValueChange={(v) => setCheckoutData({...checkoutData, color: v})}
+                              >
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select Color" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {getColorOptions().map(c => (
+                                    <SelectItem key={c} value={c}>{c}</SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </div>
                           </div>
-                        )}
-
-                        <div className="flex justify-between items-center p-6 rounded-3xl bg-background border border-border">
-                          <div>
-                            <p className="text-[8px] font-black uppercase text-muted-foreground">Unit Price + Delivery</p>
-                            <p className="text-2xl font-black">{activeDeviceData.buyPrice}</p>
+                          <div className="pt-4 border-t border-border flex justify-between items-center">
+                            <div>
+                              <p className="text-[8px] font-black uppercase text-muted-foreground">Unit Price + Delivery</p>
+                              <p className="text-2xl font-black">{activeDeviceData.buyPrice}</p>
+                            </div>
                           </div>
                         </div>
+
                         <Button 
                           onClick={() => handleDeviceSelection('purchased')}
+                          disabled={!checkoutData.color}
                           className="w-full h-16 rounded-2xl font-black uppercase tracking-widest text-sm bg-primary"
                         >
                           Order & Buy
@@ -877,7 +982,7 @@ function DashboardContent() {
                         </div>
                       </div>
                       <CardContent className="p-10 space-y-6">
-                        <p className="text-sm text-muted-foreground leading-relaxed font-bold">{activeDeviceData.description}</p>
+                        <p className="text-sm text-muted-foreground leading-relaxed font-bold whitespace-pre-line">{activeDeviceData.description}</p>
                         
                         {(selectedServiceId === 'elderly-care' || (selectedServiceId === 'child-protection')) && (
                           <div className="p-4 rounded-2xl bg-primary/5 border border-primary/10 text-xs font-bold text-primary leading-relaxed">
@@ -885,47 +990,55 @@ function DashboardContent() {
                           </div>
                         )}
 
-                        {activeDeviceData.specifications && (
-                          <div className="space-y-3 bg-secondary/20 p-6 rounded-2xl">
-                            <p className="text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-2">
-                              <Info className="w-3 h-3" /> Technical Specifications
-                            </p>
-                            <div className="grid grid-cols-2 gap-x-4 gap-y-1">
-                              {Object.entries(activeDeviceData.specifications).map(([k, v]: [any, any]) => (
-                                <div key={k} className="flex flex-col">
-                                  <span className="text-[8px] uppercase text-muted-foreground font-black">{k}</span>
-                                  <span className="text-[10px] font-bold">{v}</span>
-                                </div>
-                              ))}
+                        <div className="space-y-4 p-6 rounded-3xl bg-background border border-border">
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                              <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Quantity</Label>
+                              <Select 
+                                value={checkoutData.quantity.toString()} 
+                                onValueChange={(v) => setCheckoutData({...checkoutData, quantity: parseInt(v)})}
+                              >
+                                <SelectTrigger>
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {[1, 2, 3, 4, 5].map(n => (
+                                    <SelectItem key={n} value={n.toString()}>{n}</SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </div>
+                            <div className="space-y-2">
+                              <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Color</Label>
+                              <Select 
+                                value={checkoutData.color} 
+                                onValueChange={(v) => setCheckoutData({...checkoutData, color: v})}
+                              >
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select Color" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {getColorOptions().map(c => (
+                                    <SelectItem key={c} value={c}>{c}</SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
                             </div>
                           </div>
-                        )}
-
-                        {activeDeviceData.features && (
-                          <div className="space-y-3">
-                            <p className="text-[10px] font-black uppercase tracking-widest text-primary">Core Capabilities</p>
-                            <ul className="grid grid-cols-1 gap-2">
-                              {activeDeviceData.features.map((feature: string, fIdx: number) => (
-                                <li key={fIdx} className="flex items-start gap-2 text-[10px] text-muted-foreground font-medium">
-                                  <CheckCircle2 className="w-3 h-3 text-primary mt-0.5 shrink-0" />
-                                  {feature}
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
-
-                        <div className="flex justify-between items-center p-6 rounded-3xl bg-background border border-border">
-                          <div>
-                            <p className="text-[8px] font-black uppercase text-muted-foreground">
-                              {(selectedServiceId === 'elderly-care' || (selectedServiceId === 'child-protection' && childOption === 'option1')) ? 'Quarterly Payment' : 'Monthly Service Fee'}
-                            </p>
-                            <p className="text-2xl font-black">{activeDeviceData.leasePrice}</p>
+                          <div className="pt-4 border-t border-border flex justify-between items-center">
+                            <div>
+                              <p className="text-[8px] font-black uppercase text-muted-foreground">
+                                {(selectedServiceId === 'elderly-care' || (selectedServiceId === 'child-protection' && childOption === 'option1')) ? 'Quarterly Payment' : 'Monthly Service Fee'}
+                              </p>
+                              <p className="text-2xl font-black">{activeDeviceData.leasePrice}</p>
+                            </div>
                           </div>
                         </div>
+
                         <Button 
                           variant="outline" 
                           onClick={() => handleDeviceSelection('leased')}
+                          disabled={!checkoutData.color}
                           className="w-full h-16 rounded-2xl font-black uppercase tracking-widest text-sm"
                         >
                           {(selectedServiceId === 'elderly-care' || (selectedServiceId === 'child-protection' && childOption === 'option1')) ? 'Start Lease to Own' : 'Activate Lease'}
@@ -1070,47 +1183,15 @@ function DashboardContent() {
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      <div className="space-y-2">
-                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Village</Label>
-                        <Input 
-                          placeholder="Village" 
-                          value={checkoutData.village}
-                          onChange={(e) => setCheckoutData({...checkoutData, village: e.target.value})}
-                          className="h-12 rounded-xl border-border bg-secondary/20" 
-                        />
-                      </div>
-                      <div className="space-y-2 md:col-span-2">
-                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Street Address</Label>
-                        <div className="relative">
-                          <Input 
-                            placeholder="Street Name / Code" 
-                            value={checkoutData.street}
-                            onChange={(e) => setCheckoutData({...checkoutData, street: e.target.value})}
-                            className="h-12 rounded-xl border-border bg-secondary/20 pl-10" 
-                          />
-                          <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                        </div>
-                      </div>
-                      <div className="space-y-2">
-                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Building No.</Label>
-                        <Input 
-                          placeholder="e.g. KK 202 St" 
-                          value={checkoutData.buildingNo}
-                          onChange={(e) => setCheckoutData({...checkoutData, buildingNo: e.target.value})}
-                          className="h-12 rounded-xl border-border bg-secondary/20" 
-                        />
-                      </div>
-                    </div>
-
                     {/* Summary Section */}
                     <div className="bg-primary/5 border border-primary/10 rounded-[2rem] p-8 mb-8 space-y-6">
                       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                         <div>
                           <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">Service Tier</p>
                           <p className="text-xl font-black capitalize">
-                            {selectedServiceId?.replace('-', ' ')} {childOption === 'option1' ? '(Standard)' : childOption === 'option2' ? '(Advanced)' : ''}
+                            {checkoutData.quantity}x {selectedServiceId?.replace('-', ' ')} {childOption === 'option1' ? '(Standard)' : childOption === 'option2' ? '(Advanced)' : ''}
                           </p>
+                          <p className="text-[10px] font-bold text-primary mt-1">Color: {checkoutData.color}</p>
                         </div>
                         <div className="text-left md:text-right">
                           <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">Transaction Type</p>
@@ -1140,9 +1221,8 @@ function DashboardContent() {
                             {tempSelection === 'purchased' ? 'Total Amount' : 'Amount per Installment'}
                           </p>
                           <p className="text-3xl font-black text-primary">
-                            {tempSelection === 'purchased' 
-                              ? activeDeviceData?.buyPrice 
-                              : activeDeviceData?.leasePrice}
+                            {/* Simple RWF multiplication for summary display */}
+                            {parseInt(activeDeviceData?.buyPrice.replace(/[^0-9]/g, '')) * checkoutData.quantity} RWF
                           </p>
                           {tempSelection === 'leased' && (selectedServiceId === 'elderly-care' || (selectedServiceId === 'child-protection' && (childOption === 'option1' || childOption === 'option2'))) && (
                             <p className="text-[10px] text-muted-foreground font-bold mt-1">Pay every 3 months</p>
@@ -1204,7 +1284,10 @@ function DashboardContent() {
                             </div>
                           ))}
                         </div>
-                        <Button className="h-16 rounded-2xl font-black uppercase tracking-widest text-xs bg-primary gap-2 w-full md:w-auto">
+                        <Button 
+                          onClick={handleDownloadGuide}
+                          className="h-16 rounded-2xl font-black uppercase tracking-widest text-xs bg-primary gap-2 w-full md:w-auto"
+                        >
                           <Download className="w-5 h-5" /> Download Technical Guide (PDF)
                         </Button>
                       </div>
@@ -1222,18 +1305,25 @@ function DashboardContent() {
                 </Card>
               )}
             </TabsContent>
+          </Tabs>
 
-            <TabsContent value="activation" className="outline-none">
-              <Card className="max-w-4xl mx-auto rounded-[4rem] border-rwanda-green/20 overflow-hidden shadow-2xl animate-reveal">
-                <CardHeader className="p-16 text-center bg-gradient-to-b from-rwanda-green/[0.05] to-transparent border-b border-rwanda-green/10">
-                  <div className="w-24 h-24 rounded-[2.5rem] bg-rwanda-green/10 flex items-center justify-center mx-auto mb-8">
+          {/* Subscription Popup Dialog */}
+          <Dialog open={isSubscriptionOpen} onOpenChange={setIsSubscriptionOpen}>
+            <DialogContent className="sm:max-w-[800px] p-0 overflow-hidden border-border/50 bg-background shadow-2xl rounded-[3rem]">
+              <div className="relative p-12">
+                <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-rwanda-green via-primary to-accent" />
+                <DialogHeader className="mb-10 text-center">
+                  <div className="w-24 h-24 rounded-[2.5rem] bg-rwanda-green/10 flex items-center justify-center mx-auto mb-6">
                     <Zap className="w-12 h-12 text-rwanda-green" />
                   </div>
-                  <CardTitle className="text-6xl font-black">Subscription Plan</CardTitle>
-                  <CardDescription className="text-xl mt-6 font-light max-w-lg mx-auto">Select a plan to start your 24/7 strategic security monitoring.</CardDescription>
-                </CardHeader>
-                <CardContent className="p-16">
-                  <RadioGroup value={subType} onValueChange={setSubType} className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                  <DialogTitle className="text-5xl font-black tracking-tight">Activate Monitoring</DialogTitle>
+                  <DialogDescription className="text-lg mt-4 font-light max-w-lg mx-auto">
+                    Device connected successfully! Select a plan to start your 24/7 strategic security monitoring for <b>{profile?.deviceName || 'your device'}</b>.
+                  </DialogDescription>
+                </DialogHeader>
+
+                <div className="space-y-10">
+                  <RadioGroup value={subType} onValueChange={setSubType} className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {[
                       { id: 'weekly', label: 'Weekly Guard', price: 'RWF 5,000', note: 'Flexible Protection' },
                       { id: 'monthly', label: 'Standard Guard', price: 'RWF 18,000', note: 'Full Coverage' },
@@ -1243,37 +1333,41 @@ function DashboardContent() {
                         key={plan.id}
                         onClick={() => setSubType(plan.id)}
                         className={cn(
-                          "p-10 rounded-[3rem] border-4 transition-all cursor-pointer flex flex-col justify-between text-center relative overflow-hidden group",
+                          "p-8 rounded-[2.5rem] border-4 transition-all cursor-pointer flex flex-col justify-between text-center relative overflow-hidden group",
                           subType === plan.id ? 'border-primary bg-primary/[0.03] shadow-2xl shadow-primary/10' : 'border-border bg-background hover:border-primary/40'
                         )}
                       >
+                        <RadioGroupItem value={plan.id} id={plan.id} className="sr-only" />
                         <div>
-                          <p className="text-[10px] font-black uppercase text-muted-foreground mb-6 opacity-60">{plan.note}</p>
-                          <h4 className="font-black text-2xl tracking-tighter mb-2">{plan.label}</h4>
-                          <div className="text-3xl font-black text-primary mt-6">{plan.price}</div>
+                          <p className="text-[9px] font-black uppercase text-muted-foreground mb-4 opacity-60">{plan.note}</p>
+                          <h4 className="font-black text-xl tracking-tighter mb-2">{plan.label}</h4>
+                          <div className="text-2xl font-black text-primary mt-4">{plan.price}</div>
                         </div>
                       </div>
                     ))}
                   </RadioGroup>
-                </CardContent>
-                <CardFooter className="p-16 pt-0 flex flex-col gap-10 text-center">
-                  <Button 
-                    onClick={() => updateProfileData({ subscriptionActive: true, subscriptionType: subType })}
-                    className="w-full h-24 rounded-[2rem] bg-primary text-3xl font-black shadow-xl"
-                    disabled={updating || !profile?.deviceId}
-                  >
-                    {updating ? <Loader2 className="w-8 h-8 animate-spin" /> : "Activate Guard"}
-                  </Button>
-                  {!profile?.deviceId && (
-                    <div className="flex items-center justify-center gap-3 text-destructive font-black uppercase text-[10px] bg-destructive/10 py-5 px-10 rounded-[1.5rem] border border-destructive/20">
-                      <AlertTriangle className="w-5 h-5" /> Link your hardware node first to activate monitoring
-                    </div>
-                  )}
-                </CardFooter>
-              </Card>
-            </TabsContent>
 
-          </Tabs>
+                  <div className="pt-6">
+                    <Button 
+                      onClick={() => {
+                        updateProfileData({ subscriptionActive: true, subscriptionType: subType });
+                        setIsSubscriptionOpen(false);
+                        toast({
+                          title: "Monitoring Active",
+                          description: `Protection grid is now live for ${profile?.deviceName || 'your device'}.`,
+                        });
+                      }}
+                      className="w-full h-20 rounded-[1.5rem] bg-primary text-2xl font-black shadow-xl"
+                      disabled={updating}
+                    >
+                      {updating ? <Loader2 className="w-8 h-8 animate-spin" /> : "Activate Guard"}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
+
         </div>
       </main>
 
