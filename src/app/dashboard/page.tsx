@@ -192,8 +192,8 @@ const DEVICE_CATALOG: Record<string, any> = {
       "/images/ZoneWu-LoRa-CH4-Sensor.png",
       "/images/ZoneWu-LoRa-CH4-Sensor-Label.png"
     ],
-    buyPrice: "25,000 RWF",
-    leasePrice: "2,500 RWF",
+    buyPrice: "325,000 RWF",
+    leasePrice: "32,500 RWF",
     description: "Core Technical Specifications: Model LW302D-CH4 Target Gas Parameter: Methane (CH₄) / Natural Gas. The sensor employs a Non-Dispersive Infrared (NDIR) core design, enabling precise detection without oxygen reliance. Industrial-grade polycarbonate enclosure with anti-corrosion layer suitable for long-term harsh environments.",
     features: [
       "Zero Oxygen Reliance NDIR Detection",
@@ -585,23 +585,6 @@ function DashboardContent() {
                             <Tag className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50" />
                           </div>
                         </div>
-                        <div className="space-y-3">
-                          <Label htmlFor="nodeId" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Device ID Number</Label>
-                          <div className="relative">
-                            <Input 
-                              id="nodeId" 
-                              placeholder="SAFE-XXXX-XXXX" 
-                              value={deviceIdInput} 
-                              onChange={(e) => setDeviceNameInput(e.target.value)} // Note: The user request specifically mentioned naming the device in this form. 
-                              // Fixing the binding below for correct data entry
-                              // value={deviceIdInput} 
-                              // onChange={(e) => setDeviceIdInput(e.target.value)}
-                              className="h-16 rounded-2xl border-border bg-secondary/30 font-mono text-lg tracking-widest px-6"
-                            />
-                            {/* Re-binding correctly to setDeviceIdInput as per common sense logic alongside the new deviceNameInput above */}
-                          </div>
-                        </div>
-                        {/* Corrected Input mapping for ID after adding Name field */}
                         <div className="space-y-3">
                           <Label htmlFor="actualNodeId" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Node Identification</Label>
                           <Input 
