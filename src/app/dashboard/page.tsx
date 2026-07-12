@@ -114,11 +114,10 @@ const DEVICE_CATALOG: Record<string, any> = {
     },
     standardFaq: [
       { q: "What devices is the Y41 suitable for?", a: "It's ideal for elders, kids and personal asset tracking; with 37.3g ultra-light weight and multiple options." },
-      { q: "Does the Y41 support global use?", a: "Yes, it has two frequency band versions for North/South America and Europe/Asia/Africa/Oceania." },
       { q: "How does the emergency SOS work?", a: "Press and hold the one-key Power/SOS button for emergency calls to preset contacts." },
       { q: "How long does the battery last?", a: "Built-in 1000mAh polymer battery, normal use lasts 5-6 days." }
     ],
-    advancedDescription: "Core Features\n\n4G Full-Network Connectivity & Detachable Design\nEquipped with 4G high-speed full-network communication, it supports stable voice/video calls and smooth data transmission for global use. Features an innovative detachable design for easy cleaning, maintenance and accessory replacement; ergonomic kid-friendly body with soft skin-friendly strap ensures comfortable long-time wearing.\n\nHigh-Precision Real-Time Positioning & Geo-Fence\nAdopts high-accuracy GPS real-time positioning with no delayed location updates, supporting historical track playback for checking movement routes anytime. Parents can set customizable smart geo-fence via APP, and the watch will send instant push alerts to parents' phones once the wearer crosses the safe zone boundary.\n\n24/7 All-Round Health Monitoring\nOffers 24-hour continuous heart rate (HR) monitoring with abnormal status alerts, accurate blood pressure (BP) tracking with health curve records, and real-time blood oxygen (SPO2) detection for daily health and outdoor activity safety. Also includes step counting, calorie calculation, sleep quality monitoring (deep/light sleep) and sleep report generation.\n\nIntensive Parental Control & Safety Protection\nSupports customizable multi-period class mode to disable non-essential functions and avoid classroom distractions; full remote control via dedicated APP for one-stop data sync and function management. Comes with one-key SOS emergency call (circular dialing to 3 pre-set contacts with auto location sending), anti-stranger call/message filter, and remote watch lock for anti-lost protection.\n\nHD Communication & Interactive Functions\nEnables one-click HD voice and video calls between watch and parent's phone with clear sound and smooth images. Supports real-time voice messaging, family group chat for multi-person interaction, and watch-to-watch friend matching with one-click intercom to enrich kids' daily social communication.\n\nDurable Hardware & Practical Daily Functions\nBuilt with IP-grade waterproof and shockproof design, resistant to daily water splashing, sweating and accidental collisions, adapting to kids' active lifestyles. Features large-capacity battery with long standby and fast charging, HD sensitive color touch screen with easy operation, multi-language & multi-time zone support for global users. Also includes multi-group alarms, drinking water/homework reminders and multiple sports modes (walking, running, cycling etc.) for daily activity tracking.",
+    advancedDescription: "Give your kids the gift of safety, connection and smart living! Choose the Y48 4G Student Smart Watch—with precise GPS tracking, 24/7 health monitoring, parental control and free valuable perks. Order today and let every day be a safe, fun adventure for your little ones!",
     advancedFeatures: [
       "4G Full-Network Connectivity & Detachable Design",
       "High-Precision Real-Time Positioning & Geo-Fence",
@@ -1042,6 +1041,12 @@ function DashboardContent() {
                                 </div>
                               ))}
                             </div>
+                          </div>
+                        )}
+
+                        {(selectedServiceId === 'elderly-care' || (selectedServiceId === 'child-protection')) && (
+                          <div className="p-4 rounded-2xl bg-primary/5 border border-primary/10 text-xs font-bold text-primary leading-relaxed">
+                            It's a lease with option to buy. The price is {activeDeviceData.leasePrice} per 3 months for a year (4 installments), after which you own the device.
                           </div>
                         )}
 
