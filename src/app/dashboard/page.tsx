@@ -884,7 +884,13 @@ function DashboardContent() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-6xl mx-auto">
                     {/* Buy Option */}
                     <Card className="rounded-[3.5rem] overflow-hidden border-4 border-border bg-card/60 transition-all shadow-2xl">
-                      <div className="relative h-[500px] w-full cursor-pointer group" onClick={() => setIsPreviewOpen(true)}>
+                      <div 
+                        className="relative h-[500px] w-full cursor-pointer group" 
+                        onClick={(e) => {
+                          if ((e.target as HTMLElement).closest('button')) return;
+                          setIsPreviewOpen(true);
+                        }}
+                      >
                         <Carousel className="w-full h-full">
                           <CarouselContent>
                             {activeDeviceData.images?.map((imgUrl: string, idx: number) => (
@@ -1003,7 +1009,13 @@ function DashboardContent() {
 
                     {/* Lease Option */}
                     <Card className="rounded-[3.5rem] overflow-hidden border-4 border-border bg-card/60 transition-all shadow-2xl">
-                      <div className="relative h-[500px] w-full cursor-pointer group" onClick={() => setIsPreviewOpen(true)}>
+                      <div 
+                        className="relative h-[500px] w-full cursor-pointer group" 
+                        onClick={(e) => {
+                          if ((e.target as HTMLElement).closest('button')) return;
+                          setIsPreviewOpen(true);
+                        }}
+                      >
                         <Carousel className="w-full h-full">
                           <CarouselContent>
                             {activeDeviceData.images?.map((imgUrl: string, idx: number) => (
@@ -1456,7 +1468,7 @@ function DashboardContent() {
 
           {/* Full-screen Image Preview Dialog */}
           <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
-            <DialogContent className="max-w-[100vw] w-screen h-screen p-0 m-0 border-none bg-black/95 rounded-none flex items-center justify-center">
+            <DialogContent className="max-w-[100vw] w-screen h-screen p-0 m-0 border-none bg-black/95 rounded-none flex items-center justify-center [&>button]:text-white">
               <div className="sr-only">
                 <DialogTitle>Hardware Preview</DialogTitle>
                 <DialogDescription>Viewing full-screen images of the security device.</DialogDescription>
