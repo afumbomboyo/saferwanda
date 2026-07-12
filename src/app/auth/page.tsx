@@ -3,7 +3,7 @@
 
 import { useState, useEffect, Suspense, useRef } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { Shield, Mail, Lock, User, Loader2, AlertTriangle } from 'lucide-react';
+import { Shield, Mail, Lock, User, Loader2, AlertTriangle, Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
@@ -32,7 +32,12 @@ function AuthPageContent() {
   // Form states
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [fullName, setFullName] = useState('');
+  
+  // UI states
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   useEffect(() => {
     setIsSignUp(isSignUpDefault);
@@ -46,6 +51,31 @@ function AuthPageContent() {
       services.push(tempInitial);
     }
     return services;
+  };
+
+  const getFriendlyErrorMessage = (error: any) => {
+    switch (error.code) {
+      case 'auth/invalid-email':
+        return 'The email address you entered is not valid.';
+      case 'auth/user-disabled':
+        return 'This account has been disabled.';
+      case 'auth/user-not-found':
+        return 'We couldn\'t find an account with that email.';
+      case 'auth/wrong-password':
+        return 'The password you entered is incorrect.';
+      case 'auth/email-already-in-use':
+        return 'An account with this email already exists.';
+      case 'auth/weak-password':
+        return 'Your password is too weak. Please use at least 8 characters.';
+      case 'auth/operation-not-allowed':
+        return 'Email/password accounts are not enabled.';
+      case 'auth/too-many-requests':
+        return 'Too many attempts. Please try again later.';
+      case 'auth/invalid-credential':
+        return 'Invalid login details. Please check your email and password.';
+      default:
+        return error.message || 'An unexpected error occurred. Please try again.';
+    }
   };
 
   // Background Session Listener
@@ -82,8 +112,20 @@ function AuthPageContent() {
     e.preventDefault();
     if (!auth || !db) return;
 
-    setLoading(true);
     setError(null);
+
+    // Validation
+    if (password.length < 8) {
+      setError({ message: 'Password must be at least 8 characters long.' });
+      return;
+    }
+
+    if (isSignUp && password !== confirmPassword) {
+      setError({ message: 'Passwords do not match.' });
+      return;
+    }
+
+    setLoading(true);
     isPerformingManualAuth.current = true;
 
     try {
@@ -110,7 +152,7 @@ function AuthPageContent() {
         // Note: The background listener above handles the redirect for existing users
       }
     } catch (err: any) {
-      setError({ message: err.message, code: err.code });
+      setError({ message: getFriendlyErrorMessage(err), code: err.code });
       isPerformingManualAuth.current = false;
       setLoading(false);
     }
@@ -145,7 +187,7 @@ function AuthPageContent() {
                 <div className="p-4 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-xs font-medium flex items-start gap-3 animate-in slide-in-from-top-2">
                   <AlertTriangle className="w-4 h-4 shrink-0" />
                   <div>
-                    <p className="font-bold mb-1">Authorization Conflict</p>
+                    <p className="font-bold mb-1">Authorization Issue</p>
                     <p className="opacity-80">{error.message}</p>
                   </div>
                 </div>
@@ -191,16 +233,56 @@ function AuthPageContent() {
                     <Lock className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
                     <Input 
                       id="password" 
-                      type="password" 
+                      type={showPassword ? 'text' : 'password'} 
                       placeholder="••••••••" 
-                      className="pl-10 h-12 rounded-xl" 
+                      className="pl-10 pr-10 h-12 rounded-xl" 
                       required 
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       disabled={loading}
                     />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-3 text-muted-foreground hover:text-primary transition-colors"
+                      tabIndex={-1}
+                    >
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
                   </div>
+                  {isSignUp && (
+                    <p className="text-[10px] text-muted-foreground mt-1">
+                      Must be at least 8 characters long.
+                    </p>
+                  )}
                 </div>
+
+                {isSignUp && (
+                  <div className="space-y-2">
+                    <Label htmlFor="confirmPassword">Confirm Password</Label>
+                    <div className="relative">
+                      <Lock className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
+                      <Input 
+                        id="confirmPassword" 
+                        type={showConfirmPassword ? 'text' : 'password'} 
+                        placeholder="••••••••" 
+                        className="pl-10 pr-10 h-12 rounded-xl" 
+                        required 
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        disabled={loading}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        className="absolute right-3 top-3 text-muted-foreground hover:text-primary transition-colors"
+                        tabIndex={-1}
+                      >
+                        {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                    </div>
+                  </div>
+                )}
                 
                 <Button className="w-full bg-primary hover:bg-primary/90 h-12 rounded-xl font-bold shadow-lg shadow-primary/20 active:scale-[0.98] transition-all" disabled={loading}>
                   {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : (isSignUp ? 'Create Account' : 'Login')}
