@@ -4,7 +4,7 @@
 import { useEffect, Suspense } from 'react';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Shield, Heart, Flame, Home, Box, Eye, ArrowRight, Network } from 'lucide-react';
+import { Shield, Heart, Flame, Home, Box, Eye, ArrowRight, Network, Loader2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useUser, useFirestore } from '@/firebase';
