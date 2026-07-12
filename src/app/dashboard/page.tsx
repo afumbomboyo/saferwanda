@@ -63,6 +63,7 @@ import {
   SelectTrigger, 
   SelectValue 
 } from "@/components/ui/select";
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import { useToast } from '@/hooks/use-toast';
@@ -525,93 +526,95 @@ function DashboardContent() {
                     Connect Device
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="w-[95vw] sm:max-w-[520px] p-0 overflow-y-auto max-h-[95vh] border-border/50 bg-background shadow-2xl rounded-[2rem] sm:rounded-[2.5rem]">
-                  <div className="relative p-6 sm:p-10 pt-12">
-                    <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-primary via-accent to-rwanda-green" />
-                    <DialogHeader className="mb-8">
-                      <div className="flex items-center gap-4">
-                        <div className="w-14 h-14 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center">
-                          <Smartphone className="w-7 h-7 text-primary" />
+                <DialogContent className="w-[95vw] sm:max-w-[520px] p-0 border-border/50 bg-background shadow-2xl rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden">
+                  <ScrollArea className="max-h-[95vh] w-full">
+                    <div className="relative p-6 sm:p-10 pt-12">
+                      <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-primary via-accent to-rwanda-green" />
+                      <DialogHeader className="mb-8">
+                        <div className="flex items-center gap-4">
+                          <div className="w-14 h-14 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center">
+                            <Smartphone className="w-7 h-7 text-primary" />
+                          </div>
+                          <div>
+                            <DialogTitle className="text-3xl font-black tracking-tight leading-none">Connect Device</DialogTitle>
+                            <DialogDescription className="text-sm mt-2 opacity-70">
+                              Enter the details from your device to start receiving safety alerts.
+                            </DialogDescription>
+                          </div>
                         </div>
-                        <div>
-                          <DialogTitle className="text-3xl font-black tracking-tight leading-none">Connect Device</DialogTitle>
-                          <DialogDescription className="text-sm mt-2 opacity-70">
-                            Enter the details from your device to start receiving safety alerts.
-                          </DialogDescription>
-                        </div>
-                      </div>
-                    </DialogHeader>
-                    <div className="space-y-6">
-                      <div className="space-y-3">
-                        <Label htmlFor="deviceName" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Device Name</Label>
-                        <div className="relative">
-                          <Input 
-                            id="deviceName" 
-                            placeholder="e.g. Living Room Sensor" 
-                            value={deviceNameInput} 
-                            onChange={(e) => setDeviceNameInput(e.target.value)}
-                            className="h-16 rounded-2xl border-border bg-secondary/30 px-6 pl-12"
-                          />
-                          <Tag className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50" />
-                        </div>
-                      </div>
-                      <div className="space-y-3">
-                        <Label htmlFor="nodeId" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Device ID Number</Label>
-                        <div className="relative">
-                          <Input 
-                            id="nodeId" 
-                            placeholder="SAFE-XXXX-XXXX" 
-                            value={deviceIdInput} 
-                            onChange={(e) => setDeviceIdInput(e.target.value)}
-                            className="h-16 rounded-2xl border-border bg-secondary/30 font-mono text-lg tracking-widest px-6"
-                          />
-                        </div>
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      </DialogHeader>
+                      <div className="space-y-6">
                         <div className="space-y-3">
-                          <Label htmlFor="alertPhone" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Alert Phone Number</Label>
+                          <Label htmlFor="deviceName" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Device Name</Label>
                           <div className="relative">
                             <Input 
-                              id="alertPhone" 
-                              placeholder="+250 7XX XXX XXX" 
-                              value={alertPhone} 
-                              onChange={(e) => setAlertPhone(e.target.value)}
+                              id="deviceName" 
+                              placeholder="e.g. Living Room Sensor" 
+                              value={deviceNameInput} 
+                              onChange={(e) => setDeviceNameInput(e.target.value)}
                               className="h-16 rounded-2xl border-border bg-secondary/30 px-6 pl-12"
                             />
-                            <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50" />
+                            <Tag className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50" />
                           </div>
                         </div>
                         <div className="space-y-3">
-                          <Label htmlFor="alertEmail" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Alert Email Address</Label>
+                          <Label htmlFor="nodeId" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Device ID Number</Label>
                           <div className="relative">
                             <Input 
-                              id="alertEmail" 
-                              type="email"
-                              placeholder="you@email.com" 
-                              value={alertEmail} 
-                              onChange={(e) => setAlertEmail(e.target.value)}
-                              className="h-16 rounded-2xl border-border bg-secondary/30 px-6 pl-12"
+                              id="nodeId" 
+                              placeholder="SAFE-XXXX-XXXX" 
+                              value={deviceIdInput} 
+                              onChange={(e) => setDeviceIdInput(e.target.value)}
+                              className="h-16 rounded-2xl border-border bg-secondary/30 font-mono text-lg tracking-widest px-6"
                             />
-                            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50" />
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          <div className="space-y-3">
+                            <Label htmlFor="alertPhone" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Alert Phone Number</Label>
+                            <div className="relative">
+                              <Input 
+                                id="alertPhone" 
+                                placeholder="+250 7XX XXX XXX" 
+                                value={alertPhone} 
+                                onChange={(e) => setAlertPhone(e.target.value)}
+                                className="h-16 rounded-2xl border-border bg-secondary/30 px-6 pl-12"
+                              />
+                              <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50" />
+                            </div>
+                          </div>
+                          <div className="space-y-3">
+                            <Label htmlFor="alertEmail" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Alert Email Address</Label>
+                            <div className="relative">
+                              <Input 
+                                id="alertEmail" 
+                                type="email"
+                                placeholder="you@email.com" 
+                                value={alertEmail} 
+                                onChange={(e) => setAlertEmail(e.target.value)}
+                                className="h-16 rounded-2xl border-border bg-secondary/30 px-6 pl-12"
+                              />
+                              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50" />
+                            </div>
                           </div>
                         </div>
                       </div>
+                      <div className="mt-10">
+                        <Button 
+                          onClick={() => updateProfileData({ 
+                            deviceId: deviceIdInput, 
+                            deviceName: deviceNameInput,
+                            alertPhone, 
+                            alertEmail 
+                          })}
+                          className="w-full h-16 rounded-2xl bg-primary hover:bg-primary/90 font-black uppercase tracking-widest text-sm"
+                          disabled={updating || !deviceIdInput || !deviceNameInput || !alertPhone || !alertEmail}
+                        >
+                          {updating ? <Loader2 className="w-5 h-5 animate-spin" /> : "Connect Device"}
+                        </Button>
+                      </div>
                     </div>
-                    <div className="mt-10">
-                      <Button 
-                        onClick={() => updateProfileData({ 
-                          deviceId: deviceIdInput, 
-                          deviceName: deviceNameInput,
-                          alertPhone, 
-                          alertEmail 
-                        })}
-                        className="w-full h-16 rounded-2xl bg-primary hover:bg-primary/90 font-black uppercase tracking-widest text-sm"
-                        disabled={updating || !deviceIdInput || !deviceNameInput || !alertPhone || !alertEmail}
-                      >
-                        {updating ? <Loader2 className="w-5 h-5 animate-spin" /> : "Connect Device"}
-                      </Button>
-                    </div>
-                  </div>
+                  </ScrollArea>
                 </DialogContent>
               </Dialog>
             </div>
