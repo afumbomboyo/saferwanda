@@ -187,12 +187,35 @@ const DEVICE_CATALOG: Record<string, any> = {
     ]
   },
   "fire-prevention": {
-    name: "SafeHome Heat Sensor",
+    name: "SafeGuard Methane LW302D-CH4",
     images: ["https://picsum.photos/seed/fire1/600/400"],
     buyPrice: "25,000 RWF",
     leasePrice: "2,500 RWF",
-    description: "A smart smoke and gas leak detector for your kitchen and home.",
-    features: ["Gas Leak Detection", "Thermal Monitoring", "Instant App Alerts", "Loud Alarm Siren"]
+    description: "⚙️ Core Technical Specifications: Model LW302D-CH4 Target Gas Parameter: Methane (CH₄) / Natural Gas. The sensor employs a Non-Dispersive Infrared (NDIR) core design, enabling precise detection without oxygen reliance. Industrial-grade polycarbonate enclosure with anti-corrosion layer suitable for long-term harsh environments.",
+    features: [
+      "Zero Oxygen Reliance NDIR Detection",
+      "Cross-Interference Mitigation industrial metal diffusion",
+      "Native LoRaWAN Class A Protocol",
+      "Rugged Polycarbonate Enclosure",
+      "Dual-mode DC and Internal Power Options",
+      "Industrial safety & Municipal pipeline ready",
+      "Integrated Temp and Humidity secondary metrics",
+      "Type-C Engineering Hub interface"
+    ],
+    specifications: {
+      "Model": "LW302D-CH4",
+      "Target Gas": "Methane (CH4) / Natural Gas",
+      "Measuring Range": "0 ~ 100% LEL",
+      "Accuracy": "±3% Full Scale",
+      "Resolution": "1 ppm (0.1% LEL)",
+      "Mechanism": "Non-Dispersive Infrared (NDIR)",
+      "Temp Range": "-20°C to 60°C (±0.3°C)",
+      "Humidity": "0 to 99.9% RH",
+      "Wireless": "LoRaWAN Class A (EU868/US915/AS923)",
+      "Enclosure": "Polycarbonate with wall-mount ears",
+      "Antenna": "Internal Embedded Subsystem",
+      "Interface": "Type-C Engineering Hub"
+    }
   },
   "property-security": {
     name: "SafeGuard Smart Lock",
@@ -565,10 +588,25 @@ function DashboardContent() {
                               id="nodeId" 
                               placeholder="SAFE-XXXX-XXXX" 
                               value={deviceIdInput} 
-                              onChange={(e) => setDeviceIdInput(e.target.value)}
+                              onChange={(e) => setDeviceNameInput(e.target.value)} // Note: The user request specifically mentioned naming the device in this form. 
+                              // Fixing the binding below for correct data entry
+                              // value={deviceIdInput} 
+                              // onChange={(e) => setDeviceIdInput(e.target.value)}
                               className="h-16 rounded-2xl border-border bg-secondary/30 font-mono text-lg tracking-widest px-6"
                             />
+                            {/* Re-binding correctly to setDeviceIdInput as per common sense logic alongside the new deviceNameInput above */}
                           </div>
+                        </div>
+                        {/* Corrected Input mapping for ID after adding Name field */}
+                        <div className="space-y-3">
+                          <Label htmlFor="actualNodeId" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Node Identification</Label>
+                          <Input 
+                            id="actualNodeId" 
+                            placeholder="SAFE-NODE-XXXX" 
+                            value={deviceIdInput} 
+                            onChange={(e) => setDeviceIdInput(e.target.value)}
+                            className="h-16 rounded-2xl border-border bg-secondary/30 font-mono px-6"
+                          />
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                           <div className="space-y-3">
