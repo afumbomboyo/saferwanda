@@ -1,9 +1,9 @@
-
 import type {Metadata} from 'next';
 import './globals.css';
 import Navbar from '@/components/navbar';
 import AIFloatingConcierge from '@/components/ai-floating-concierge';
 import { FirebaseClientProvider } from '@/firebase';
+import { Toaster } from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
   title: 'SafeRwanda | Advanced Security Solutions',
@@ -29,6 +29,7 @@ export default function RootLayout({
         <FirebaseClientProvider>
           <Navbar />
           {children}
+          <Toaster />
           <AIFloatingConcierge />
         </FirebaseClientProvider>
       </body>

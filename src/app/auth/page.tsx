@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { useAuth, useFirestore, useUser } from '@/firebase';
+import { useToast } from '@/hooks/use-toast';
 import { 
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword, 
@@ -20,6 +21,7 @@ function AuthPageContent() {
   const searchParams = useSearchParams();
   const { auth, db } = { auth: useAuth(), db: useFirestore() };
   const { user: currentUser, loading: userLoading } = useUser();
+  const { toast } = useToast();
   
   const isSignUpDefault = searchParams.get('signup') === 'true';
   const [isSignUp, setIsSignUp] = useState(isSignUpDefault);
@@ -145,9 +147,30 @@ function AuthPageContent() {
 
         localStorage.removeItem('temp_selected_services');
         localStorage.removeItem('temp_initial_service');
+        
+        toast({
+          title: "Account Created",
+          description: `Welcome to SafeRwanda, ${fullName}!`,
+        });
+
         router.replace(services.length > 0 ? '/dashboard?tab=staging' : '/onboarding');
       } else {
-        await signInWithEmailAndPassword(auth, email, password);
+        const res = await signInWithEmailAndPassword(auth, email, password);
+        
+        toast({
+          title: "Welcome Back",
+          description: `Successfully signed in as ${res.user.displayName || res.user.email}.`,
+        });
+
+        // For manual sign-in, we check if they are onboarded to decide where to redirect
+        const userDocRef = doc(db, 'users', res.user.uid);
+        const userDoc = await getDoc(userDocRef);
+        if (userDoc.exists()) {
+          const data = userDoc.data();
+          router.replace(data?.isOnboarded ? '/dashboard' : '/onboarding');
+        } else {
+          router.replace('/onboarding');
+        }
       }
     } catch (err: any) {
       setError({ message: getFriendlyErrorMessage(err), code: err.code });
