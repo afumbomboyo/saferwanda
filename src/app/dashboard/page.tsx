@@ -910,7 +910,7 @@ function DashboardContent() {
                                   <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  {[1, 2, 3, 4, 5].map(n => (
+                                  {Array.from({ length: 99 }, (_, i) => i + 1).map(n => (
                                     <SelectItem key={n} value={n.toString()}>{n}</SelectItem>
                                   ))}
                                 </SelectContent>
@@ -935,8 +935,10 @@ function DashboardContent() {
                           </div>
                           <div className="pt-4 border-t border-border flex justify-between items-center">
                             <div>
-                              <p className="text-[8px] font-black uppercase text-muted-foreground">Unit Price + Delivery</p>
-                              <p className="text-2xl font-black">{activeDeviceData.buyPrice}</p>
+                              <p className="text-[8px] font-black uppercase text-muted-foreground">Total Amount ({checkoutData.quantity} units)</p>
+                              <p className="text-2xl font-black">
+                                {(parseInt(activeDeviceData.buyPrice.replace(/[^0-9]/g, '')) * checkoutData.quantity).toLocaleString()} RWF
+                              </p>
                             </div>
                           </div>
                         </div>
@@ -1002,7 +1004,7 @@ function DashboardContent() {
                                   <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  {[1, 2, 3, 4, 5].map(n => (
+                                  {Array.from({ length: 99 }, (_, i) => i + 1).map(n => (
                                     <SelectItem key={n} value={n.toString()}>{n}</SelectItem>
                                   ))}
                                 </SelectContent>
@@ -1028,9 +1030,11 @@ function DashboardContent() {
                           <div className="pt-4 border-t border-border flex justify-between items-center">
                             <div>
                               <p className="text-[8px] font-black uppercase text-muted-foreground">
-                                {(selectedServiceId === 'elderly-care' || (selectedServiceId === 'child-protection' && childOption === 'option1')) ? 'Quarterly Payment' : 'Monthly Service Fee'}
+                                Total {(selectedServiceId === 'elderly-care' || (selectedServiceId === 'child-protection' && (childOption === 'option1' || childOption === 'option2'))) ? 'Quarterly' : 'Monthly'} Amount
                               </p>
-                              <p className="text-2xl font-black">{activeDeviceData.leasePrice}</p>
+                              <p className="text-2xl font-black">
+                                {(parseInt(activeDeviceData.leasePrice.replace(/[^0-9]/g, '')) * checkoutData.quantity).toLocaleString()} RWF
+                              </p>
                             </div>
                           </div>
                         </div>
@@ -1221,8 +1225,7 @@ function DashboardContent() {
                             {tempSelection === 'purchased' ? 'Total Amount' : 'Amount per Installment'}
                           </p>
                           <p className="text-3xl font-black text-primary">
-                            {/* Simple RWF multiplication for summary display */}
-                            {parseInt(activeDeviceData?.buyPrice.replace(/[^0-9]/g, '')) * checkoutData.quantity} RWF
+                            {(parseInt(activeDeviceData?.buyPrice.replace(/[^0-9]/g, '')) * checkoutData.quantity).toLocaleString()} RWF
                           </p>
                           {tempSelection === 'leased' && (selectedServiceId === 'elderly-care' || (selectedServiceId === 'child-protection' && (childOption === 'option1' || childOption === 'option2'))) && (
                             <p className="text-[10px] text-muted-foreground font-bold mt-1">Pay every 3 months</p>
