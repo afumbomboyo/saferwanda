@@ -525,8 +525,8 @@ function DashboardContent() {
                     Connect Device
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="sm:max-w-[520px] p-0 overflow-hidden border-border/50 bg-background shadow-2xl rounded-[2.5rem]">
-                  <div className="relative p-10 pt-12">
+                <DialogContent className="w-[95vw] sm:max-w-[520px] p-0 overflow-y-auto max-h-[95vh] border-border/50 bg-background shadow-2xl rounded-[2rem] sm:rounded-[2.5rem]">
+                  <div className="relative p-6 sm:p-10 pt-12">
                     <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-primary via-accent to-rwanda-green" />
                     <DialogHeader className="mb-8">
                       <div className="flex items-center gap-4">
