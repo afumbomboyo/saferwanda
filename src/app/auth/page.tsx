@@ -12,9 +12,6 @@ import { useAuth, useFirestore, useUser } from '@/firebase';
 import { 
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword, 
-  GoogleAuthProvider, 
-  signInWithRedirect, 
-  getRedirectResult,
   updateProfile
 } from 'firebase/auth';
 import { doc, setDoc, getDoc, updateDoc, arrayUnion, serverTimestamp } from 'firebase/firestore';
@@ -28,7 +25,6 @@ function AuthPageContent() {
   const isSignUpDefault = searchParams.get('signup') === 'true';
   const [isSignUp, setIsSignUp] = useState(isSignUpDefault);
   const [loading, setLoading] = useState(false);
-  const [checkingRedirect, setCheckingRedirect] = useState(true);
   const [error, setError] = useState<{ message: string; code?: string } | null>(null);
   
   const isPerformingManualAuth = useRef(false);
@@ -52,65 +48,9 @@ function AuthPageContent() {
     return services;
   };
 
-  // Handle Google Redirect Result
-  useEffect(() => {
-    if (!auth || !db) return;
-
-    const handleRedirect = async () => {
-      try {
-        const result = await getRedirectResult(auth);
-        
-        if (!result || !result.user) {
-          setCheckingRedirect(false);
-          return;
-        }
-
-        isPerformingManualAuth.current = true;
-        setLoading(true);
-
-        const user = result.user;
-        const userDocRef = doc(db, 'users', user.uid);
-        const userDoc = await getDoc(userDocRef);
-        const services = mergeSelections();
-
-        if (!userDoc.exists()) {
-          await setDoc(userDocRef, {
-            uid: user.uid,
-            fullName: user.displayName || 'Security Agent',
-            email: user.email || '',
-            servicesSelected: services,
-            isOnboarded: services.length > 0,
-            createdAt: serverTimestamp(),
-          });
-        } else {
-          if (services.length > 0) {
-            await updateDoc(userDocRef, {
-              servicesSelected: arrayUnion(...services),
-              isOnboarded: true
-            });
-          }
-        }
-
-        localStorage.removeItem('temp_selected_services');
-        localStorage.removeItem('temp_initial_service');
-        
-        router.replace('/dashboard?tab=staging');
-      } catch (err: any) {
-        console.error("Redirect Error:", err);
-        setError({ message: err.message, code: err.code });
-      } finally {
-        setLoading(false);
-        setCheckingRedirect(false);
-        isPerformingManualAuth.current = false;
-      }
-    };
-
-    handleRedirect();
-  }, [auth, db, router]);
-
   // Background Session Listener
   useEffect(() => {
-    if (checkingRedirect || userLoading || !currentUser || isPerformingManualAuth.current) return;
+    if (userLoading || !currentUser || isPerformingManualAuth.current) return;
 
     const checkUserStatus = async () => {
       if (!db) return;
@@ -136,7 +76,7 @@ function AuthPageContent() {
     };
 
     checkUserStatus();
-  }, [currentUser, userLoading, checkingRedirect, db, router]);
+  }, [currentUser, userLoading, db, router]);
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -167,7 +107,7 @@ function AuthPageContent() {
         router.replace(services.length > 0 ? '/dashboard?tab=staging' : '/onboarding');
       } else {
         await signInWithEmailAndPassword(auth, email, password);
-        // Note: The background listener above handles the redirect and service merging for existing users
+        // Note: The background listener above handles the redirect for existing users
       }
     } catch (err: any) {
       setError({ message: err.message, code: err.code });
@@ -175,30 +115,6 @@ function AuthPageContent() {
       setLoading(false);
     }
   };
-
-  const handleGoogleSignIn = async () => {
-    if (!auth) return;
-    setError(null);
-    setLoading(true);
-    isPerformingManualAuth.current = true;
-    const provider = new GoogleAuthProvider();
-    try {
-      await signInWithRedirect(auth, provider);
-    } catch (err: any) {
-      setError({ message: err.message, code: err.code });
-      setLoading(false);
-      isPerformingManualAuth.current = false;
-    }
-  };
-
-  if (checkingRedirect) {
-    return (
-      <div className="flex min-h-screen flex-col items-center justify-center p-4 bg-background">
-        <Loader2 className="w-10 h-10 animate-spin text-primary mb-4" />
-        <p className="text-sm font-bold uppercase tracking-widest text-muted-foreground animate-pulse">Synchronizing Security Protocols...</p>
-      </div>
-    );
-  }
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
@@ -290,39 +206,19 @@ function AuthPageContent() {
                   {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : (isSignUp ? 'Create Account' : 'Login')}
                 </Button>
               </form>
-
-              <div className="relative my-6">
-                <div className="absolute inset-0 flex items-center">
-                  <span className="w-full border-t border-border" />
-                </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-card px-2 text-muted-foreground font-bold tracking-widest">Or</span>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 gap-2">
-                <Button 
-                  type="button"
-                  variant="outline" 
-                  onClick={handleGoogleSignIn}
-                  disabled={loading}
-                  className="border-border hover:bg-primary/5 h-12 rounded-xl font-bold transition-all group"
-                >
-                  <svg className="w-5 h-5 mr-3 group-hover:scale-110 transition-transform" viewBox="0 0 24 24">
-                    <path fill="#EA4335" d="M23.49 12.27c0-.79-.07-1.54-.19-2.27h-11.3v4.51h6.47c-.29 1.48-1.14 2.73-2.4 3.58v3h3.86c2.26-2.09 3.56-5.17 3.56-8.82z"/>
-                    <path fill="#FBBC05" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.86-3c-1.08.72-2.45 1.16-4.07 1.16-3.13 0-5.78-2.11-6.73-4.96h-3.98v3.09c1.97 3.92 6.02 6.62 10.71 6.62z"/>
-                    <path fill="#34A853" d="M5.27 14.29c-.24-.72-.38-1.49-.38-2.29s.14-1.57.38-2.29v-3.09h-3.98c-.81 1.61-1.27 3.44-1.27 5.38s.46 3.77 1.27 5.38l3.98-3.09z"/>
-                    <path fill="#4285F4" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.44-3.44c-2.1-1.96-4.85-3.11-8.04-3.11-4.69 0-8.74 2.7-10.71 6.62l3.98 3.09c.95-2.85 3.6-4.96 6.73-4.96z"/>
-                  </svg>
-                  Continue with Google
-                </Button>
-              </div>
             </CardContent>
             <CardFooter className="flex flex-col gap-4">
               <p className="text-sm text-center text-muted-foreground">
                 {isSignUp ? 'Already registered?' : "New to the network?"}{' '}
                 <button 
-                  onClick={() => setIsSignUp(!isSignUp)}
+                  onClick={() => {
+                    if (isSignUp) {
+                      setIsSignUp(false);
+                      router.push('/auth');
+                    } else {
+                      router.push('/services?signup_hint=true');
+                    }
+                  }}
                   className="text-primary hover:underline font-bold"
                 >
                   {isSignUp ? 'Log In' : 'Sign Up'}

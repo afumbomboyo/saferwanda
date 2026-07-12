@@ -1,19 +1,31 @@
 
 "use client"
 
-import { useEffect } from 'react';
+import { useEffect, Suspense } from 'react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Shield, Heart, Flame, Home, Box, Eye, ArrowRight, Network } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useUser, useFirestore } from '@/firebase';
 import { doc, getDoc, updateDoc, arrayUnion } from 'firebase/firestore';
+import { useToast } from '@/hooks/use-toast';
 
-export default function ServicesPage() {
+function ServicesContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { user } = useUser();
   const db = useFirestore();
+  const { toast } = useToast();
+
+  useEffect(() => {
+    if (searchParams.get('signup_hint') === 'true') {
+      toast({
+        title: "Initialize Sign-Up",
+        description: "Please pick a service below to start creating your SafeRwanda security account.",
+      });
+    }
+  }, [searchParams, toast]);
 
   useEffect(() => {
     const observerOptions = {
@@ -193,5 +205,17 @@ export default function ServicesPage() {
         </div>
       </main>
     </div>
+  );
+}
+
+export default function ServicesPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    }>
+      <ServicesContent />
+    </Suspense>
   );
 }

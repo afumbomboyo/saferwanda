@@ -145,7 +145,7 @@ export default function Navbar() {
                 </DropdownMenu>
               ) : (
                 <Button asChild className="h-12 px-8 rounded-xl font-bold shadow-xl shadow-primary/20 bg-primary hover:bg-primary/90 transition-all active:scale-95">
-                  <Link href="/auth?signup=true">Get Started</Link>
+                  <Link href="/services">Get Started</Link>
                 </Button>
               )}
             </>
@@ -259,7 +259,7 @@ function MobileMenu({ navLinks, activePath, user, handleLogout }: { navLinks: an
               </Button>
             ) : (
               <Button asChild className="w-full h-14 rounded-xl font-bold shadow-2xl shadow-primary/30 bg-primary text-white text-lg">
-                <Link href="/auth?signup=true" onClick={() => setOpen(false)}>
+                <Link href="/services" onClick={() => setOpen(false)}>
                   Get Started
                 </Link>
               </Button>
