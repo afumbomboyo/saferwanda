@@ -193,7 +193,7 @@ const DEVICE_CATALOG: Record<string, any> = {
       "/images/ZoneWu-LoRa-CH4-Sensor-Label.png"
     ],
     buyPrice: "325,000 RWF",
-    leasePrice: "32,500 RWF",
+    leasePrice: "162,500 RWF",
     description: "Core Technical Specifications: Model LW302D-CH4 Target Gas Parameter: Methane (CH₄) / Natural Gas. The sensor employs a Non-Dispersive Infrared (NDIR) core design, enabling precise detection without oxygen reliance. Industrial-grade polycarbonate enclosure with anti-corrosion layer suitable for long-term harsh environments.",
     features: [
       "Zero Oxygen Reliance NDIR Detection",
@@ -1036,10 +1036,10 @@ function DashboardContent() {
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent pointer-events-none" />
                         <div className="absolute bottom-8 left-8 pointer-events-none">
                           <h4 className="text-3xl font-black text-white">
-                            {(selectedServiceId === 'elderly-care' || selectedServiceId === 'child-protection') ? 'Lease to Own' : 'Rent Hardware'}
+                            {(selectedServiceId === 'elderly-care' || selectedServiceId === 'child-protection' || selectedServiceId === 'fire-prevention') ? 'Lease to Own' : 'Rent Hardware'}
                           </h4>
                           <p className="text-white/60 text-xs font-bold uppercase tracking-widest">
-                            {(selectedServiceId === 'elderly-care' || selectedServiceId === 'child-protection') ? 'Quarterly Installments' : 'Flexible Monthly Leasing'}
+                            {(selectedServiceId === 'elderly-care' || selectedServiceId === 'child-protection' || selectedServiceId === 'fire-prevention') ? 'Quarterly Installments' : 'Flexible Monthly Leasing'}
                           </p>
                         </div>
                         <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -1081,7 +1081,7 @@ function DashboardContent() {
                           </div>
                         )}
 
-                        {(selectedServiceId === 'elderly-care' || (selectedServiceId === 'child-protection')) && (
+                        {(selectedServiceId === 'elderly-care' || selectedServiceId === 'child-protection' || selectedServiceId === 'fire-prevention') && (
                           <div className="p-4 rounded-2xl bg-primary/5 border border-primary/10 text-xs font-bold text-primary leading-relaxed">
                             It's a lease with option to buy. The price is {activeDeviceData.leasePrice} per 3 months for a year (4 installments), after which you own the device.
                           </div>
@@ -1125,7 +1125,7 @@ function DashboardContent() {
                           <div className="pt-4 border-t border-border flex justify-between items-center">
                             <div>
                               <p className="text-[8px] font-black uppercase text-muted-foreground">
-                                Total {(selectedServiceId === 'elderly-care' || (selectedServiceId === 'child-protection' && (childOption === 'option1' || childOption === 'option2'))) ? 'Quarterly' : 'Monthly'} Amount
+                                Total {(selectedServiceId === 'elderly-care' || selectedServiceId === 'fire-prevention' || (selectedServiceId === 'child-protection' && (childOption === 'option1' || childOption === 'option2'))) ? 'Quarterly' : 'Monthly'} Amount
                               </p>
                               <p className="text-2xl font-black">
                                 {(parseInt(activeDeviceData.leasePrice.replace(/[^0-9]/g, '')) * checkoutData.quantity).toLocaleString()} RWF
@@ -1310,7 +1310,7 @@ function DashboardContent() {
                           <p className="text-sm font-bold">
                             {tempSelection === 'purchased' 
                               ? 'Full ownership upon delivery' 
-                              : (selectedServiceId === 'elderly-care' || (selectedServiceId === 'child-protection' && (childOption === 'option1' || childOption === 'option2')))
+                              : (selectedServiceId === 'elderly-care' || selectedServiceId === 'fire-prevention' || (selectedServiceId === 'child-protection' && (childOption === 'option1' || childOption === 'option2')))
                                 ? '4 Installments (1 Year Plan)' 
                                 : 'Monthly Subscription'}
                           </p>
@@ -1322,7 +1322,7 @@ function DashboardContent() {
                           <p className="text-3xl font-black text-primary">
                             {(parseInt(activeDeviceData?.buyPrice.replace(/[^0-9]/g, '')) * checkoutData.quantity).toLocaleString()} RWF
                           </p>
-                          {tempSelection === 'leased' && (selectedServiceId === 'elderly-care' || (selectedServiceId === 'child-protection' && (childOption === 'option1' || childOption === 'option2'))) && (
+                          {tempSelection === 'leased' && (selectedServiceId === 'elderly-care' || selectedServiceId === 'fire-prevention' || (selectedServiceId === 'child-protection' && (childOption === 'option1' || childOption === 'option2'))) && (
                             <p className="text-[10px] text-muted-foreground font-bold mt-1">Pay every 3 months</p>
                           )}
                         </div>
