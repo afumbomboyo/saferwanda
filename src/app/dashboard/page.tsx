@@ -630,7 +630,7 @@ function DashboardContent() {
                             id="actualNodeId" 
                             placeholder="SAFE-NODE-XXXX" 
                             value={deviceIdInput} 
-                            onChange={(e) => setDeviceNameInput(e.target.value)}
+                            onChange={(e) => setDeviceIdInput(e.target.value)}
                             className="h-16 rounded-2xl border-border bg-secondary/30 font-mono px-6"
                           />
                         </div>
@@ -942,8 +942,8 @@ function DashboardContent() {
                           </CarouselContent>
                           {activeDeviceData.images?.length > 1 && (
                             <>
-                              <CarouselPrevious className="left-4" onClick={(e) => e.stopPropagation()} />
-                              <CarouselNext className="right-4" onClick={(e) => e.stopPropagation()} />
+                              <CarouselPrevious className="left-4" />
+                              <CarouselNext className="right-4" />
                             </>
                           )}
                         </Carousel>
@@ -1067,8 +1067,8 @@ function DashboardContent() {
                           </CarouselContent>
                           {activeDeviceData.images?.length > 1 && (
                             <>
-                              <CarouselPrevious className="left-4" onClick={(e) => e.stopPropagation()} />
-                              <CarouselNext className="right-4" onClick={(e) => e.stopPropagation()} />
+                              <CarouselPrevious className="left-4" />
+                              <CarouselNext className="right-4" />
                             </>
                           )}
                         </Carousel>
@@ -1519,11 +1519,6 @@ function DashboardContent() {
                   )}
                 </Carousel>
               </div>
-              <DialogTrigger asChild>
-                <Button variant="ghost" size="icon" className="absolute right-4 top-4 text-white hover:bg-white/10" onClick={() => setIsPreviewOpen(false)}>
-                  <X className="h-8 w-8" />
-                </Button>
-              </DialogTrigger>
             </DialogContent>
           </Dialog>
 
