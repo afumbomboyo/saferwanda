@@ -1319,7 +1319,7 @@ function DashboardContent() {
                         <div>
                           <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">Service Tier</p>
                           <p className="text-xl font-black capitalize">
-                            {checkoutData.quantity}x {selectedServiceId?.replace('-', ' ')} {childOption === 'option1' ? '(Standard)' : childOption === 'option2' ? '(Advanced)' : ''}
+                            {checkoutData.quantity}x {selectedServiceId?.replace('-', ' ')} {selectedServiceId === 'child-protection' && childOption === 'option1' ? '(Standard)' : childOption === 'option2' ? '(Advanced)' : ''}
                           </p>
                           <p className="text-[10px] font-bold text-primary mt-1">Color: {checkoutData.color}</p>
                         </div>
