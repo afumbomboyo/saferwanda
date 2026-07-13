@@ -89,7 +89,7 @@ export default function Home() {
               src="/images/SafeRwanda-Hero-BG.png"
               alt="SafeRwanda Vision"
               fill
-              className="object-cover opacity-60 scale-105"
+              className="object-cover opacity-50 scale-105"
               priority
             />
           )}
