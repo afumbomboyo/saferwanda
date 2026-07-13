@@ -710,7 +710,7 @@ function DashboardContent() {
                         { label: 'Health', val: profile?.deviceId ? 'Active' : 'Offline', icon: Activity, color: 'text-accent' },
                         { label: 'Alerts', val: '0', icon: Bell, color: 'text-muted-foreground' }
                       ].map((stat, i) => (
-                        <div key={i} className="bg-secondary/20 p-6 rounded-[2rem] border border-border/50 text-center">
+                        <div key={i} className="bg-secondary/20 p-6 rounded-2xl border border-border/50 text-center">
                           <stat.icon className={cn("w-5 h-5 mx-auto mb-3 opacity-60", stat.color)} />
                           <div className="text-3xl font-black">{stat.val}</div>
                           <div className="text-[9px] uppercase font-black tracking-widest text-muted-foreground mt-1">{stat.label}</div>
@@ -773,6 +773,9 @@ function DashboardContent() {
                             <Button 
                               onClick={() => {
                                 setSelectedServiceId(serviceId);
+                                // Reset common step states
+                                setChildOption(null);
+                                setCheckoutData(prev => ({ ...prev, color: '' }));
                                 setStagingStep('instructions');
                               }}
                               className="w-full rounded-xl bg-primary/10 text-primary hover:bg-primary hover:text-white border-none font-black text-[10px] uppercase tracking-widest h-12"
@@ -870,6 +873,7 @@ function DashboardContent() {
                       className="group cursor-pointer hover:border-primary transition-all p-10 rounded-[2.5rem] bg-card/60 border-2 border-border shadow-xl flex flex-col justify-between"
                       onClick={() => {
                         setChildOption('option1');
+                        setCheckoutData(prev => ({ ...prev, color: '' })); // Reset color on option switch
                         setStagingStep('get-device');
                       }}
                     >
@@ -889,6 +893,7 @@ function DashboardContent() {
                       className="group cursor-pointer hover:border-accent transition-all p-10 rounded-[2.5rem] bg-card/60 border-2 border-border shadow-xl flex flex-col justify-between"
                       onClick={() => {
                         setChildOption('option2');
+                        setCheckoutData(prev => ({ ...prev, color: '' })); // Reset color on option switch
                         setStagingStep('get-device');
                       }}
                     >
@@ -1366,6 +1371,7 @@ function DashboardContent() {
                           !checkoutData.province || 
                           !checkoutData.district || 
                           !checkoutData.street ||
+                          !checkoutData.color ||
                           !!locationError ||
                           isLocating
                         }
