@@ -33,7 +33,8 @@ import {
   Heart,
   Signal,
   Tag,
-  Maximize2
+  Maximize2,
+  X
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
@@ -226,15 +227,39 @@ const DEVICE_CATALOG: Record<string, any> = {
     buyPrice: "55,000 RWF",
     leasePrice: "5,000 RWF",
     description: "A secure smart lock for your main gate and doors.",
-    features: ["Remote Unlock", "Entry Logs", "Tamper Alerts", "Bluetooth Connectivity"]
+    features: ["Remote Unlock", "Entry Logs", "Tamper Alerts", "Bluetooth Connectivity"],
+    specifications: {
+      "Material": "Zinc Alloy",
+      "Access": "Fingerprint, Code, App, Key",
+      "Connectivity": "Bluetooth & Wi-Fi Gateway",
+      "Battery": "4 AA Alkaline",
+      "Emergency": "Micro-USB Power Jump"
+    }
   },
   "asset-protection": {
-    name: "SafeTrack Asset",
+    name: "SafeTrack Asset Pro (Milesight Architecture)",
     images: ["https://picsum.photos/seed/asset1/600/400"],
-    buyPrice: "60,000 RWF",
-    leasePrice: "5,500 RWF",
-    description: "A heavy-duty GPS tracker for vehicles and high-value equipment.",
-    features: ["4G LTE Tracking", "Movement History", "Magnetic Mount", "Long Battery Life"]
+    buyPrice: "185,000 RWF",
+    leasePrice: "92,500 RWF",
+    description: "A professional-grade asset tracking solution featuring dual-technology positioning (GNSS + Wi-Fi MAC scanning) and an ultra-long 15-year battery life. Outfitted with a physical industrial anti-theft tamper plunger and three flexible operational reporting modes. Designed for heavy-duty protection of vehicles and high-value equipment in any environment.",
+    features: [
+      "Dual-Technology Positioning (GNSS + Wi-Fi Scanning)",
+      "Ultra-Long 15-Year Battery Lifespan",
+      "Industrial Security Anti-Theft Plunger",
+      "Flexible Reporting Modes (Motion, Timing, Periodic)",
+      "Intelligent Edge Data Resiliency (1,000 Record Cache)",
+      "Integrated 3-axis Accelerometer & Temp Sensor"
+    ],
+    specifications: {
+      "Wireless Connectivity": "Native LoRaWAN (Class A)",
+      "Local Interface": "NFC & Bluetooth 5.3",
+      "Positioning Accuracy": "< 2.5 meters CEP",
+      "Internal Power Bank": "4 × 2700 mAh Li-SOCl₂ replaceable",
+      "Physical Form Factor": "110 mm × 70 mm × 30 mm",
+      "Net Weight": "202 grams",
+      "Rugged Build": "IP67 Waterproof / IK09 Impact",
+      "Operating Thresholds": "-30°C to +70°C"
+    }
   },
   "neighborhood-surveillance": {
     name: "SafeMesh Hub",
@@ -242,7 +267,14 @@ const DEVICE_CATALOG: Record<string, any> = {
     buyPrice: "75,000 RWF",
     leasePrice: "7,000 RWF",
     description: "A security hub that connects you with your neighbors' safety network.",
-    features: ["Community Alerts", "Camera Integration", "Emergency Broadcast", "Night Vision Support"]
+    features: ["Community Alerts", "Camera Integration", "Emergency Broadcast", "Night Vision Support"],
+    specifications: {
+      "Connectivity": "LoRaMesh & Ethernet",
+      "Camera": "1080p HD Wide Angle",
+      "Storage": "64GB Internal Cache",
+      "Range": "Up to 2km LoS",
+      "Nodes": "Supports 50 concurrent links"
+    }
   },
   "smart-community": {
     name: "SafeCity Node",
@@ -250,7 +282,14 @@ const DEVICE_CATALOG: Record<string, any> = {
     buyPrice: "85,000 RWF",
     leasePrice: "8,000 RWF",
     description: "A community device for smart street lighting and hazard tracking.",
-    features: ["Streetlight Control", "Waste Analytics", "Environmental Sensors", "Mesh Network"]
+    features: ["Streetlight Control", "Waste Analytics", "Environmental Sensors", "Mesh Network"],
+    specifications: {
+      "Sensors": "CO2, Humidity, Light Level",
+      "Connectivity": "Cellular 4G & LoRaWAN",
+      "Power": "Solar-ready + Battery",
+      "Enclosure": "Aluminium NEMA-4X",
+      "Integration": "OpenAPI ready"
+    }
   }
 };
 
@@ -591,7 +630,7 @@ function DashboardContent() {
                             id="actualNodeId" 
                             placeholder="SAFE-NODE-XXXX" 
                             value={deviceIdInput} 
-                            onChange={(e) => setDeviceIdInput(e.target.value)}
+                            onChange={(e) => setDeviceNameInput(e.target.value)}
                             className="h-16 rounded-2xl border-border bg-secondary/30 font-mono px-6"
                           />
                         </div>
@@ -903,8 +942,8 @@ function DashboardContent() {
                           </CarouselContent>
                           {activeDeviceData.images?.length > 1 && (
                             <>
-                              <CarouselPrevious className="left-4" />
-                              <CarouselNext className="right-4" />
+                              <CarouselPrevious className="left-4" onClick={(e) => e.stopPropagation()} />
+                              <CarouselNext className="right-4" onClick={(e) => e.stopPropagation()} />
                             </>
                           )}
                         </Carousel>
@@ -939,7 +978,7 @@ function DashboardContent() {
                         {activeDeviceData.specifications && (
                           <div className="space-y-3 bg-secondary/20 p-6 rounded-2xl">
                             <p className="text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-2">
-                              <Info className="w-3 h-3" /> Technical Specifications
+                              <span className="font-bold">TECHNICAL SPECIFICATIONS</span>
                             </p>
                             <div className="grid grid-cols-2 gap-x-4 gap-y-1">
                               {Object.entries(activeDeviceData.specifications).map(([k, v]: [any, any]) => (
@@ -1028,19 +1067,15 @@ function DashboardContent() {
                           </CarouselContent>
                           {activeDeviceData.images?.length > 1 && (
                             <>
-                              <CarouselPrevious className="left-4" />
-                              <CarouselNext className="right-4" />
+                              <CarouselPrevious className="left-4" onClick={(e) => e.stopPropagation()} />
+                              <CarouselNext className="right-4" onClick={(e) => e.stopPropagation()} />
                             </>
                           )}
                         </Carousel>
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent pointer-events-none" />
                         <div className="absolute bottom-8 left-8 pointer-events-none">
-                          <h4 className="text-3xl font-black text-white">
-                            {(selectedServiceId === 'elderly-care' || selectedServiceId === 'child-protection' || selectedServiceId === 'fire-prevention') ? 'Lease to Own' : 'Rent Hardware'}
-                          </h4>
-                          <p className="text-white/60 text-xs font-bold uppercase tracking-widest">
-                            {(selectedServiceId === 'elderly-care' || selectedServiceId === 'child-protection' || selectedServiceId === 'fire-prevention') ? 'Quarterly Installments' : 'Flexible Monthly Leasing'}
-                          </p>
+                          <h4 className="text-3xl font-black text-white">Lease to Own</h4>
+                          <p className="text-white/60 text-xs font-bold uppercase tracking-widest">Quarterly Installments</p>
                         </div>
                         <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
                           <div className="bg-black/50 backdrop-blur-md p-2 rounded-full text-white">
@@ -1068,7 +1103,7 @@ function DashboardContent() {
                         {activeDeviceData.specifications && (
                           <div className="space-y-3 bg-secondary/20 p-6 rounded-2xl">
                             <p className="text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-2">
-                              <Info className="w-3 h-3" /> Technical Specifications
+                              <span className="font-bold">TECHNICAL SPECIFICATIONS</span>
                             </p>
                             <div className="grid grid-cols-2 gap-x-4 gap-y-1">
                               {Object.entries(activeDeviceData.specifications).map(([k, v]: [any, any]) => (
@@ -1081,11 +1116,9 @@ function DashboardContent() {
                           </div>
                         )}
 
-                        {(selectedServiceId === 'elderly-care' || selectedServiceId === 'child-protection' || selectedServiceId === 'fire-prevention') && (
-                          <div className="p-4 rounded-2xl bg-primary/5 border border-primary/10 text-xs font-bold text-primary leading-relaxed">
-                            It's a lease with option to buy. The price is {activeDeviceData.leasePrice} per 3 months for a year (4 installments), after which you own the device.
-                          </div>
-                        )}
+                        <div className="p-4 rounded-2xl bg-primary/5 border border-primary/10 text-xs font-bold text-primary leading-relaxed">
+                          It's a lease with option to buy. The price is {activeDeviceData.leasePrice} per 3 months for a year (4 installments), after which you own the device.
+                        </div>
 
                         <div className="space-y-4 p-6 rounded-3xl bg-background border border-border">
                           <div className="grid grid-cols-2 gap-4">
@@ -1124,9 +1157,7 @@ function DashboardContent() {
                           </div>
                           <div className="pt-4 border-t border-border flex justify-between items-center">
                             <div>
-                              <p className="text-[8px] font-black uppercase text-muted-foreground">
-                                Total {(selectedServiceId === 'elderly-care' || selectedServiceId === 'fire-prevention' || (selectedServiceId === 'child-protection' && (childOption === 'option1' || childOption === 'option2'))) ? 'Quarterly' : 'Monthly'} Amount
-                              </p>
+                              <p className="text-[8px] font-black uppercase text-muted-foreground">Total Quarterly Amount ({checkoutData.quantity} units)</p>
                               <p className="text-2xl font-black">
                                 {(parseInt(activeDeviceData.leasePrice.replace(/[^0-9]/g, '')) * checkoutData.quantity).toLocaleString()} RWF
                               </p>
@@ -1140,7 +1171,7 @@ function DashboardContent() {
                           disabled={!checkoutData.color}
                           className="w-full h-16 rounded-2xl font-black uppercase tracking-widest text-sm"
                         >
-                          {(selectedServiceId === 'elderly-care' || (selectedServiceId === 'child-protection' && childOption === 'option1')) ? 'Start Lease to Own' : 'Activate Lease'}
+                          Start Lease to Own
                         </Button>
                       </CardContent>
                     </Card>
@@ -1308,11 +1339,7 @@ function DashboardContent() {
                             {tempSelection === 'purchased' ? 'One-time Payment' : 'Payment Schedule'}
                           </p>
                           <p className="text-sm font-bold">
-                            {tempSelection === 'purchased' 
-                              ? 'Full ownership upon delivery' 
-                              : (selectedServiceId === 'elderly-care' || selectedServiceId === 'fire-prevention' || (selectedServiceId === 'child-protection' && (childOption === 'option1' || childOption === 'option2')))
-                                ? '4 Installments (1 Year Plan)' 
-                                : 'Monthly Subscription'}
+                            {tempSelection === 'purchased' ? 'Full ownership upon delivery' : '4 Installments (1 Year Plan)'}
                           </p>
                         </div>
                         <div className="text-center sm:text-right">
@@ -1322,7 +1349,7 @@ function DashboardContent() {
                           <p className="text-3xl font-black text-primary">
                             {(parseInt((tempSelection === 'purchased' ? activeDeviceData?.buyPrice : activeDeviceData?.leasePrice).replace(/[^0-9]/g, '')) * checkoutData.quantity).toLocaleString()} RWF
                           </p>
-                          {tempSelection === 'leased' && (selectedServiceId === 'elderly-care' || selectedServiceId === 'fire-prevention' || (selectedServiceId === 'child-protection' && (childOption === 'option1' || childOption === 'option2'))) && (
+                          {tempSelection === 'leased' && (
                             <p className="text-[10px] text-muted-foreground font-bold mt-1">Pay every 3 months</p>
                           )}
                         </div>
@@ -1492,6 +1519,11 @@ function DashboardContent() {
                   )}
                 </Carousel>
               </div>
+              <DialogTrigger asChild>
+                <Button variant="ghost" size="icon" className="absolute right-4 top-4 text-white hover:bg-white/10" onClick={() => setIsPreviewOpen(false)}>
+                  <X className="h-8 w-8" />
+                </Button>
+              </DialogTrigger>
             </DialogContent>
           </Dialog>
 
