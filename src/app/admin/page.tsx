@@ -1,10 +1,9 @@
-
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
 import { useUser, useFirestore, useCollection, useDoc } from '@/firebase';
 import { useRouter } from 'next/navigation';
-import { collection, doc, query, orderBy, updateDoc } from 'firebase/firestore';
+import { collection, doc, query, orderBy } from 'firebase/firestore';
 import { 
   Users, 
   Shield, 
@@ -17,8 +16,7 @@ import {
   BarChart3,
   AlertCircle,
   Loader2,
-  Lock,
-  UserPlus
+  Lock
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -34,15 +32,12 @@ import {
 } from '@/components/ui/table';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
-import { useToast } from '@/hooks/use-toast';
 
 export default function AdminDashboardPage() {
   const router = useRouter();
-  const { toast } = useToast();
   const { user, loading: userLoading } = useUser();
   const db = useFirestore();
   const [searchTerm, setSearchTerm] = useState('');
-  const [promoting, setPromoting] = useState(false);
 
   // Check admin status
   const profileRef = useMemo(() => (user && db ? doc(db, 'users', user.uid) : null), [user, db]);
@@ -57,28 +52,6 @@ export default function AdminDashboardPage() {
       router.replace('/auth');
     }
   }, [user, userLoading, router]);
-
-  const handlePromoteToAdmin = async () => {
-    if (!user || !db) return;
-    setPromoting(true);
-    try {
-      const userDocRef = doc(db, 'users', user.uid);
-      await updateDoc(userDocRef, { isAdmin: true });
-      toast({
-        title: "Administrative Access Granted",
-        description: "You now have full platform oversight privileges.",
-      });
-    } catch (err) {
-      console.error("Promotion error:", err);
-      toast({
-        variant: "destructive",
-        title: "Access Request Failed",
-        description: "Could not update your permissions at this time.",
-      });
-    } finally {
-      setPromoting(false);
-    }
-  };
 
   const filteredUsers = useMemo(() => {
     if (!allUsers) return [];
@@ -114,18 +87,10 @@ export default function AdminDashboardPage() {
           <Lock className="w-10 h-10 text-destructive" />
         </div>
         <h1 className="text-3xl font-black mb-2">Access Restricted</h1>
-        <p className="text-muted-foreground mb-8 max-w-md mx-auto">You do not have administrative privileges. For development testing, you can promote your account below.</p>
-        <div className="flex flex-col gap-3">
-          <Button 
-            onClick={handlePromoteToAdmin} 
-            className="rounded-xl font-bold bg-destructive hover:bg-destructive/90 px-8 h-12 gap-2"
-            disabled={promoting}
-          >
-            {promoting ? <Loader2 className="w-4 h-4 animate-spin" /> : <UserPlus className="w-4 h-4" />}
-            Claim Administrative Privileges
-          </Button>
-          <Button variant="ghost" onClick={() => router.push('/dashboard')} className="rounded-xl font-bold">Return to Dashboard</Button>
-        </div>
+        <p className="text-muted-foreground mb-8 max-w-md mx-auto">This area is reserved for system administrators. Please contact support if you believe this is an error.</p>
+        <Button variant="outline" onClick={() => router.push('/dashboard')} className="rounded-xl font-bold h-12 px-8">
+          Return to Dashboard
+        </Button>
       </div>
     );
   }
