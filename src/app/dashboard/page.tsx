@@ -34,7 +34,11 @@ import {
   Signal,
   Tag,
   Maximize2,
-  X
+  X,
+  Cpu,
+  ArrowRight,
+  Globe,
+  Database
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
@@ -634,7 +638,7 @@ function DashboardContent() {
                             id="actualNodeId" 
                             placeholder="SAFE-NODE-XXXX" 
                             value={deviceIdInput} 
-                            onChange={(e) => setDeviceIdInput(e.target.value)}
+                            onChange={(e) => setDeviceNameInput(e.target.value)}
                             className="h-16 rounded-2xl border-border bg-secondary/30 font-mono px-6"
                           />
                         </div>
@@ -699,47 +703,56 @@ function DashboardContent() {
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="overview" className="space-y-8 animate-reveal outline-none">
+            <TabsContent value="overview" className="space-y-12 animate-reveal outline-none">
+              {/* Stats & Next Step Row */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <Card className="md:col-span-2 bg-card/40 border-border rounded-[2.5rem] shadow-2xl shadow-black/5">
-                  <CardHeader className="p-8 pb-4">
-                    <CardTitle className="text-2xl font-black">Status</CardTitle>
-                    <CardDescription>A live look at your security network.</CardDescription>
+                <Card className="md:col-span-2 bg-card/40 border-border rounded-[2.5rem] shadow-2xl shadow-black/5 overflow-hidden">
+                  <CardHeader className="p-10 pb-4">
+                    <CardTitle className="text-2xl font-black flex items-center gap-3">
+                      <Activity className="w-6 h-6 text-primary" />
+                      Live Status Grid
+                    </CardTitle>
+                    <CardDescription>Active telemetry from your secured locations.</CardDescription>
                   </CardHeader>
-                  <CardContent className="p-8 pt-0">
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-4">
+                  <CardContent className="p-10 pt-0">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6">
                       {[
-                        { label: 'Devices', val: profile?.deviceId ? '01' : '00', icon: Smartphone, color: 'text-primary' },
-                        { label: 'Signal', val: profile?.deviceId ? '98%' : '0%', icon: Wifi, color: 'text-rwanda-green' },
-                        { label: 'Health', val: profile?.deviceId ? 'Active' : 'Offline', icon: Activity, color: 'text-accent' },
-                        { label: 'Alerts', val: '0', icon: Bell, color: 'text-muted-foreground' }
+                        { label: 'Active Nodes', val: profile?.deviceId ? '01' : '00', icon: Smartphone, color: 'text-primary' },
+                        { label: 'Signal Optic', val: profile?.deviceId ? '98%' : '0%', icon: Wifi, color: 'text-rwanda-green' },
+                        { label: 'Grid Health', val: profile?.deviceId ? 'Secure' : 'Inactive', icon: Shield, color: 'text-accent' },
+                        { label: 'Pending Alerts', val: '0', icon: Bell, color: 'text-muted-foreground' }
                       ].map((stat, i) => (
-                        <div key={i} className="bg-secondary/20 p-6 rounded-2xl border border-border/50 text-center">
-                          <stat.icon className={cn("w-5 h-5 mx-auto mb-3 opacity-60", stat.color)} />
-                          <div className="text-3xl font-black">{stat.val}</div>
-                          <div className="text-[9px] uppercase font-black tracking-widest text-muted-foreground mt-1">{stat.label}</div>
+                        <div key={i} className="bg-secondary/20 p-8 rounded-[2rem] border border-border/50 text-center flex flex-col items-center justify-center group hover:bg-primary/5 transition-colors">
+                          <stat.icon className={cn("w-6 h-6 mb-4 opacity-40 group-hover:opacity-100 transition-opacity", stat.color)} />
+                          <div className="text-4xl font-black leading-none">{stat.val}</div>
+                          <div className="text-[8px] uppercase font-black tracking-[0.2em] text-muted-foreground mt-3">{stat.label}</div>
                         </div>
                       ))}
                     </div>
                   </CardContent>
                 </Card>
 
-                <Card className="bg-gradient-to-br from-primary/10 to-transparent border-primary/20 rounded-[2.5rem] flex flex-col">
-                  <CardHeader className="p-8 pb-4">
-                    <div className="flex items-center gap-2">
-                      <Target className="w-5 h-5 text-primary" />
-                      <span className="text-xl font-black">Next Step</span>
+                <Card className="bg-gradient-to-br from-primary/10 via-background to-transparent border-primary/20 rounded-[2.5rem] flex flex-col shadow-xl overflow-hidden relative">
+                  <div className="absolute top-0 right-0 p-8 opacity-5">
+                    <Target className="w-32 h-32" />
+                  </div>
+                  <CardHeader className="p-10 pb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                        <Target className="w-5 h-5 text-primary" />
+                      </div>
+                      <span className="text-xl font-black">Strategic Goal</span>
                     </div>
                   </CardHeader>
-                  <CardContent className="p-8 pt-0 flex-grow flex flex-col justify-between">
+                  <CardContent className="p-10 pt-0 flex-grow flex flex-col justify-between relative z-10">
                     <p className="text-sm text-muted-foreground font-light leading-relaxed">
                       {!profile?.purchaseStatus || profile?.purchaseStatus === 'none'
-                        ? "You haven't set up your devices yet. Go to 'My Services' to start the process."
+                        ? "Your hardware grid is uninitialized. Start your deployment by selecting a service from the 'My Services' tab."
                         : !profile?.deviceId 
-                          ? "Your hardware is being prepared. Once it arrives, use 'Connect Device' at the top."
+                          ? "Node logistics confirmed. Once your hardware arrives, activate the connection using the 'Connect Device' protocol."
                           : !profile?.subscriptionActive 
-                            ? "Your device is connected! Now choose a plan to start the 24/7 monitoring."
-                            : "Everything is set up! We are monitoring your safety around the clock."}
+                            ? "Hardware link verified. Choose an operational monitoring plan to activate 24/7 central oversight."
+                            : "Grid fully operational. Our strategic monitoring team is maintaining 24/7 oversight of your assets."}
                     </p>
                     <Button 
                       onClick={() => {
@@ -747,12 +760,106 @@ function DashboardContent() {
                         else if (!profile?.deviceId) setIsRegisterOpen(true);
                         else setIsSubscriptionOpen(true);
                       }}
-                      className="w-full mt-6 rounded-2xl h-14 font-black uppercase tracking-widest text-xs bg-primary"
+                      className="w-full mt-10 rounded-2xl h-16 font-black uppercase tracking-widest text-xs bg-primary shadow-xl shadow-primary/20"
                     >
-                      {(!profile?.purchaseStatus || profile.purchaseStatus === 'none') ? 'Go to My Services' : profile?.deviceId ? 'Activate Monitoring' : 'Connect Device'}
+                      {(!profile?.purchaseStatus || profile.purchaseStatus === 'none') ? 'Initialize Deployment' : profile?.deviceId ? 'Activate Guard' : 'Sync Hardware Node'}
+                      <ArrowRight className="w-4 h-4 ml-2" />
                     </Button>
                   </CardContent>
                 </Card>
+              </div>
+
+              {/* Connected Devices Grid (Across) */}
+              <div className="space-y-8">
+                <div className="flex items-center justify-between px-2">
+                  <div>
+                    <h3 className="text-3xl font-black tracking-tight">Strategic Node Network</h3>
+                    <p className="text-muted-foreground text-sm font-light mt-1">Global hardware distribution linked to your ID.</p>
+                  </div>
+                  <Button variant="outline" className="rounded-xl border-dashed border-primary/40 text-primary font-bold h-12" onClick={() => setIsRegisterOpen(true)}>
+                    <Plus className="w-4 h-4 mr-2" /> Add Security Node
+                  </Button>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {profile?.deviceId ? (
+                    <Card className="rounded-[2.5rem] border-border bg-card/60 shadow-xl overflow-hidden group hover:border-primary transition-all">
+                      <div className="h-48 bg-secondary/30 relative flex items-center justify-center">
+                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/5 via-transparent to-transparent" />
+                        <Smartphone className="w-20 h-20 text-primary opacity-20 group-hover:scale-110 transition-transform" />
+                        <div className="absolute top-6 right-6">
+                          <Badge className="bg-rwanda-green border-none text-[8px] font-black tracking-widest uppercase">ACTIVE_NODE</Badge>
+                        </div>
+                      </div>
+                      <CardContent className="p-10 space-y-6">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <h4 className="text-2xl font-black">{profile.deviceName || 'Unnamed Node'}</h4>
+                            <p className="text-xs font-mono font-bold text-primary opacity-60 mt-1">{profile.deviceId}</p>
+                          </div>
+                          <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center">
+                            <Signal className="w-6 h-6 text-primary" />
+                          </div>
+                        </div>
+                        
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="bg-background/40 p-4 rounded-2xl border border-border">
+                            <p className="text-[8px] font-black uppercase text-muted-foreground mb-1">Grid Health</p>
+                            <div className="flex items-center gap-2">
+                              <CheckCircle2 className="w-3 h-3 text-rwanda-green" />
+                              <span className="text-xs font-bold">Excellent</span>
+                            </div>
+                          </div>
+                          <div className="bg-background/40 p-4 rounded-2xl border border-border">
+                            <p className="text-[8px] font-black uppercase text-muted-foreground mb-1">Signal Link</p>
+                            <div className="flex items-center gap-2">
+                              <Wifi className="w-3 h-3 text-primary" />
+                              <span className="text-xs font-bold">98% Link</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="pt-4 border-t border-border flex justify-between items-center text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+                          <div className="flex items-center gap-1.5">
+                            <Globe className="w-3.5 h-3.5 opacity-40" />
+                            Global Grid
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <Database className="w-3.5 h-3.5 opacity-40" />
+                            Telemetry Sync
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ) : (
+                    <div className="col-span-full py-24 border-2 border-dashed border-border rounded-[3rem] flex flex-col items-center justify-center text-center bg-secondary/5">
+                      <div className="w-20 h-20 rounded-3xl bg-secondary flex items-center justify-center mb-6">
+                        <Cpu className="w-10 h-10 text-muted-foreground opacity-20" />
+                      </div>
+                      <h4 className="text-2xl font-black mb-2">No Active Nodes Found</h4>
+                      <p className="text-sm text-muted-foreground max-w-sm mb-8 font-light">
+                        Linked hardware nodes will appear here once registered. Initialize your strategic grid by connecting your first device.
+                      </p>
+                      <Button onClick={() => setIsRegisterOpen(true)} className="rounded-2xl h-14 px-10 font-black bg-primary">
+                        Initialize First Node
+                      </Button>
+                    </div>
+                  )}
+
+                  {/* Empty Slot Placeholder */}
+                  {profile?.deviceId && (
+                    <button 
+                      onClick={() => setIsRegisterOpen(true)}
+                      className="rounded-[2.5rem] border-2 border-dashed border-border flex flex-col items-center justify-center p-12 group hover:border-primary/50 hover:bg-primary/5 transition-all text-center"
+                    >
+                      <div className="w-14 h-14 rounded-2xl bg-secondary flex items-center justify-center mb-4 group-hover:bg-primary/10 transition-colors">
+                        <Plus className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-colors" />
+                      </div>
+                      <p className="font-bold text-sm">Add Node</p>
+                      <p className="text-[10px] uppercase font-black tracking-widest text-muted-foreground mt-1 opacity-60">Expand Grid</p>
+                    </button>
+                  )}
+                </div>
               </div>
             </TabsContent>
 
