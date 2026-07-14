@@ -250,7 +250,7 @@ function AuthPageContent() {
                 </div>
               </div>
               <CardTitle className="text-3xl font-headline font-black tracking-tight">
-                {isSignUp ? 'Initialize Account' : 'Login'}
+                {isSignUp ? 'Create Account' : 'Login'}
               </CardTitle>
               <CardDescription className="text-sm font-light mt-2">
                 {isSignUp 
@@ -334,7 +334,7 @@ function AuthPageContent() {
 
                 {isSignUp && (
                   <div className="space-y-2">
-                    <Label htmlFor="confirmPassword" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Confirm Identity</Label>
+                    <Label htmlFor="confirmPassword" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Confirm Password</Label>
                     <div className="relative group">
                       <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                       <Input 
