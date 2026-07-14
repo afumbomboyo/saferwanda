@@ -238,7 +238,11 @@ const DEVICE_CATALOG: Record<string, any> = {
   },
   "asset-protection": {
     name: "SafeTrack Asset Pro (Milesight Architecture)",
-    images: ["https://picsum.photos/seed/asset1/600/400"],
+    images: [
+      "/images/Milesight-LoRa-Asset-Tracker.png",
+      "/images/Milesight-LoRa-Asset-Tracker-Label-Front.png",
+      "/images/Milesight-LoRa-Asset-Tracker-Label-Back.png"
+    ],
     buyPrice: "185,000 RWF",
     leasePrice: "92,500 RWF",
     description: "A professional-grade asset tracking solution featuring dual-technology positioning (GNSS + Wi-Fi MAC scanning) and an ultra-long 15-year battery life. Outfitted with a physical industrial anti-theft tamper plunger and three flexible operational reporting modes. Designed for heavy-duty protection of vehicles and high-value equipment in any environment.",
