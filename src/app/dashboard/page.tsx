@@ -710,17 +710,17 @@ function DashboardContent() {
                   <CardHeader className="p-10 pb-4">
                     <CardTitle className="text-2xl font-black flex items-center gap-3">
                       <Activity className="w-6 h-6 text-primary" />
-                      Live Status Grid
+                      Status
                     </CardTitle>
-                    <CardDescription>Active telemetry from your secured locations.</CardDescription>
+                    <CardDescription>A live look at your security network.</CardDescription>
                   </CardHeader>
                   <CardContent className="p-10 pt-0">
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6">
                       {[
-                        { label: 'Active Nodes', val: profile?.deviceId ? '01' : '00', icon: Smartphone, color: 'text-primary' },
-                        { label: 'Signal Optic', val: profile?.deviceId ? '98%' : '0%', icon: Wifi, color: 'text-rwanda-green' },
-                        { label: 'Grid Health', val: profile?.deviceId ? 'Secure' : 'Inactive', icon: Shield, color: 'text-accent' },
-                        { label: 'Pending Alerts', val: '0', icon: Bell, color: 'text-muted-foreground' }
+                        { label: 'Devices', val: profile?.deviceId ? '01' : '00', icon: Smartphone, color: 'text-primary' },
+                        { label: 'Signal', val: profile?.deviceId ? '98%' : '0%', icon: Wifi, color: 'text-rwanda-green' },
+                        { label: 'Health', val: profile?.deviceId ? 'Secure' : 'Inactive', icon: Shield, color: 'text-accent' },
+                        { label: 'Alerts', val: '0', icon: Bell, color: 'text-muted-foreground' }
                       ].map((stat, i) => (
                         <div key={i} className="bg-secondary/20 p-8 rounded-[2rem] border border-border/50 text-center flex flex-col items-center justify-center group hover:bg-primary/5 transition-colors">
                           <stat.icon className={cn("w-6 h-6 mb-4 opacity-40 group-hover:opacity-100 transition-opacity", stat.color)} />
