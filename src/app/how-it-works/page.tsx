@@ -22,6 +22,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { PlaceHolderImages } from '@/app/lib/placeholder-images';
+import { cn } from '@/lib/utils';
 
 export default function HowItWorksPage() {
   useEffect(() => {
