@@ -185,9 +185,9 @@ function AuthPageContent() {
   };
 
   return (
-    <div className="flex min-h-screen bg-background pt-24 overflow-x-hidden">
+    <div className="flex min-h-screen bg-background overflow-x-hidden">
       {/* Tactical Branding Pane (Desktop Only) */}
-      <div className="hidden lg:flex lg:w-1/2 relative flex-col justify-center p-16 overflow-hidden">
+      <div className="hidden lg:flex lg:w-1/2 relative flex-col justify-center p-16 overflow-hidden pt-32">
         <div className="absolute inset-0 z-0">
           <Image 
             src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80" 
@@ -235,7 +235,7 @@ function AuthPageContent() {
       </div>
 
       {/* Auth Form Pane */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-4 md:p-12 relative">
+      <div className="w-full lg:w-1/2 flex flex-col items-center justify-center p-4 md:p-12 relative pt-32">
         <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-[100px] pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-accent/5 rounded-full blur-[100px] pointer-events-none" />
 
