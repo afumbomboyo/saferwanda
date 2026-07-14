@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, Suspense, useRef } from 'react';
@@ -14,7 +15,7 @@ import {
   createUserWithEmailAndPassword, 
   updateProfile
 } from 'firebase/auth';
-import { doc, setDoc, getDoc, updateDoc, arrayUnion, serverTimestamp } from 'firebase/firestore';
+import { doc, setDoc, getDoc, updateDoc, arrayUnion, serverTimestamp, collection, getDocs, query, limit } from 'firebase/firestore';
 
 function AuthPageContent() {
   const router = useRouter();
@@ -136,10 +137,15 @@ function AuthPageContent() {
         
         const services = mergeSelections();
 
+        // Check if this is the first user on the platform
+        const usersSnap = await getDocs(query(collection(db, 'users'), limit(1)));
+        const isFirstUser = usersSnap.empty;
+
         await setDoc(doc(db, 'users', res.user.uid), {
           uid: res.user.uid,
           fullName,
           email,
+          isAdmin: isFirstUser, // Auto-promote first user
           servicesSelected: services,
           isOnboarded: services.length > 0,
           createdAt: serverTimestamp(),
@@ -150,7 +156,7 @@ function AuthPageContent() {
         
         toast({
           title: "Account Created",
-          description: `Welcome to SafeRwanda, ${fullName}!`,
+          description: `Welcome to SafeRwanda, ${fullName}!${isFirstUser ? ' You have been granted admin privileges.' : ''}`,
         });
 
         router.replace(services.length > 0 ? '/dashboard?tab=staging' : '/onboarding');
