@@ -633,7 +633,7 @@ function DashboardContent() {
                           </div>
                         </div>
                         <div className="space-y-3">
-                          <Label htmlFor="actualNodeId" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Node Identification</Label>
+                          <Label htmlFor="actualNodeId" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Device ID</Label>
                           <Input 
                             id="actualNodeId" 
                             placeholder="SAFE-NODE-XXXX" 
@@ -762,7 +762,7 @@ function DashboardContent() {
                       }}
                       className="w-full mt-10 rounded-2xl h-16 font-black uppercase tracking-widest text-xs bg-primary shadow-xl shadow-primary/20"
                     >
-                      {(!profile?.purchaseStatus || profile.purchaseStatus === 'none') ? 'Initialize Deployment' : profile?.deviceId ? 'Activate Guard' : 'Sync Hardware Node'}
+                      {(!profile?.purchaseStatus || profile.purchaseStatus === 'none') ? 'Go to My Services' : profile?.deviceId ? 'Activate Guard' : 'Sync Hardware Node'}
                       <ArrowRight className="w-4 h-4 ml-2" />
                     </Button>
                   </CardContent>
