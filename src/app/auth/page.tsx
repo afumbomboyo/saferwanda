@@ -3,13 +3,15 @@
 
 import { useState, useEffect, Suspense, useRef } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { Shield, Mail, Lock, User, Loader2, AlertTriangle, Eye, EyeOff } from 'lucide-react';
+import { Shield, Mail, Lock, User, Loader2, AlertTriangle, Eye, EyeOff, CheckCircle2, ShieldCheck, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { useAuth, useFirestore, useUser } from '@/firebase';
 import { useToast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
+import Image from 'next/image';
 import { 
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword, 
@@ -137,7 +139,6 @@ function AuthPageContent() {
         
         const services = mergeSelections();
 
-        // Check if this is the first user on the platform
         const usersSnap = await getDocs(query(collection(db, 'users'), limit(1)));
         const isFirstUser = usersSnap.empty;
 
@@ -145,7 +146,7 @@ function AuthPageContent() {
           uid: res.user.uid,
           fullName,
           email,
-          isAdmin: isFirstUser, // Auto-promote first user
+          isAdmin: isFirstUser,
           servicesSelected: services,
           isOnboarded: services.length > 0,
           createdAt: serverTimestamp(),
@@ -168,7 +169,6 @@ function AuthPageContent() {
           description: `Successfully signed in as ${res.user.displayName || res.user.email}.`,
         });
 
-        // For manual sign-in, we check if they are onboarded to decide where to redirect
         const userDocRef = doc(db, 'users', res.user.uid);
         const userDoc = await getDoc(userDocRef);
         if (userDoc.exists()) {
@@ -186,50 +186,101 @@ function AuthPageContent() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-background">
-      <main className="flex-grow flex items-center justify-center p-4 pt-24 pb-12">
-        <div className="w-full max-w-md animate-fade-in">
+    <div className="flex min-h-screen bg-background overflow-hidden">
+      {/* Tactical Branding Pane (Desktop Only) */}
+      <div className="hidden lg:flex lg:w-1/2 relative flex-col justify-center p-16 overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <Image 
+            src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80" 
+            alt="Security Background" 
+            fill 
+            className="object-cover opacity-20 grayscale brightness-50"
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-background to-background" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent" />
+        </div>
 
-          <Card className="glass-card shadow-2xl relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary via-accent to-rwanda-green" />
+        <div className="relative z-10 space-y-8 animate-fade-in">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-black uppercase tracking-[0.2em] mb-4">
+            <ShieldCheck className="w-4 h-4" />
+            Strategic Operations Grid
+          </div>
+          <h1 className="text-5xl xl:text-7xl font-headline font-black tracking-tighter leading-none text-foreground">
+            Secure Your <br />
+            <span className="text-primary">Piece of Tomorrow.</span>
+          </h1>
+          <p className="text-lg text-muted-foreground max-w-lg font-light leading-relaxed">
+            SafeRwanda is building the next generation of IoT security infrastructure. Join the network of protected citizens today.
+          </p>
+
+          <div className="grid grid-cols-2 gap-8 pt-12">
+            {[
+              { label: 'Uptime', value: '99.9%' },
+              { label: 'Deployments', value: '1,200+' },
+              { label: 'Response', value: '< 2s' },
+              { label: 'Security', value: 'AES-256' }
+            ].map((stat, i) => (
+              <div key={i} className="space-y-1">
+                <p className="text-[10px] font-black uppercase tracking-widest text-primary opacity-60">{stat.label}</p>
+                <p className="text-2xl font-black">{stat.value}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="absolute bottom-16 left-16 z-10 flex items-center gap-4 text-[10px] font-bold text-muted-foreground opacity-40 uppercase tracking-[0.3em]">
+          <div className="w-12 h-px bg-muted-foreground" />
+          SafeRwanda IoT Labs • 2024
+        </div>
+      </div>
+
+      {/* Auth Form Pane */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-4 md:p-12 relative">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-[100px] pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-accent/5 rounded-full blur-[100px] pointer-events-none" />
+
+        <div className="w-full max-w-md animate-fade-in relative z-10">
+          <Card className="glass-card shadow-2xl relative overflow-hidden rounded-[2.5rem] border-white/5">
+            <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-primary via-accent to-rwanda-green" />
             
-            <CardHeader className="text-center pb-2">
-              <div className="flex justify-center mb-4">
-                <div className="w-16 h-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center">
+            <CardHeader className="text-center pb-2 pt-10">
+              <div className="flex justify-center mb-6">
+                <div className="w-16 h-16 rounded-[1.5rem] bg-primary/10 border border-primary/20 flex items-center justify-center shadow-inner">
                   <Shield className="w-8 h-8 text-primary" />
                 </div>
               </div>
-              <CardTitle className="text-2xl font-headline font-bold">
-                {isSignUp ? 'Secure Your Piece of Tomorrow' : 'Login'}
+              <CardTitle className="text-3xl font-headline font-black tracking-tight">
+                {isSignUp ? 'Initialize Account' : 'Login'}
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-sm font-light mt-2 px-8">
                 {isSignUp 
                   ? 'Initialize your SafeRwanda security account.' 
                   : 'Access your monitoring dashboard.'}
               </CardDescription>
             </CardHeader>
 
-            <CardContent className="space-y-4 pt-4">
+            <CardContent className="space-y-6 pt-6 pb-8">
               {error && (
-                <div className="p-4 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-xs font-medium flex items-start gap-3 animate-in slide-in-from-top-2">
+                <div className="p-4 rounded-2xl bg-destructive/10 border border-destructive/20 text-destructive text-[11px] font-bold flex items-start gap-3 animate-in slide-in-from-top-2">
                   <AlertTriangle className="w-4 h-4 shrink-0" />
                   <div>
-                    <p className="font-bold mb-1">Authorization Issue</p>
-                    <p className="opacity-80">{error.message}</p>
+                    <p className="uppercase tracking-widest mb-1">Authorization Issue</p>
+                    <p className="opacity-80 font-medium">{error.message}</p>
                   </div>
                 </div>
               )}
 
-              <form onSubmit={handleAuth} className="space-y-4">
+              <form onSubmit={handleAuth} className="space-y-5">
                 {isSignUp && (
                   <div className="space-y-2">
-                    <Label htmlFor="name">Full Name</Label>
-                    <div className="relative">
-                      <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <Label htmlFor="name" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Full Name</Label>
+                    <div className="relative group">
+                      <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                       <Input 
                         id="name" 
                         placeholder="Agent Name" 
-                        className="pl-10 h-12 rounded-xl" 
+                        className="pl-12 h-14 rounded-2xl bg-secondary/30 border-white/5 focus-visible:ring-primary focus-visible:bg-secondary/50 transition-all" 
                         required 
                         value={fullName}
                         onChange={(e) => setFullName(e.target.value)}
@@ -239,14 +290,14 @@ function AuthPageContent() {
                   </div>
                 )}
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email Address</Label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <Label htmlFor="email" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Email Address</Label>
+                  <div className="relative group">
+                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                     <Input 
                       id="email" 
                       type="email" 
                       placeholder="agent@saferwanda.io" 
-                      className="pl-10 h-12 rounded-xl" 
+                      className="pl-12 h-14 rounded-2xl bg-secondary/30 border-white/5 focus-visible:ring-primary focus-visible:bg-secondary/50 transition-all" 
                       required 
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
@@ -255,14 +306,17 @@ function AuthPageContent() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="password">Password</Label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <div className="flex justify-between items-center mb-1">
+                    <Label htmlFor="password" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Password</Label>
+                    {!isSignUp && <button type="button" className="text-[9px] font-black text-primary uppercase tracking-widest hover:underline">Forgot?</button>}
+                  </div>
+                  <div className="relative group">
+                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                     <Input 
                       id="password" 
                       type={showPassword ? 'text' : 'password'} 
                       placeholder="••••••••" 
-                      className="pl-10 pr-10 h-12 rounded-xl" 
+                      className="pl-12 pr-12 h-14 rounded-2xl bg-secondary/30 border-white/5 focus-visible:ring-primary focus-visible:bg-secondary/50 transition-all" 
                       required 
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
@@ -271,29 +325,24 @@ function AuthPageContent() {
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
                       tabIndex={-1}
                     >
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
                   </div>
-                  {isSignUp && (
-                    <p className="text-[10px] text-muted-foreground mt-1">
-                      Must be at least 8 characters long.
-                    </p>
-                  )}
                 </div>
 
                 {isSignUp && (
                   <div className="space-y-2">
-                    <Label htmlFor="confirmPassword">Confirm Password</Label>
-                    <div className="relative">
-                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <Label htmlFor="confirmPassword" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Confirm Identity</Label>
+                    <div className="relative group">
+                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                       <Input 
                         id="confirmPassword" 
                         type={showConfirmPassword ? 'text' : 'password'} 
                         placeholder="••••••••" 
-                        className="pl-10 pr-10 h-12 rounded-xl" 
+                        className="pl-12 pr-12 h-14 rounded-2xl bg-secondary/30 border-white/5 focus-visible:ring-primary focus-visible:bg-secondary/50 transition-all" 
                         required 
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
@@ -302,7 +351,7 @@ function AuthPageContent() {
                       <button
                         type="button"
                         onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
                         tabIndex={-1}
                       >
                         {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -311,13 +360,20 @@ function AuthPageContent() {
                   </div>
                 )}
                 
-                <Button className="w-full bg-primary hover:bg-primary/90 h-12 rounded-xl font-bold shadow-lg shadow-primary/20 active:scale-[0.98] transition-all" disabled={loading}>
+                <Button className="w-full bg-primary hover:bg-primary/90 h-16 rounded-2xl font-black uppercase tracking-widest text-xs shadow-xl shadow-primary/20 active:scale-[0.98] transition-all" disabled={loading}>
                   {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : (isSignUp ? 'Create Account' : 'Login')}
+                  {!loading && <ArrowRight className="w-4 h-4 ml-2" />}
                 </Button>
               </form>
             </CardContent>
-            <CardFooter className="flex flex-col gap-4">
-              <p className="text-sm text-center text-muted-foreground">
+            
+            <CardFooter className="flex flex-col gap-4 pb-10">
+              <div className="flex items-center gap-4 w-full px-8">
+                <div className="h-px flex-grow bg-white/5" />
+                <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest whitespace-nowrap">Status Check</span>
+                <div className="h-px flex-grow bg-white/5" />
+              </div>
+              <p className="text-xs text-center text-muted-foreground font-light">
                 {isSignUp ? 'Already registered?' : "New to the network?"}{' '}
                 <button 
                   onClick={() => {
@@ -328,7 +384,7 @@ function AuthPageContent() {
                       router.push('/services?signup_hint=true');
                     }
                   }}
-                  className="text-primary hover:underline font-bold"
+                  className="text-primary hover:underline font-black uppercase tracking-widest text-[10px] ml-1"
                 >
                   {isSignUp ? 'Log In' : 'Sign Up'}
                 </button>
@@ -336,7 +392,7 @@ function AuthPageContent() {
             </CardFooter>
           </Card>
         </div>
-      </main>
+      </div>
     </div>
   );
 }
@@ -345,7 +401,10 @@ export default function AuthPage() {
   return (
     <Suspense fallback={
       <div className="flex min-h-screen items-center justify-center bg-background">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <div className="flex flex-col items-center gap-4">
+          <Shield className="h-12 w-12 animate-pulse text-primary" />
+          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground">Initializing Security Protocol...</p>
+        </div>
       </div>
     }>
       <AuthPageContent />
