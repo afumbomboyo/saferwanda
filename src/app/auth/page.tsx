@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, Suspense, useRef } from 'react';
@@ -186,7 +185,7 @@ function AuthPageContent() {
   };
 
   return (
-    <div className="flex min-h-screen bg-background overflow-hidden">
+    <div className="flex min-h-screen bg-background pt-20 lg:pt-0 overflow-x-hidden">
       {/* Tactical Branding Pane (Desktop Only) */}
       <div className="hidden lg:flex lg:w-1/2 relative flex-col justify-center p-16 overflow-hidden">
         <div className="absolute inset-0 z-0">
