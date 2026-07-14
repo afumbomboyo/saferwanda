@@ -741,18 +741,18 @@ function DashboardContent() {
                       <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
                         <Target className="w-5 h-5 text-primary" />
                       </div>
-                      <span className="text-xl font-black">Strategic Goal</span>
+                      <span className="text-xl font-black">Next Step</span>
                     </div>
                   </CardHeader>
                   <CardContent className="p-10 pt-0 flex-grow flex flex-col justify-between relative z-10">
                     <p className="text-sm text-muted-foreground font-light leading-relaxed">
                       {!profile?.purchaseStatus || profile?.purchaseStatus === 'none'
-                        ? "Your hardware grid is uninitialized. Start your deployment by selecting a service from the 'My Services' tab."
+                        ? "You haven't set up your devices yet. Go to 'My Services' to start the process."
                         : !profile?.deviceId 
-                          ? "Node logistics confirmed. Once your hardware arrives, activate the connection using the 'Connect Device' protocol."
+                          ? "Your hardware is on the way. Once you get it, click 'Connect Device' to link it."
                           : !profile?.subscriptionActive 
-                            ? "Hardware link verified. Choose an operational monitoring plan to activate 24/7 central oversight."
-                            : "Grid fully operational. Our strategic monitoring team is maintaining 24/7 oversight of your assets."}
+                            ? "Your device is linked. Now pick a plan to start monitoring."
+                            : "Your device is active and we are monitoring it 24/7."}
                     </p>
                     <Button 
                       onClick={() => {
@@ -769,15 +769,15 @@ function DashboardContent() {
                 </Card>
               </div>
 
-              {/* Connected Devices Grid (Across) */}
+              {/* My Devices Section */}
               <div className="space-y-8">
                 <div className="flex items-center justify-between px-2">
                   <div>
-                    <h3 className="text-3xl font-black tracking-tight">Strategic Node Network</h3>
-                    <p className="text-muted-foreground text-sm font-light mt-1">Global hardware distribution linked to your ID.</p>
+                    <h3 className="text-3xl font-black tracking-tight">My Devices</h3>
+                    <p className="text-muted-foreground text-sm font-light mt-1">All gadgets linked to your account.</p>
                   </div>
                   <Button variant="outline" className="rounded-xl border-dashed border-primary/40 text-primary font-bold h-12" onClick={() => setIsRegisterOpen(true)}>
-                    <Plus className="w-4 h-4 mr-2" /> Add Security Node
+                    <Plus className="w-4 h-4 mr-2" /> Add Device
                   </Button>
                 </div>
 
@@ -788,7 +788,7 @@ function DashboardContent() {
                         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/5 via-transparent to-transparent" />
                         <Smartphone className="w-20 h-20 text-primary opacity-20 group-hover:scale-110 transition-transform" />
                         <div className="absolute top-6 right-6">
-                          <Badge className="bg-rwanda-green border-none text-[8px] font-black tracking-widest uppercase">ACTIVE_NODE</Badge>
+                          <Badge className="bg-rwanda-green border-none text-[8px] font-black tracking-widest uppercase">ACTIVE</Badge>
                         </div>
                       </div>
                       <CardContent className="p-10 space-y-6">
@@ -804,14 +804,14 @@ function DashboardContent() {
                         
                         <div className="grid grid-cols-2 gap-4">
                           <div className="bg-background/40 p-4 rounded-2xl border border-border">
-                            <p className="text-[8px] font-black uppercase text-muted-foreground mb-1">Grid Health</p>
+                            <p className="text-[8px] font-black uppercase text-muted-foreground mb-1">Health</p>
                             <div className="flex items-center gap-2">
                               <CheckCircle2 className="w-3 h-3 text-rwanda-green" />
                               <span className="text-xs font-bold">Excellent</span>
                             </div>
                           </div>
                           <div className="bg-background/40 p-4 rounded-2xl border border-border">
-                            <p className="text-[8px] font-black uppercase text-muted-foreground mb-1">Signal Link</p>
+                            <p className="text-[8px] font-black uppercase text-muted-foreground mb-1">Signal</p>
                             <div className="flex items-center gap-2">
                               <Wifi className="w-3 h-3 text-primary" />
                               <span className="text-xs font-bold">98% Link</span>
@@ -822,11 +822,11 @@ function DashboardContent() {
                         <div className="pt-4 border-t border-border flex justify-between items-center text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
                           <div className="flex items-center gap-1.5">
                             <Globe className="w-3.5 h-3.5 opacity-40" />
-                            Global Grid
+                            Connected
                           </div>
                           <div className="flex items-center gap-1.5">
                             <Database className="w-3.5 h-3.5 opacity-40" />
-                            Telemetry Sync
+                            Syncing
                           </div>
                         </div>
                       </CardContent>
@@ -836,12 +836,12 @@ function DashboardContent() {
                       <div className="w-20 h-20 rounded-3xl bg-secondary flex items-center justify-center mb-6">
                         <Cpu className="w-10 h-10 text-muted-foreground opacity-20" />
                       </div>
-                      <h4 className="text-2xl font-black mb-2">No Active Nodes Found</h4>
+                      <h4 className="text-2xl font-black mb-2">No Devices Found</h4>
                       <p className="text-sm text-muted-foreground max-w-sm mb-8 font-light">
-                        Linked hardware nodes will appear here once registered. Initialize your strategic grid by connecting your first device.
+                        Your gadgets will show up here after you link them. Click the button below to add your first device.
                       </p>
                       <Button onClick={() => setIsRegisterOpen(true)} className="rounded-2xl h-14 px-10 font-black bg-primary">
-                        Initialize First Node
+                        Add My First Device
                       </Button>
                     </div>
                   )}
@@ -855,8 +855,8 @@ function DashboardContent() {
                       <div className="w-14 h-14 rounded-2xl bg-secondary flex items-center justify-center mb-4 group-hover:bg-primary/10 transition-colors">
                         <Plus className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-colors" />
                       </div>
-                      <p className="font-bold text-sm">Add Node</p>
-                      <p className="text-[10px] uppercase font-black tracking-widest text-muted-foreground mt-1 opacity-60">Expand Grid</p>
+                      <p className="font-bold text-sm">Add Device</p>
+                      <p className="text-[10px] uppercase font-black tracking-widest text-muted-foreground mt-1 opacity-60">Add Another</p>
                     </button>
                   )}
                 </div>
