@@ -187,7 +187,7 @@ function AuthPageContent() {
   return (
     <div className="flex min-h-screen bg-background overflow-x-hidden">
       {/* Tactical Branding Pane (Desktop Only) */}
-      <div className="hidden lg:flex lg:w-1/2 relative flex-col justify-center p-16 overflow-hidden pt-32">
+      <div className="hidden lg:flex lg:w-1/2 relative flex-col overflow-hidden">
         <div className="absolute inset-0 z-0">
           <Image 
             src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80" 
@@ -200,8 +200,8 @@ function AuthPageContent() {
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent" />
         </div>
 
-        <div className="relative z-10 space-y-8 animate-fade-in">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-black uppercase tracking-[0.2em] mb-4">
+        <div className="relative z-10 flex flex-col justify-center h-full p-16 pt-32 pb-24 animate-fade-in">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-black uppercase tracking-[0.2em] mb-4 w-fit">
             <ShieldCheck className="w-4 h-4" />
             Strategic Operations Grid
           </div>
@@ -209,7 +209,7 @@ function AuthPageContent() {
             Secure Your <br />
             <span className="text-primary">Piece of Tomorrow.</span>
           </h1>
-          <p className="text-lg text-muted-foreground max-w-lg font-light leading-relaxed">
+          <p className="text-lg text-muted-foreground max-w-lg font-light leading-relaxed mt-8">
             SafeRwanda is building the next generation of IoT security infrastructure. Join the network of protected citizens today.
           </p>
 
@@ -226,24 +226,24 @@ function AuthPageContent() {
               </div>
             ))}
           </div>
-        </div>
 
-        <div className="absolute bottom-16 left-16 z-10 flex items-center gap-4 text-[10px] font-bold text-muted-foreground opacity-40 uppercase tracking-[0.3em]">
-          <div className="w-12 h-px bg-muted-foreground" />
-          SafeRwanda IoT Labs • 2024
+          <div className="mt-auto flex items-center gap-4 text-[10px] font-bold text-muted-foreground opacity-40 uppercase tracking-[0.3em]">
+            <div className="w-12 h-px bg-muted-foreground" />
+            SafeRwanda IoT Labs • 2024
+          </div>
         </div>
       </div>
 
       {/* Auth Form Pane */}
-      <div className="w-full lg:w-1/2 flex flex-col items-center justify-center p-4 md:p-12 relative pt-32">
+      <div className="w-full lg:w-1/2 flex flex-col items-center relative min-h-screen">
         <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-[100px] pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-accent/5 rounded-full blur-[100px] pointer-events-none" />
 
-        <div className="w-full max-w-md animate-fade-in relative z-10">
+        <div className="w-full max-w-md animate-fade-in relative z-10 pt-32 pb-24 px-4">
           <Card className="glass-card shadow-2xl relative overflow-hidden rounded-[2.5rem] border-white/5">
             <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-primary via-accent to-rwanda-green" />
             
-            <CardHeader className="text-center pb-2 pt-10">
+            <CardHeader className="text-center pb-2 pt-10 px-6 sm:px-10">
               <div className="flex justify-center mb-6">
                 <div className="w-16 h-16 rounded-[1.5rem] bg-primary/10 border border-primary/20 flex items-center justify-center shadow-inner">
                   <Shield className="w-8 h-8 text-primary" />
@@ -252,14 +252,14 @@ function AuthPageContent() {
               <CardTitle className="text-3xl font-headline font-black tracking-tight">
                 {isSignUp ? 'Initialize Account' : 'Login'}
               </CardTitle>
-              <CardDescription className="text-sm font-light mt-2 px-8">
+              <CardDescription className="text-sm font-light mt-2">
                 {isSignUp 
                   ? 'Initialize your SafeRwanda security account.' 
                   : 'Access your monitoring dashboard.'}
               </CardDescription>
             </CardHeader>
 
-            <CardContent className="space-y-6 pt-6 pb-8">
+            <CardContent className="space-y-6 pt-6 pb-8 px-6 sm:px-10">
               {error && (
                 <div className="p-4 rounded-2xl bg-destructive/10 border border-destructive/20 text-destructive text-[11px] font-bold flex items-start gap-3 animate-in slide-in-from-top-2">
                   <AlertTriangle className="w-4 h-4 shrink-0" />
@@ -366,8 +366,8 @@ function AuthPageContent() {
               </form>
             </CardContent>
             
-            <CardFooter className="flex flex-col gap-4 pb-10">
-              <div className="flex items-center gap-4 w-full px-8">
+            <CardFooter className="flex flex-col gap-4 pb-10 px-6 sm:px-10">
+              <div className="flex items-center gap-4 w-full px-2 sm:px-8">
                 <div className="h-px flex-grow bg-white/5" />
                 <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest whitespace-nowrap">Status Check</span>
                 <div className="h-px flex-grow bg-white/5" />
