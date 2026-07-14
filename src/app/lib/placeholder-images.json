@@ -1,3 +1,4 @@
+
 {
   "placeholderImages": [
     {
@@ -47,6 +48,42 @@
       "description": "Smart city dashboard interface",
       "imageUrl": "https://picsum.photos/seed/safe8/600/400",
       "imageHint": "smart city"
+    },
+    {
+      "id": "step-account",
+      "description": "User creating a secure account",
+      "imageUrl": "https://picsum.photos/seed/account/800/600",
+      "imageHint": "account signup"
+    },
+    {
+      "id": "step-shop",
+      "description": "Hardware catalog in the dashboard",
+      "imageUrl": "https://picsum.photos/seed/shop/800/600",
+      "imageHint": "online shopping"
+    },
+    {
+      "id": "step-connect",
+      "description": "Connecting device with ID",
+      "imageUrl": "https://picsum.photos/seed/connect/800/600",
+      "imageHint": "device setup"
+    },
+    {
+      "id": "step-monitor",
+      "description": "Real-time monitoring dashboard",
+      "imageUrl": "https://picsum.photos/seed/monitor/800/600",
+      "imageHint": "data analysis"
+    },
+    {
+      "id": "step-alert",
+      "description": "Receiving alerts on smartphone",
+      "imageUrl": "https://picsum.photos/seed/alert/800/600",
+      "imageHint": "phone notification"
+    },
+    {
+      "id": "step-comms",
+      "description": "Two-way communication interface",
+      "imageUrl": "https://picsum.photos/seed/comms/800/600",
+      "imageHint": "communication technology"
     }
   ]
 }

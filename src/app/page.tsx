@@ -115,7 +115,7 @@ export default function Home() {
                   </Link>
                 </Button>
                 <Button asChild variant="outline" size="lg" className="h-12 md:h-14 px-8 rounded-xl text-sm md:text-base font-bold border-white/10 bg-white/5 backdrop-blur-md transition-all hover:scale-90">
-                  <Link href="#demo">How it Works</Link>
+                  <Link href="/how-it-works">How it Works</Link>
                 </Button>
               </div>
             </div>
@@ -269,7 +269,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* 3. How It Works */}
+        {/* 3. How It Works - Summary */}
         <section className="py-24 bg-[#F5F5F7] dark:bg-muted/10 relative overflow-hidden">
           <div className="container mx-auto px-4 relative z-10">
             <div className="text-center max-w-2xl mx-auto mb-16 animate-reveal">
@@ -303,6 +303,12 @@ export default function Home() {
                   <p className="text-muted-foreground leading-relaxed text-xs md:text-sm">{step.desc}</p>
                 </div>
               ))}
+            </div>
+
+            <div className="mt-16 text-center animate-reveal">
+              <Button asChild variant="outline" size="lg" className="rounded-xl h-14 px-10 border-primary text-primary hover:bg-primary hover:text-white font-bold">
+                <Link href="/how-it-works">Full Operational Guide <ArrowRight className="w-4 h-4 ml-2" /></Link>
+              </Button>
             </div>
           </div>
         </section>
