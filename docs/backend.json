@@ -9,6 +9,7 @@
         "uid": { "type": "string", "description": "Unique Firebase Auth ID" },
         "fullName": { "type": "string", "description": "User's full name" },
         "email": { "type": "string", "format": "email" },
+        "isAdmin": { "type": "boolean", "description": "Flag for platform administrators." },
         "servicesSelected": { 
           "type": "array", 
           "items": { "type": "string" },
@@ -22,6 +23,7 @@
         },
         "hasPaidSetupFee": { "type": "boolean", "description": "Whether the user opted for professional installation." },
         "deviceId": { "type": "string", "description": "The linked IoT hardware unique identifier." },
+        "deviceName": { "type": "string", "description": "User-assigned name for the device." },
         "alertPhone": { "type": "string", "description": "Phone number for distress alerts." },
         "alertEmail": { "type": "string", "description": "Email address for distress alerts." },
         "subscriptionActive": { "type": "boolean", "description": "Whether the service subscription is current." },

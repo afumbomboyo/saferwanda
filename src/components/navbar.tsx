@@ -3,12 +3,13 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { ShieldCheck, Menu, X, User, LogOut, LayoutDashboard, ChevronDown } from 'lucide-react';
+import { ShieldCheck, Menu, X, User, LogOut, LayoutDashboard, ChevronDown, ShieldAlert } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { cn } from '@/lib/utils';
-import { useUser, useAuth } from '@/firebase';
+import { useUser, useAuth, useFirestore, useDoc } from '@/firebase';
 import { signOut } from 'firebase/auth';
+import { doc } from 'firebase/firestore';
 import {
   Sheet,
   SheetContent,
@@ -31,8 +32,13 @@ export default function Navbar() {
   const router = useRouter();
   const { user, loading } = useUser();
   const auth = useAuth();
+  const db = useFirestore();
   const [isScrolled, setIsScrolled] = useState(false);
   const [activePath, setActivePath] = useState<string | null>(null);
+
+  // Fetch profile to check isAdmin
+  const profileRef = useMemo(() => (user && db ? doc(db, 'users', user.uid) : null), [user, db]);
+  const { data: profile } = useDoc(profileRef);
 
   useEffect(() => {
     setActivePath(pathname);
@@ -102,6 +108,17 @@ export default function Navbar() {
                 Login
               </Link>
             )}
+            {profile?.isAdmin && (
+              <Link 
+                href="/admin" 
+                className={cn(
+                  "text-sm font-bold uppercase tracking-widest transition-colors antialiased text-destructive",
+                  activePath === '/admin' ? "opacity-100" : "opacity-70 hover:opacity-100"
+                )}
+              >
+                Admin
+              </Link>
+            )}
           </div>
 
           {!loading && (
@@ -118,7 +135,9 @@ export default function Navbar() {
                       </Avatar>
                       <div className="flex flex-col items-start text-left">
                         <span className="text-xs font-bold leading-none">{user.displayName || 'Agent'}</span>
-                        <span className="text-[10px] text-muted-foreground font-medium">Node Operator</span>
+                        <span className="text-[10px] text-muted-foreground font-medium">
+                          {profile?.isAdmin ? 'Global Admin' : 'Node Operator'}
+                        </span>
                       </div>
                       <ChevronDown className="w-4 h-4 text-muted-foreground" />
                     </Button>
@@ -131,12 +150,21 @@ export default function Navbar() {
                       </div>
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator className="bg-white/5" />
+                    {profile?.isAdmin && (
+                      <DropdownMenuItem asChild className="rounded-xl py-3 cursor-pointer text-destructive">
+                        <Link href="/admin" className="flex items-center">
+                          <ShieldAlert className="mr-2 h-4 w-4" />
+                          <span>Admin Panel</span>
+                        </Link>
+                      </DropdownMenuItem>
+                    )}
                     <DropdownMenuItem asChild className="rounded-xl py-3 cursor-pointer">
                       <Link href="/dashboard" className="flex items-center">
                         <LayoutDashboard className="mr-2 h-4 w-4 text-primary" />
                         <span>Dashboard</span>
                       </Link>
                     </DropdownMenuItem>
+                    <DropdownMenuSeparator className="bg-white/5" />
                     <DropdownMenuItem className="rounded-xl py-3 text-destructive focus:bg-destructive/10 focus:text-destructive cursor-pointer" onClick={handleLogout}>
                       <LogOut className="mr-2 h-4 w-4" />
                       <span>Log Out</span>
@@ -154,14 +182,14 @@ export default function Navbar() {
 
         {/* Mobile Nav Toggle */}
         <div className="md:hidden flex items-center gap-4">
-          <MobileMenu navLinks={navLinks} activePath={activePath} user={user} handleLogout={handleLogout} />
+          <MobileMenu navLinks={navLinks} activePath={activePath} user={user} handleLogout={handleLogout} profile={profile} />
         </div>
       </div>
     </nav>
   );
 }
 
-function MobileMenu({ navLinks, activePath, user, handleLogout }: { navLinks: any[], activePath: string | null, user: any, handleLogout: () => void }) {
+function MobileMenu({ navLinks, activePath, user, handleLogout, profile }: { navLinks: any[], activePath: string | null, user: any, handleLogout: () => void, profile: any }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -198,7 +226,7 @@ function MobileMenu({ navLinks, activePath, user, handleLogout }: { navLinks: an
               </Avatar>
               <div>
                 <p className="font-bold text-sm leading-none">{user.displayName || 'Agent'}</p>
-                <p className="text-xs text-muted-foreground mt-1">{user.email}</p>
+                <p className="text-xs text-muted-foreground mt-1">{profile?.isAdmin ? 'Global Admin' : 'Node Operator'}</p>
               </div>
             </div>
           )}
@@ -219,6 +247,20 @@ function MobileMenu({ navLinks, activePath, user, handleLogout }: { navLinks: an
               </Link>
             );
           })}
+
+          {profile?.isAdmin && (
+            <Link 
+              href="/admin"
+              onClick={() => setOpen(false)}
+              className={cn(
+                "text-2xl font-headline font-extrabold tracking-tight transition-all hover:translate-x-2 active:scale-95 antialiased flex items-center gap-2 text-destructive",
+                activePath === '/admin' ? "opacity-100" : "opacity-70"
+              )}
+            >
+              <ShieldAlert className="w-6 h-6" />
+              Admin Panel
+            </Link>
+          )}
 
           {user && (
             <Link 
