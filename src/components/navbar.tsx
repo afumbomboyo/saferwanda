@@ -64,6 +64,8 @@ export default function Navbar() {
     { name: 'Our Services', href: '/services' },
   ];
 
+  const isAdmin = !!(user && profile?.isAdmin);
+
   return (
     <nav className={cn(
       "fixed top-0 w-full z-[100] transition-all duration-500 ease-in-out",
@@ -108,7 +110,7 @@ export default function Navbar() {
                 Login
               </Link>
             )}
-            {profile?.isAdmin && (
+            {isAdmin && (
               <Link 
                 href="/admin" 
                 className={cn(
@@ -150,7 +152,7 @@ export default function Navbar() {
                       </div>
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator className="bg-white/5" />
-                    {profile?.isAdmin && (
+                    {isAdmin && (
                       <DropdownMenuItem asChild className="rounded-xl py-3 cursor-pointer text-destructive">
                         <Link href="/admin" className="flex items-center">
                           <ShieldAlert className="mr-2 h-4 w-4" />
@@ -182,14 +184,14 @@ export default function Navbar() {
 
         {/* Mobile Nav Toggle */}
         <div className="md:hidden flex items-center gap-4">
-          <MobileMenu navLinks={navLinks} activePath={activePath} user={user} handleLogout={handleLogout} profile={profile} />
+          <MobileMenu navLinks={navLinks} activePath={activePath} user={user} handleLogout={handleLogout} profile={profile} isAdmin={isAdmin} />
         </div>
       </div>
     </nav>
   );
 }
 
-function MobileMenu({ navLinks, activePath, user, handleLogout, profile }: { navLinks: any[], activePath: string | null, user: any, handleLogout: () => void, profile: any }) {
+function MobileMenu({ navLinks, activePath, user, handleLogout, profile, isAdmin }: { navLinks: any[], activePath: string | null, user: any, handleLogout: () => void, profile: any, isAdmin: boolean }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -248,7 +250,7 @@ function MobileMenu({ navLinks, activePath, user, handleLogout, profile }: { nav
             );
           })}
 
-          {profile?.isAdmin && (
+          {isAdmin && (
             <Link 
               href="/admin"
               onClick={() => setOpen(false)}
