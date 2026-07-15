@@ -32,9 +32,9 @@ export default function Home() {
   const [mounted, setMounted] = useState(false);
   const [currentTime, setCurrentTime] = useState('--:--:--');
   const [metrics, setMetrics] = useState([
-    { id: 1, label: 'Kigali Methane', value: '12 PPM', status: 'Optimal' },
+    { id: 1, label: 'Fire Sensor', value: '12 PPM', status: 'Optimal' },
     { id: 2, label: 'Asset Tracker #92', value: 'In Motion', status: 'Encrypted' },
-    { id: 3, label: 'Gateway Node Alpha', value: '99.9% Uptime', status: 'Stable' },
+    { id: 3, label: 'LoRa Gateway', value: '99.9% Uptime', status: 'Stable' },
   ]);
 
   useEffect(() => {
