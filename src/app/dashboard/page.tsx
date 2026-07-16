@@ -562,57 +562,57 @@ function DashboardContent() {
     <div className="flex flex-col min-h-screen bg-background relative overflow-hidden">
       <div className="absolute -top-24 -left-24 w-96 h-96 bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
       
-      <main className="flex-grow pt-32 pb-24 relative z-10">
+      <main className="flex-grow pt-24 md:pt-32 pb-24 relative z-10">
         <div className="container mx-auto px-4 max-w-7xl">
           
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12 animate-fade-in">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8 md:mb-12 animate-fade-in">
             <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-[2rem] bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center border border-primary/20 shadow-2xl">
-                <Shield className="w-8 h-8 text-white" />
+              <div className="w-12 h-12 md:w-16 md:h-16 rounded-[1.2rem] md:rounded-[2rem] bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center border border-primary/20 shadow-2xl">
+                <Shield className="w-6 h-6 md:w-8 md:h-8 text-white" />
               </div>
               <div>
                 <div className="flex items-center gap-2 mb-1">
                   <Badge variant="outline" className={cn(
-                    "font-black uppercase tracking-widest text-[8px] px-2 py-0.5",
+                    "font-black uppercase tracking-widest text-[7px] md:text-[8px] px-2 py-0.5",
                     profile?.subscriptionActive ? "border-rwanda-green text-rwanda-green bg-rwanda-green/5" : "border-amber-500 text-amber-500 bg-amber-500/5"
                   )}>
                     {profile?.subscriptionActive ? 'Monitoring Active' : 'Waiting for Start'}
                   </Badge>
                   {profile?.deviceId && (
-                    <Badge variant="outline" className="border-primary/30 text-primary bg-primary/5 font-black uppercase tracking-widest text-[8px]">
+                    <Badge variant="outline" className="border-primary/30 text-primary bg-primary/5 font-black uppercase tracking-widest text-[7px] md:text-[8px] hidden xs:inline-flex">
                       {profile.deviceName || 'Device Connected'}
                     </Badge>
                   )}
                 </div>
-                <h1 className="text-3xl md:text-4xl font-headline font-black tracking-tight leading-none">Security Center</h1>
-                <p className="text-muted-foreground text-xs mt-1 uppercase tracking-[0.2em] font-bold opacity-60">Welcome, {profile?.fullName || 'User'}</p>
+                <h1 className="text-2xl md:text-4xl font-headline font-black tracking-tight leading-none">Security Center</h1>
+                <p className="text-muted-foreground text-[10px] md:text-xs mt-1 uppercase tracking-[0.2em] font-bold opacity-60">Welcome, {profile?.fullName || 'User'}</p>
               </div>
             </div>
             
-            <div className="flex items-center gap-2 bg-secondary/30 backdrop-blur-xl p-2 rounded-[1.5rem] border border-border shadow-inner">
+            <div className="flex items-center w-full md:w-auto gap-2 bg-secondary/30 backdrop-blur-xl p-2 rounded-2xl md:rounded-[1.5rem] border border-border shadow-inner">
               <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl"><Bell className="w-4 h-4" /></Button>
               <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl"><Settings className="w-4 h-4" /></Button>
               <div className="h-6 w-px bg-border mx-1" />
               
               <Dialog open={isRegisterOpen} onOpenChange={setIsRegisterOpen}>
                 <DialogTrigger asChild>
-                  <Button className="rounded-xl font-bold px-6 h-10 gap-2 bg-primary hover:bg-primary/90 shadow-lg">
+                  <Button className="flex-grow md:flex-none rounded-xl font-bold px-4 md:px-6 h-10 gap-2 bg-primary hover:bg-primary/90 shadow-lg">
                     <Plus className="w-4 h-4" />
-                    Connect Device
+                    <span className="text-xs md:text-sm">Connect Device</span>
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="w-[95vw] sm:max-w-[520px] p-0 border-border/50 bg-background shadow-2xl rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden">
-                  <ScrollArea className="max-h-[95vh] w-full">
+                  <ScrollArea className="max-h-[90vh] w-full">
                     <div className="relative p-6 sm:p-10 pt-12">
                       <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-primary via-accent to-rwanda-green" />
                       <DialogHeader className="mb-8">
                         <div className="flex items-center gap-4">
-                          <div className="w-14 h-14 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center">
-                            <Smartphone className="w-7 h-7 text-primary" />
+                          <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center">
+                            <Smartphone className="w-6 h-6 md:w-7 md:h-7 text-primary" />
                           </div>
                           <div>
-                            <DialogTitle className="text-3xl font-black tracking-tight leading-none">Connect Device</DialogTitle>
-                            <DialogDescription className="text-sm mt-2 opacity-70">
+                            <DialogTitle className="text-xl md:text-3xl font-black tracking-tight leading-none">Connect Device</DialogTitle>
+                            <DialogDescription className="text-xs md:text-sm mt-2 opacity-70">
                               Enter the details from your device to start receiving safety alerts.
                             </DialogDescription>
                           </div>
@@ -627,7 +627,7 @@ function DashboardContent() {
                               placeholder="e.g. Living Room Sensor" 
                               value={deviceNameInput} 
                               onChange={(e) => setDeviceNameInput(e.target.value)}
-                              className="h-16 rounded-2xl border-border bg-secondary/30 px-6 pl-12"
+                              className="h-14 md:h-16 rounded-2xl border-border bg-secondary/30 px-6 pl-12 text-sm"
                             />
                             <Tag className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50" />
                           </div>
@@ -638,8 +638,8 @@ function DashboardContent() {
                             id="actualNodeId" 
                             placeholder="SAFE-NODE-XXXX" 
                             value={deviceIdInput} 
-                            onChange={(e) => setDeviceNameInput(e.target.value)}
-                            className="h-16 rounded-2xl border-border bg-secondary/30 font-mono px-6"
+                            onChange={(e) => setDeviceIdInput(e.target.value)}
+                            className="h-14 md:h-16 rounded-2xl border-border bg-secondary/30 font-mono px-6 text-sm"
                           />
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -651,7 +651,7 @@ function DashboardContent() {
                                 placeholder="+250 7XX XXX XXX" 
                                 value={alertPhone} 
                                 onChange={(e) => setAlertPhone(e.target.value)}
-                                className="h-16 rounded-2xl border-border bg-secondary/30 px-6 pl-12"
+                                className="h-14 md:h-16 rounded-2xl border-border bg-secondary/30 px-6 pl-12 text-sm"
                               />
                               <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50" />
                             </div>
@@ -665,7 +665,7 @@ function DashboardContent() {
                                 placeholder="you@email.com" 
                                 value={alertEmail} 
                                 onChange={(e) => setAlertEmail(e.target.value)}
-                                className="h-16 rounded-2xl border-border bg-secondary/30 px-6 pl-12"
+                                className="h-14 md:h-16 rounded-2xl border-border bg-secondary/30 px-6 pl-12 text-sm"
                               />
                               <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50" />
                             </div>
@@ -680,7 +680,7 @@ function DashboardContent() {
                             alertPhone, 
                             alertEmail 
                           })}
-                          className="w-full h-16 rounded-2xl bg-primary hover:bg-primary/90 font-black uppercase tracking-widest text-sm"
+                          className="w-full h-14 md:h-16 rounded-2xl bg-primary hover:bg-primary/90 font-black uppercase tracking-widest text-xs md:text-sm"
                           disabled={updating || !deviceIdInput || !deviceNameInput || !alertPhone || !alertEmail}
                         >
                           {updating ? <Loader2 className="w-5 h-5 animate-spin" /> : "Connect Device"}
@@ -693,59 +693,59 @@ function DashboardContent() {
             </div>
           </div>
 
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full space-y-12">
-            <TabsList className="grid grid-cols-2 h-auto p-1.5 bg-secondary/40 rounded-[1.5rem] border border-border/50 shadow-xl">
-              <TabsTrigger value="overview" className="rounded-xl py-3 data-[state=active]:bg-primary data-[state=active]:text-white font-bold text-[10px] md:text-sm">
-                <LayoutDashboard className="w-4 h-4 mr-2" /> Overview
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full space-y-8 md:space-y-12">
+            <TabsList className="grid grid-cols-2 h-auto p-1.5 bg-secondary/40 rounded-2xl md:rounded-[1.5rem] border border-border/50 shadow-xl">
+              <TabsTrigger value="overview" className="rounded-xl py-3 data-[state=active]:bg-primary data-[state=active]:text-white font-bold text-xs md:text-sm">
+                <LayoutDashboard className="w-4 h-4 mr-2 hidden xs:inline" /> Overview
               </TabsTrigger>
-              <TabsTrigger value="staging" className="rounded-xl py-3 data-[state=active]:bg-primary data-[state=active]:text-white font-bold text-[10px] md:text-sm">
-                <ShoppingCart className="w-4 h-4 mr-2" /> My Services
+              <TabsTrigger value="staging" className="rounded-xl py-3 data-[state=active]:bg-primary data-[state=active]:text-white font-bold text-xs md:text-sm">
+                <ShoppingCart className="w-4 h-4 mr-2 hidden xs:inline" /> My Services
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="overview" className="space-y-12 animate-reveal outline-none">
+            <TabsContent value="overview" className="space-y-8 md:space-y-12 animate-reveal outline-none">
               {/* Stats & Next Step Row */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <Card className="md:col-span-2 bg-card/40 border-border rounded-[2.5rem] shadow-2xl shadow-black/5 overflow-hidden">
-                  <CardHeader className="p-10 pb-4">
-                    <CardTitle className="text-2xl font-black flex items-center gap-3">
-                      <Activity className="w-6 h-6 text-primary" />
+                <Card className="md:col-span-2 bg-card/40 border-border rounded-[2rem] md:rounded-[2.5rem] shadow-2xl shadow-black/5 overflow-hidden">
+                  <CardHeader className="p-6 md:p-10 pb-4">
+                    <CardTitle className="text-xl md:text-2xl font-black flex items-center gap-3">
+                      <Activity className="w-5 h-5 md:w-6 md:h-6 text-primary" />
                       Status
                     </CardTitle>
-                    <CardDescription>A live look at your security network.</CardDescription>
+                    <CardDescription className="text-xs md:text-sm">A live look at your security network.</CardDescription>
                   </CardHeader>
-                  <CardContent className="p-10 pt-0">
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6">
+                  <CardContent className="p-6 md:p-10 pt-0">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4 mt-6">
                       {[
                         { label: 'Devices', val: profile?.deviceId ? '01' : '00', icon: Smartphone, color: 'text-primary' },
                         { label: 'Signal', val: profile?.deviceId ? '98%' : '0%', icon: Wifi, color: 'text-rwanda-green' },
                         { label: 'Health', val: profile?.deviceId ? 'Secure' : 'Inactive', icon: Shield, color: 'text-accent' },
                         { label: 'Alerts', val: '0', icon: Bell, color: 'text-muted-foreground' }
                       ].map((stat, i) => (
-                        <div key={i} className="bg-secondary/20 p-8 rounded-[2rem] border border-border/50 text-center flex flex-col items-center justify-center group hover:bg-primary/5 transition-colors">
-                          <stat.icon className={cn("w-6 h-6 mb-4 opacity-40 group-hover:opacity-100 transition-opacity", stat.color)} />
-                          <div className="text-4xl font-black leading-none">{stat.val}</div>
-                          <div className="text-[8px] uppercase font-black tracking-[0.2em] text-muted-foreground mt-3">{stat.label}</div>
+                        <div key={i} className="bg-secondary/20 p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] border border-border/50 text-center flex flex-col items-center justify-center group hover:bg-primary/5 transition-colors">
+                          <stat.icon className={cn("w-5 h-5 md:w-6 md:h-6 mb-3 md:mb-4 opacity-40 group-hover:opacity-100 transition-opacity", stat.color)} />
+                          <div className="text-2xl md:text-4xl font-black leading-none">{stat.val}</div>
+                          <div className="text-[7px] md:text-[8px] uppercase font-black tracking-[0.2em] text-muted-foreground mt-2 md:mt-3">{stat.label}</div>
                         </div>
                       ))}
                     </div>
                   </CardContent>
                 </Card>
 
-                <Card className="bg-gradient-to-br from-primary/10 via-background to-transparent border-primary/20 rounded-[2.5rem] flex flex-col shadow-xl overflow-hidden relative">
+                <Card className="bg-gradient-to-br from-primary/10 via-background to-transparent border-primary/20 rounded-[2rem] md:rounded-[2.5rem] flex flex-col shadow-xl overflow-hidden relative">
                   <div className="absolute top-0 right-0 p-8 opacity-5">
-                    <Target className="w-32 h-32" />
+                    <Target className="w-24 h-24 md:w-32 md:h-32" />
                   </div>
-                  <CardHeader className="p-10 pb-4">
+                  <CardHeader className="p-6 md:p-10 pb-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                        <Target className="w-5 h-5 text-primary" />
+                      <div className="w-8 h-8 md:w-10 md:h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                        <Target className="w-4 h-4 md:w-5 md:h-5 text-primary" />
                       </div>
-                      <span className="text-xl font-black">Next Step</span>
+                      <span className="text-lg md:text-xl font-black">Next Step</span>
                     </div>
                   </CardHeader>
-                  <CardContent className="p-10 pt-0 flex-grow flex flex-col justify-between relative z-10">
-                    <p className="text-sm text-muted-foreground font-light leading-relaxed">
+                  <CardContent className="p-6 md:p-10 pt-0 flex-grow flex flex-col justify-between relative z-10">
+                    <p className="text-xs md:text-sm text-muted-foreground font-light leading-relaxed">
                       {!profile?.purchaseStatus || profile?.purchaseStatus === 'none'
                         ? "You haven't set up your devices yet. Go to 'My Services' to start the process."
                         : !profile?.deviceId 
@@ -760,7 +760,7 @@ function DashboardContent() {
                         else if (!profile?.deviceId) setIsRegisterOpen(true);
                         else setIsSubscriptionOpen(true);
                       }}
-                      className="w-full mt-10 rounded-2xl h-16 font-black uppercase tracking-widest text-xs bg-primary shadow-xl shadow-primary/20"
+                      className="w-full mt-8 md:mt-10 rounded-2xl h-14 md:h-16 font-black uppercase tracking-widest text-[10px] md:text-xs bg-primary shadow-xl shadow-primary/20"
                     >
                       {(!profile?.purchaseStatus || profile.purchaseStatus === 'none') ? 'Go to My Services' : profile?.deviceId ? 'Activate Guard' : 'Sync Hardware Node'}
                       <ArrowRight className="w-4 h-4 ml-2" />
@@ -770,93 +770,93 @@ function DashboardContent() {
               </div>
 
               {/* My Devices Section */}
-              <div className="space-y-8">
-                <div className="flex items-center justify-between px-2">
+              <div className="space-y-6 md:space-y-8">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between px-2 gap-4">
                   <div>
-                    <h3 className="text-3xl font-black tracking-tight">My Devices</h3>
-                    <p className="text-muted-foreground text-sm font-light mt-1">All gadgets linked to your account.</p>
+                    <h3 className="text-2xl md:text-3xl font-black tracking-tight">My Devices</h3>
+                    <p className="text-muted-foreground text-xs md:text-sm font-light mt-1">All gadgets linked to your account.</p>
                   </div>
-                  <Button variant="outline" className="rounded-xl border-dashed border-primary/40 text-primary font-bold h-12" onClick={() => setIsRegisterOpen(true)}>
+                  <Button variant="outline" className="w-full sm:w-auto rounded-xl border-dashed border-primary/40 text-primary font-bold h-12" onClick={() => setIsRegisterOpen(true)}>
                     <Plus className="w-4 h-4 mr-2" /> Add Device
                   </Button>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {profile?.deviceId ? (
-                    <Card className="rounded-[2.5rem] border-border bg-card/60 shadow-xl overflow-hidden group hover:border-primary transition-all">
-                      <div className="h-48 bg-secondary/30 relative flex items-center justify-center">
+                    <Card className="rounded-[2rem] md:rounded-[2.5rem] border-border bg-card/60 shadow-xl overflow-hidden group hover:border-primary transition-all">
+                      <div className="h-40 md:h-48 bg-secondary/30 relative flex items-center justify-center">
                         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/5 via-transparent to-transparent" />
-                        <Smartphone className="w-20 h-20 text-primary opacity-20 group-hover:scale-110 transition-transform" />
-                        <div className="absolute top-6 right-6">
-                          <Badge className="bg-rwanda-green border-none text-[8px] font-black tracking-widest uppercase">ACTIVE</Badge>
+                        <Smartphone className="w-16 h-16 md:w-20 md:h-20 text-primary opacity-20 group-hover:scale-110 transition-transform" />
+                        <div className="absolute top-4 md:top-6 right-4 md:right-6">
+                          <Badge className="bg-rwanda-green border-none text-[7px] md:text-[8px] font-black tracking-widest uppercase">ACTIVE</Badge>
                         </div>
                       </div>
-                      <CardContent className="p-10 space-y-6">
+                      <CardContent className="p-8 md:p-10 space-y-4 md:space-y-6">
                         <div className="flex justify-between items-start">
                           <div>
-                            <h4 className="text-2xl font-black">{profile.deviceName || 'Unnamed Node'}</h4>
-                            <p className="text-xs font-mono font-bold text-primary opacity-60 mt-1">{profile.deviceId}</p>
+                            <h4 className="text-xl md:text-2xl font-black">{profile.deviceName || 'Unnamed Node'}</h4>
+                            <p className="text-[10px] md:text-xs font-mono font-bold text-primary opacity-60 mt-1">{profile.deviceId}</p>
                           </div>
-                          <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center">
-                            <Signal className="w-6 h-6 text-primary" />
+                          <div className="w-10 h-10 md:w-12 md:h-12 rounded-2xl bg-primary/10 flex items-center justify-center">
+                            <Signal className="w-5 h-5 md:w-6 md:h-6 text-primary" />
                           </div>
                         </div>
                         
-                        <div className="grid grid-cols-2 gap-4">
-                          <div className="bg-background/40 p-4 rounded-2xl border border-border">
-                            <p className="text-[8px] font-black uppercase text-muted-foreground mb-1">Health</p>
-                            <div className="flex items-center gap-2">
+                        <div className="grid grid-cols-2 gap-3 md:gap-4">
+                          <div className="bg-background/40 p-3 md:p-4 rounded-2xl border border-border text-center sm:text-left">
+                            <p className="text-[7px] md:text-[8px] font-black uppercase text-muted-foreground mb-1">Health</p>
+                            <div className="flex items-center justify-center sm:justify-start gap-1.5 md:gap-2">
                               <CheckCircle2 className="w-3 h-3 text-rwanda-green" />
-                              <span className="text-xs font-bold">Excellent</span>
+                              <span className="text-[10px] md:text-xs font-bold">Excellent</span>
                             </div>
                           </div>
-                          <div className="bg-background/40 p-4 rounded-2xl border border-border">
-                            <p className="text-[8px] font-black uppercase text-muted-foreground mb-1">Signal</p>
-                            <div className="flex items-center gap-2">
+                          <div className="bg-background/40 p-3 md:p-4 rounded-2xl border border-border text-center sm:text-left">
+                            <p className="text-[7px] md:text-[8px] font-black uppercase text-muted-foreground mb-1">Signal</p>
+                            <div className="flex items-center justify-center sm:justify-start gap-1.5 md:gap-2">
                               <Wifi className="w-3 h-3 text-primary" />
-                              <span className="text-xs font-bold">98% Link</span>
+                              <span className="text-[10px] md:text-xs font-bold">98% Link</span>
                             </div>
                           </div>
                         </div>
 
-                        <div className="pt-4 border-t border-border flex justify-between items-center text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+                        <div className="pt-4 border-t border-border flex justify-between items-center text-[8px] md:text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
                           <div className="flex items-center gap-1.5">
-                            <Globe className="w-3.5 h-3.5 opacity-40" />
+                            <Globe className="w-3 h-3 md:w-3.5 md:h-3.5 opacity-40" />
                             Connected
                           </div>
                           <div className="flex items-center gap-1.5">
-                            <Database className="w-3.5 h-3.5 opacity-40" />
+                            <Database className="w-3 h-3 md:w-3.5 md:h-3.5 opacity-40" />
                             Syncing
                           </div>
                         </div>
                       </CardContent>
                     </Card>
                   ) : (
-                    <div className="col-span-full py-24 border-2 border-dashed border-border rounded-[3rem] flex flex-col items-center justify-center text-center bg-secondary/5">
-                      <div className="w-20 h-20 rounded-3xl bg-secondary flex items-center justify-center mb-6">
-                        <Cpu className="w-10 h-10 text-muted-foreground opacity-20" />
+                    <div className="col-span-full py-16 md:py-24 border-2 border-dashed border-border rounded-[2rem] md:rounded-[3rem] flex flex-col items-center justify-center text-center bg-secondary/5 px-6">
+                      <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl md:rounded-3xl bg-secondary flex items-center justify-center mb-6">
+                        <Cpu className="w-8 h-8 md:w-10 md:h-10 text-muted-foreground opacity-20" />
                       </div>
-                      <h4 className="text-2xl font-black mb-2">No Devices Found</h4>
-                      <p className="text-sm text-muted-foreground max-w-sm mb-8 font-light">
+                      <h4 className="text-xl md:text-2xl font-black mb-2">No Devices Found</h4>
+                      <p className="text-xs md:text-sm text-muted-foreground max-w-sm mb-8 font-light leading-relaxed">
                         Your gadgets will show up here after you link them. Click the button below to add your first device.
                       </p>
-                      <Button onClick={() => setIsRegisterOpen(true)} className="rounded-2xl h-14 px-10 font-black bg-primary">
+                      <Button onClick={() => setIsRegisterOpen(true)} className="rounded-2xl h-12 md:h-14 px-8 md:px-10 font-black bg-primary text-xs md:text-sm">
                         Add My First Device
                       </Button>
                     </div>
                   )}
 
-                  {/* Empty Slot Placeholder */}
+                  {/* Add Slot Placeholder (Mobile version is smaller) */}
                   {profile?.deviceId && (
                     <button 
                       onClick={() => setIsRegisterOpen(true)}
-                      className="rounded-[2.5rem] border-2 border-dashed border-border flex flex-col items-center justify-center p-12 group hover:border-primary/50 hover:bg-primary/5 transition-all text-center"
+                      className="rounded-[2rem] md:rounded-[2.5rem] border-2 border-dashed border-border flex flex-col items-center justify-center p-8 md:p-12 group hover:border-primary/50 hover:bg-primary/5 transition-all text-center"
                     >
-                      <div className="w-14 h-14 rounded-2xl bg-secondary flex items-center justify-center mb-4 group-hover:bg-primary/10 transition-colors">
-                        <Plus className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-colors" />
+                      <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-secondary flex items-center justify-center mb-4 group-hover:bg-primary/10 transition-colors">
+                        <Plus className="w-5 h-5 md:w-6 md:h-6 text-muted-foreground group-hover:text-primary transition-colors" />
                       </div>
-                      <p className="font-bold text-sm">Add Device</p>
-                      <p className="text-[10px] uppercase font-black tracking-widest text-muted-foreground mt-1 opacity-60">Add Another</p>
+                      <p className="font-bold text-xs md:text-sm">Add Device</p>
+                      <p className="text-[7px] md:text-[8px] uppercase font-black tracking-widest text-muted-foreground mt-1 opacity-60">Add Another</p>
                     </button>
                   )}
                 </div>
@@ -865,40 +865,39 @@ function DashboardContent() {
 
             <TabsContent value="staging" className="space-y-8 outline-none">
               {stagingStep === 'list' && (
-                <Card className="bg-card/60 border-border rounded-[3rem] shadow-2xl animate-reveal">
-                  <CardHeader className="p-12 pb-6 border-b border-border/50">
-                    <CardTitle className="text-4xl font-black">My Services</CardTitle>
-                    <CardDescription className="text-lg font-light">Pick a service below to start set up.</CardDescription>
+                <Card className="bg-card/60 border-border rounded-[2rem] md:rounded-[3rem] shadow-2xl animate-reveal">
+                  <CardHeader className="p-8 md:p-12 pb-6 border-b border-border/50">
+                    <CardTitle className="text-2xl md:text-4xl font-black">My Services</CardTitle>
+                    <CardDescription className="text-base md:text-lg font-light">Pick a service below to start set up.</CardDescription>
                   </CardHeader>
-                  <CardContent className="p-12">
+                  <CardContent className="p-8 md:p-12">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                       {profile?.servicesSelected?.length > 0 ? (
                         profile.servicesSelected.map((serviceId: string) => (
-                          <div key={serviceId} className="p-8 rounded-[2.5rem] border bg-background border-border shadow-sm flex flex-col justify-between hover:border-primary transition-all relative overflow-hidden">
+                          <div key={serviceId} className="p-6 md:p-8 rounded-[1.5rem] md:rounded-[2.5rem] border bg-background border-border shadow-sm flex flex-col justify-between hover:border-primary transition-all relative overflow-hidden">
                             <div className="relative z-10">
-                              <h4 className="font-black text-xl capitalize mb-3">{serviceId.replace('-', ' ')}</h4>
-                              <p className="text-[10px] text-muted-foreground uppercase tracking-widest mb-8">
+                              <h4 className="font-black text-lg md:text-xl capitalize mb-2 md:mb-3">{serviceId.replace('-', ' ')}</h4>
+                              <p className="text-[8px] md:text-[10px] text-muted-foreground uppercase tracking-widest mb-6 md:mb-8">
                                 Status: {profile?.purchaseStatus !== 'none' ? 'Hardware Pending' : 'Initialization Required'}
                               </p>
                             </div>
                             <Button 
                               onClick={() => {
                                 setSelectedServiceId(serviceId);
-                                // Reset common step states
                                 setChildOption(null);
                                 setCheckoutData(prev => ({ ...prev, color: '' }));
                                 setStagingStep('instructions');
                               }}
-                              className="w-full rounded-xl bg-primary/10 text-primary hover:bg-primary hover:text-white border-none font-black text-[10px] uppercase tracking-widest h-12"
+                              className="w-full rounded-xl bg-primary/10 text-primary hover:bg-primary hover:text-white border-none font-black text-[9px] md:text-[10px] uppercase tracking-widest h-10 md:h-12"
                             >
                               Start Set Up
                             </Button>
                           </div>
                         ))
                       ) : (
-                        <div className="col-span-full py-24 text-center border-2 border-dashed border-border rounded-[2.5rem]">
-                          <h4 className="text-2xl font-black mb-2">No Services Yet</h4>
-                          <p className="text-muted-foreground mb-8">You haven't picked any safety services yet.</p>
+                        <div className="col-span-full py-16 md:py-24 text-center border-2 border-dashed border-border rounded-[2rem] md:rounded-[2.5rem] px-6">
+                          <h4 className="text-xl md:text-2xl font-black mb-2">No Services Yet</h4>
+                          <p className="text-sm text-muted-foreground mb-8">You haven't picked any safety services yet.</p>
                           <Button onClick={() => router.push('/services')} className="rounded-2xl h-14 px-10 font-black bg-primary">Browse Services</Button>
                         </div>
                       )}
@@ -908,50 +907,50 @@ function DashboardContent() {
               )}
 
               {stagingStep === 'instructions' && selectedServiceId && (
-                <Card className="max-w-4xl mx-auto rounded-[3rem] border-border bg-card/60 shadow-2xl animate-reveal">
-                  <CardHeader className="p-12 pb-6 border-b border-border/50 bg-primary/5">
-                    <Button variant="ghost" className="w-fit mb-6 rounded-xl gap-2 font-bold" onClick={() => setStagingStep('list')}>
+                <Card className="max-w-4xl mx-auto rounded-[2rem] md:rounded-[3rem] border-border bg-card/60 shadow-2xl animate-reveal">
+                  <CardHeader className="p-8 md:p-12 pb-6 border-b border-border/50 bg-primary/5">
+                    <Button variant="ghost" className="w-fit mb-4 md:mb-6 rounded-xl gap-2 font-bold text-xs" onClick={() => setStagingStep('list')}>
                       <ChevronLeft className="w-4 h-4" /> Back to My Services
                     </Button>
-                    <CardTitle className="text-4xl font-black">How it Works</CardTitle>
-                    <CardDescription className="text-lg font-light mt-2">Professional guidance for your security journey.</CardDescription>
+                    <CardTitle className="text-2xl md:text-4xl font-black">How it Works</CardTitle>
+                    <CardDescription className="text-base md:text-lg font-light mt-2">Professional guidance for your security journey.</CardDescription>
                   </CardHeader>
-                  <CardContent className="p-12">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                      <div className="space-y-8">
-                        <h3 className="text-2xl font-black">Steps to Install</h3>
-                        <div className="space-y-6">
+                  <CardContent className="p-8 md:p-12">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-12">
+                      <div className="space-y-6 md:space-y-8">
+                        <h3 className="text-xl md:text-2xl font-black">Steps to Install</h3>
+                        <div className="space-y-4 md:space-y-6">
                            {[
                              { step: "1. Hardware Acquisition", desc: "Select whether to buy or lease your professional SafeRwanda device." },
                              { step: "2. Strategic Delivery", desc: "Your hardware is shipped via secured courier to your registered location." },
                              { step: "3. Deployment", desc: "Follow the technical guide to mount and activate your sensor node." },
                              { step: "4. Network Link", desc: "Connect your device to our 24/7 monitoring grid using your Device ID." }
                            ].map((item, i) => (
-                             <div key={i} className="flex gap-4">
-                               <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                                 <span className="text-primary font-bold text-sm">{i+1}</span>
+                             <div key={i} className="flex gap-3 md:gap-4">
+                               <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                                 <span className="text-primary font-bold text-xs md:text-sm">{i+1}</span>
                                </div>
                                <div className="space-y-1">
-                                 <h4 className="font-bold text-base">{item.step}</h4>
-                                 <p className="text-xs text-muted-foreground leading-relaxed">{item.desc}</p>
+                                 <h4 className="font-bold text-sm md:text-base">{item.step}</h4>
+                                 <p className="text-[10px] md:text-xs text-muted-foreground leading-relaxed">{item.desc}</p>
                                </div>
                              </div>
                            ))}
                         </div>
                         <Button 
                           onClick={handleDownloadGuide}
-                          className="h-16 rounded-2xl font-black uppercase tracking-widest text-xs bg-primary gap-2 w-full"
+                          className="h-14 md:h-16 rounded-2xl font-black uppercase tracking-widest text-[10px] md:text-xs bg-primary gap-2 w-full"
                         >
                           <Download className="w-4 h-4" /> Download Guide (PDF)
                         </Button>
                       </div>
 
-                      <div className="bg-primary/5 rounded-[2.5rem] border border-primary/10 p-10 flex flex-col justify-center text-center">
-                        <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-6">
-                          <ShoppingCart className="w-8 h-8 text-primary" />
+                      <div className="bg-primary/5 rounded-[1.5rem] md:rounded-[2.5rem] border border-primary/10 p-8 md:p-10 flex flex-col justify-center text-center">
+                        <div className="w-12 h-12 md:w-16 md:h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4 md:mb-6">
+                          <ShoppingCart className="w-6 h-6 md:w-8 md:h-8 text-primary" />
                         </div>
-                        <h4 className="text-2xl font-black mb-4">Start Your Protection</h4>
-                        <p className="text-sm text-muted-foreground mb-8 leading-relaxed">
+                        <h4 className="text-xl md:text-2xl font-black mb-3 md:mb-4">Start Your Protection</h4>
+                        <p className="text-[10px] md:text-sm text-muted-foreground mb-6 md:mb-8 leading-relaxed">
                           Your security is our priority. Once you have reviewed the instructions, proceed to select your hardware options.
                         </p>
                         <Button 
@@ -959,7 +958,7 @@ function DashboardContent() {
                             if (selectedServiceId === 'child-protection') setStagingStep('child-options');
                             else setStagingStep('get-device');
                           }}
-                          className="w-full h-16 rounded-2xl bg-primary hover:bg-primary/90 font-black uppercase tracking-widest text-sm shadow-xl"
+                          className="w-full h-14 md:h-16 rounded-2xl bg-primary hover:bg-primary/90 font-black uppercase tracking-widest text-[10px] md:text-sm shadow-xl"
                         >
                           Continue to Get Device
                         </Button>
@@ -970,77 +969,77 @@ function DashboardContent() {
               )}
 
               {stagingStep === 'child-options' && (
-                <div className="space-y-12 animate-reveal">
-                  <div className="flex flex-col items-center text-center max-w-2xl mx-auto space-y-4">
-                    <Button variant="ghost" className="rounded-xl gap-2 font-bold" onClick={() => setStagingStep('instructions')}>
+                <div className="space-y-8 md:space-y-12 animate-reveal">
+                  <div className="flex flex-col items-center text-center max-w-2xl mx-auto space-y-3 md:space-y-4 px-4">
+                    <Button variant="ghost" className="rounded-xl gap-2 font-bold text-xs" onClick={() => setStagingStep('instructions')}>
                       <ChevronLeft className="w-4 h-4" /> Back to Instructions
                     </Button>
-                    <h2 className="text-4xl font-black">Child Protection Options</h2>
-                    <p className="text-muted-foreground">Select the protection tier for your SafeWatch node.</p>
+                    <h2 className="text-2xl md:text-4xl font-black">Child Protection Options</h2>
+                    <p className="text-xs md:text-sm text-muted-foreground">Select the protection tier for your SafeWatch node.</p>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 max-w-5xl mx-auto px-4">
                     <Card 
-                      className="group cursor-pointer hover:border-primary transition-all p-10 rounded-[2.5rem] bg-card/60 border-2 border-border shadow-xl flex flex-col justify-between"
+                      className="group cursor-pointer hover:border-primary transition-all p-8 md:p-10 rounded-[2rem] md:rounded-[2.5rem] bg-card/60 border-2 border-border shadow-xl flex flex-col justify-between"
                       onClick={() => {
                         setChildOption('option1');
-                        setCheckoutData(prev => ({ ...prev, color: '' })); // Reset color on option switch
+                        setCheckoutData(prev => ({ ...prev, color: '' }));
                         setStagingStep('get-device');
                       }}
                     >
                       <div>
-                        <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6">
-                          <Signal className="w-6 h-6 text-primary" />
+                        <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6">
+                          <Signal className="w-5 h-5 md:w-6 md:h-6 text-primary" />
                         </div>
-                        <h3 className="text-2xl font-black mb-4">Option 1: Standard</h3>
-                        <p className="text-sm text-muted-foreground leading-relaxed">
+                        <h3 className="text-xl md:text-2xl font-black mb-3 md:mb-4">Option 1: Standard</h3>
+                        <p className="text-[10px] md:text-sm text-muted-foreground leading-relaxed">
                           Real-time tracking and geofencing for safe school commutes. Includes a one-touch SOS panic button and a silent audio callback to instantly hear your child's surroundings.
                         </p>
                       </div>
-                      <Button className="mt-8 w-full rounded-xl font-bold bg-primary/5 text-primary group-hover:bg-primary group-hover:text-white border-none">Select Option 1</Button>
+                      <Button className="mt-8 w-full rounded-xl font-bold bg-primary/5 text-primary group-hover:bg-primary group-hover:text-white border-none text-xs">Select Option 1</Button>
                     </Card>
 
                     <Card 
-                      className="group cursor-pointer hover:border-accent transition-all p-10 rounded-[2.5rem] bg-card/60 border-2 border-border shadow-xl flex flex-col justify-between"
+                      className="group cursor-pointer hover:border-accent transition-all p-8 md:p-10 rounded-[2rem] md:rounded-[2.5rem] bg-card/60 border-2 border-border shadow-xl flex flex-col justify-between"
                       onClick={() => {
                         setChildOption('option2');
-                        setCheckoutData(prev => ({ ...prev, color: '' })); // Reset color on option switch
+                        setCheckoutData(prev => ({ ...prev, color: '' }));
                         setStagingStep('get-device');
                       }}
                     >
                       <div>
-                        <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center mb-6">
-                          <Heart className="w-6 h-6 text-accent" />
+                        <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-accent/10 flex items-center justify-center mb-6">
+                          <Heart className="w-5 h-5 md:w-6 md:h-6 text-accent" />
                         </div>
-                        <h3 className="text-2xl font-black mb-4">Option 2: Advanced</h3>
-                        <p className="text-sm text-muted-foreground leading-relaxed">
+                        <h3 className="text-xl md:text-2xl font-black mb-3 md:mb-4">Option 2: Advanced</h3>
+                        <p className="text-[10px] md:text-sm text-muted-foreground leading-relaxed">
                           Everything in Option 1 plus advanced health monitoring for heart rate, blood pressure, and oxygen saturation, specifically targeting early malaria detection and wellness tracking.
                         </p>
                       </div>
-                      <Button className="mt-8 w-full rounded-xl font-bold bg-accent/5 text-accent group-hover:bg-accent group-hover:text-accent-foreground border-none">Select Option 2</Button>
+                      <Button className="mt-8 w-full rounded-xl font-bold bg-accent/5 text-accent group-hover:bg-accent group-hover:text-accent-foreground border-none text-xs">Select Option 2</Button>
                     </Card>
                   </div>
                 </div>
               )}
 
               {stagingStep === 'get-device' && selectedServiceId && activeDeviceData && (
-                <div className="space-y-12 animate-reveal">
-                  <div className="flex flex-col items-center text-center max-w-2xl mx-auto space-y-4">
-                    <Button variant="ghost" className="rounded-xl gap-2 font-bold" onClick={() => {
+                <div className="space-y-8 md:space-y-12 animate-reveal">
+                  <div className="flex flex-col items-center text-center max-w-2xl mx-auto space-y-3 md:space-y-4 px-4">
+                    <Button variant="ghost" className="rounded-xl gap-2 font-bold text-xs" onClick={() => {
                       if (selectedServiceId === 'child-protection') setStagingStep('child-options');
                       else setStagingStep('instructions');
                     }}>
                       <ChevronLeft className="w-4 h-4" /> Back to Selection
                     </Button>
-                    <h2 className="text-4xl font-black">Get Your Device</h2>
-                    <p className="text-muted-foreground">Select your hardware for {selectedServiceId.replace('-', ' ')}.</p>
+                    <h2 className="text-2xl md:text-4xl font-black">Get Your Device</h2>
+                    <p className="text-xs md:text-sm text-muted-foreground">Select your hardware for {selectedServiceId.replace('-', ' ')}.</p>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-6xl mx-auto">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 max-w-6xl mx-auto px-4">
                     {/* Buy Option */}
-                    <Card className="rounded-[3.5rem] overflow-hidden border-4 border-border bg-card/60 transition-all shadow-2xl">
+                    <Card className="rounded-[2.5rem] md:rounded-[3.5rem] overflow-hidden border-2 md:border-4 border-border bg-card/60 transition-all shadow-2xl">
                       <div 
-                        className="relative h-[500px] w-full cursor-pointer group" 
+                        className="relative h-[350px] md:h-[500px] w-full cursor-pointer group" 
                         onClick={(e) => {
                           if ((e.target as HTMLElement).closest('button')) return;
                           setIsPreviewOpen(true);
@@ -1050,7 +1049,7 @@ function DashboardContent() {
                           <CarouselContent>
                             {activeDeviceData.images?.map((imgUrl: string, idx: number) => (
                               <CarouselItem key={idx}>
-                                <div className="relative h-[500px] w-full">
+                                <div className="relative h-[350px] md:h-[500px] w-full">
                                   <Image src={imgUrl} alt={`${activeDeviceData.name} view ${idx + 1}`} fill className="object-contain" />
                                 </div>
                               </CarouselItem>
@@ -1064,9 +1063,9 @@ function DashboardContent() {
                           )}
                         </Carousel>
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent pointer-events-none" />
-                        <div className="absolute bottom-8 left-8 pointer-events-none">
-                          <h4 className="text-3xl font-black text-white">Buy Hardware</h4>
-                          <p className="text-white/60 text-xs font-bold uppercase tracking-widest">Ownership + Secured Shipping</p>
+                        <div className="absolute bottom-6 md:bottom-8 left-6 md:left-8 pointer-events-none">
+                          <h4 className="text-2xl md:text-3xl font-black text-white">Buy Hardware</h4>
+                          <p className="text-white/60 text-[10px] md:text-xs font-bold uppercase tracking-widest">Ownership + Secured Shipping</p>
                         </div>
                         <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
                           <div className="bg-black/50 backdrop-blur-md p-2 rounded-full text-white">
@@ -1074,12 +1073,12 @@ function DashboardContent() {
                           </div>
                         </div>
                       </div>
-                      <CardContent className="p-10 space-y-6">
-                        <p className="text-sm text-muted-foreground leading-relaxed font-bold whitespace-pre-line">{activeDeviceData.description}</p>
+                      <CardContent className="p-6 md:p-10 space-y-4 md:space-y-6">
+                        <p className="text-[10px] md:text-sm text-muted-foreground leading-relaxed font-bold whitespace-pre-line">{activeDeviceData.description}</p>
                         
                         {activeDeviceData.features && (
                           <div className="space-y-2">
-                            <p className="text-[10px] font-black uppercase tracking-widest text-primary">Core Features</p>
+                            <p className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-primary">Core Features</p>
                             <ul className="grid grid-cols-1 gap-1">
                               {activeDeviceData.features.map((f: string, i: number) => (
                                 <li key={i} className="flex items-start gap-2 text-[10px] font-medium text-muted-foreground">
@@ -1092,25 +1091,25 @@ function DashboardContent() {
                         )}
 
                         {activeDeviceData.specifications && (
-                          <div className="space-y-3 bg-secondary/20 p-6 rounded-2xl">
-                            <p className="text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-2">
+                          <div className="space-y-3 bg-secondary/20 p-4 md:p-6 rounded-2xl">
+                            <p className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-2">
                               <span className="font-bold">TECHNICAL SPECIFICATIONS</span>
                             </p>
-                            <div className="grid grid-cols-2 gap-x-4 gap-y-1">
+                            <div className="grid grid-cols-2 gap-x-3 md:gap-x-4 gap-y-1">
                               {Object.entries(activeDeviceData.specifications).map(([k, v]: [any, any]) => (
                                 <div key={k} className="flex flex-col">
-                                  <span className="text-[8px] uppercase text-muted-foreground font-black">{k}</span>
-                                  <span className="text-[10px] font-bold">{v}</span>
+                                  <span className="text-[7px] md:text-[8px] uppercase text-muted-foreground font-black">{k}</span>
+                                  <span className="text-[9px] md:text-[10px] font-bold">{v}</span>
                                 </div>
                               ))}
                             </div>
                           </div>
                         )}
 
-                        <div className="space-y-4 p-6 rounded-3xl bg-background border border-border">
-                          <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-4 p-4 md:p-6 rounded-3xl bg-background border border-border">
+                          <div className="grid grid-cols-2 gap-3 md:gap-4">
                             <div className="space-y-2">
-                              <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Quantity</Label>
+                              <Label className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-muted-foreground">Quantity</Label>
                               <Select 
                                 value={checkoutData.quantity.toString()} 
                                 onValueChange={(v) => setCheckoutData({...checkoutData, quantity: parseInt(v)})}
@@ -1126,13 +1125,13 @@ function DashboardContent() {
                               </Select>
                             </div>
                             <div className="space-y-2">
-                              <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Color</Label>
+                              <Label className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-muted-foreground">Color</Label>
                               <Select 
                                 value={checkoutData.color} 
                                 onValueChange={(v) => setCheckoutData({...checkoutData, color: v})}
                               >
                                 <SelectTrigger>
-                                  <SelectValue placeholder="Select Color" />
+                                  <SelectValue placeholder="Color" />
                                 </SelectTrigger>
                                 <SelectContent>
                                   {getColorOptions().map(c => (
@@ -1144,8 +1143,8 @@ function DashboardContent() {
                           </div>
                           <div className="pt-4 border-t border-border flex justify-between items-center">
                             <div>
-                              <p className="text-[8px] font-black uppercase text-muted-foreground">Total Amount ({checkoutData.quantity} units)</p>
-                              <p className="text-2xl font-black">
+                              <p className="text-[7px] md:text-[8px] font-black uppercase text-muted-foreground">Total ({checkoutData.quantity} units)</p>
+                              <p className="text-xl md:text-2xl font-black">
                                 {(parseInt(activeDeviceData.buyPrice.replace(/[^0-9]/g, '')) * checkoutData.quantity).toLocaleString()} RWF
                               </p>
                             </div>
@@ -1155,7 +1154,7 @@ function DashboardContent() {
                         <Button 
                           onClick={() => handleDeviceSelection('purchased')}
                           disabled={!checkoutData.color}
-                          className="w-full h-16 rounded-2xl font-black uppercase tracking-widest text-sm bg-primary"
+                          className="w-full h-14 md:h-16 rounded-2xl font-black uppercase tracking-widest text-xs md:text-sm bg-primary"
                         >
                           Order & Buy
                         </Button>
@@ -1163,9 +1162,9 @@ function DashboardContent() {
                     </Card>
 
                     {/* Lease Option */}
-                    <Card className="rounded-[3.5rem] overflow-hidden border-4 border-border bg-card/60 transition-all shadow-2xl">
+                    <Card className="rounded-[2.5rem] md:rounded-[3.5rem] overflow-hidden border-2 md:border-4 border-border bg-card/60 transition-all shadow-2xl">
                       <div 
-                        className="relative h-[500px] w-full cursor-pointer group" 
+                        className="relative h-[350px] md:h-[500px] w-full cursor-pointer group" 
                         onClick={(e) => {
                           if ((e.target as HTMLElement).closest('button')) return;
                           setIsPreviewOpen(true);
@@ -1175,7 +1174,7 @@ function DashboardContent() {
                           <CarouselContent>
                             {activeDeviceData.images?.map((imgUrl: string, idx: number) => (
                               <CarouselItem key={idx}>
-                                <div className="relative h-[500px] w-full">
+                                <div className="relative h-[350px] md:h-[500px] w-full">
                                   <Image src={imgUrl} alt={`${activeDeviceData.name} view ${idx + 1}`} fill className="object-contain" />
                                 </div>
                               </CarouselItem>
@@ -1189,9 +1188,9 @@ function DashboardContent() {
                           )}
                         </Carousel>
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent pointer-events-none" />
-                        <div className="absolute bottom-8 left-8 pointer-events-none">
-                          <h4 className="text-3xl font-black text-white">Lease to Own</h4>
-                          <p className="text-white/60 text-xs font-bold uppercase tracking-widest">Quarterly Installments</p>
+                        <div className="absolute bottom-6 md:bottom-8 left-6 md:left-8 pointer-events-none">
+                          <h4 className="text-2xl md:text-3xl font-black text-white">Lease to Own</h4>
+                          <p className="text-white/60 text-[10px] md:text-xs font-bold uppercase tracking-widest">Quarterly Installments</p>
                         </div>
                         <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
                           <div className="bg-black/50 backdrop-blur-md p-2 rounded-full text-white">
@@ -1199,12 +1198,12 @@ function DashboardContent() {
                           </div>
                         </div>
                       </div>
-                      <CardContent className="p-10 space-y-6">
-                        <p className="text-sm text-muted-foreground leading-relaxed font-bold whitespace-pre-line">{activeDeviceData.description}</p>
+                      <CardContent className="p-6 md:p-10 space-y-4 md:space-y-6">
+                        <p className="text-[10px] md:text-sm text-muted-foreground leading-relaxed font-bold whitespace-pre-line">{activeDeviceData.description}</p>
                         
                         {activeDeviceData.features && (
                           <div className="space-y-2">
-                            <p className="text-[10px] font-black uppercase tracking-widest text-primary">Core Features</p>
+                            <p className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-primary">Core Features</p>
                             <ul className="grid grid-cols-1 gap-1">
                               {activeDeviceData.features.map((f: string, i: number) => (
                                 <li key={i} className="flex items-start gap-2 text-[10px] font-medium text-muted-foreground">
@@ -1217,29 +1216,29 @@ function DashboardContent() {
                         )}
 
                         {activeDeviceData.specifications && (
-                          <div className="space-y-3 bg-secondary/20 p-6 rounded-2xl">
-                            <p className="text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-2">
+                          <div className="space-y-3 bg-secondary/20 p-4 md:p-6 rounded-2xl">
+                            <p className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-2">
                               <span className="font-bold">TECHNICAL SPECIFICATIONS</span>
                             </p>
-                            <div className="grid grid-cols-2 gap-x-4 gap-y-1">
+                            <div className="grid grid-cols-2 gap-x-3 md:gap-x-4 gap-y-1">
                               {Object.entries(activeDeviceData.specifications).map(([k, v]: [any, any]) => (
                                 <div key={k} className="flex flex-col">
-                                  <span className="text-[8px] uppercase text-muted-foreground font-black">{k}</span>
-                                  <span className="text-[10px] font-bold">{v}</span>
+                                  <span className="text-[7px] md:text-[8px] uppercase text-muted-foreground font-black">{k}</span>
+                                  <span className="text-[9px] md:text-[10px] font-bold">{v}</span>
                                 </div>
                               ))}
                             </div>
                           </div>
                         )}
 
-                        <div className="p-4 rounded-2xl bg-primary/5 border border-primary/10 text-xs font-bold text-primary leading-relaxed">
+                        <div className="p-4 rounded-2xl bg-primary/5 border border-primary/10 text-[10px] md:text-xs font-bold text-primary leading-relaxed">
                           It's a lease with option to buy. The price is {activeDeviceData.leasePrice} per 3 months for a year (4 installments), after which you own the device.
                         </div>
 
-                        <div className="space-y-4 p-6 rounded-3xl bg-background border border-border">
-                          <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-4 p-4 md:p-6 rounded-3xl bg-background border border-border">
+                          <div className="grid grid-cols-2 gap-3 md:gap-4">
                             <div className="space-y-2">
-                              <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Quantity</Label>
+                              <Label className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-muted-foreground">Quantity</Label>
                               <Select 
                                 value={checkoutData.quantity.toString()} 
                                 onValueChange={(v) => setCheckoutData({...checkoutData, quantity: parseInt(v)})}
@@ -1255,13 +1254,13 @@ function DashboardContent() {
                               </Select>
                             </div>
                             <div className="space-y-2">
-                              <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Color</Label>
+                              <Label className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-muted-foreground">Color</Label>
                               <Select 
                                 value={checkoutData.color} 
                                 onValueChange={(v) => setCheckoutData({...checkoutData, color: v})}
                               >
                                 <SelectTrigger>
-                                  <SelectValue placeholder="Select Color" />
+                                  <SelectValue placeholder="Color" />
                                 </SelectTrigger>
                                 <SelectContent>
                                   {getColorOptions().map(c => (
@@ -1273,8 +1272,8 @@ function DashboardContent() {
                           </div>
                           <div className="pt-4 border-t border-border flex justify-between items-center">
                             <div>
-                              <p className="text-[8px] font-black uppercase text-muted-foreground">Total Quarterly Amount ({checkoutData.quantity} units)</p>
-                              <p className="text-2xl font-black">
+                              <p className="text-[7px] md:text-[8px] font-black uppercase text-muted-foreground">Installment ({checkoutData.quantity} units)</p>
+                              <p className="text-xl md:text-2xl font-black">
                                 {(parseInt(activeDeviceData.leasePrice.replace(/[^0-9]/g, '')) * checkoutData.quantity).toLocaleString()} RWF
                               </p>
                             </div>
@@ -1285,7 +1284,7 @@ function DashboardContent() {
                           variant="outline" 
                           onClick={() => handleDeviceSelection('leased')}
                           disabled={!checkoutData.color}
-                          className="w-full h-16 rounded-2xl font-black uppercase tracking-widest text-sm"
+                          className="w-full h-14 md:h-16 rounded-2xl font-black uppercase tracking-widest text-[10px] md:text-sm"
                         >
                           Start Lease to Own
                         </Button>
@@ -1293,15 +1292,14 @@ function DashboardContent() {
                     </Card>
                   </div>
 
-                  {/* FAQ Section for Hardware */}
                   {activeDeviceData.faq && (
-                    <Card className="max-w-4xl mx-auto rounded-[2.5rem] border-border bg-card/40 p-10">
-                      <h3 className="text-2xl font-black mb-8">Hardware FAQ</h3>
-                      <div className="space-y-6">
+                    <Card className="max-w-4xl mx-auto rounded-[2rem] md:rounded-[2.5rem] border-border bg-card/40 p-6 md:p-10 px-4 md:px-10">
+                      <h3 className="text-xl md:text-2xl font-black mb-6 md:mb-8">Hardware FAQ</h3>
+                      <div className="space-y-4 md:space-y-6">
                         {activeDeviceData.faq.map((item: any, i: number) => (
-                          <div key={i} className="space-y-2">
-                            <h4 className="font-bold text-sm text-primary">Q: {item.q}</h4>
-                            <p className="text-sm text-muted-foreground">A: {item.a}</p>
+                          <div key={i} className="space-y-1.5 md:space-y-2">
+                            <h4 className="font-bold text-xs md:text-sm text-primary">Q: {item.q}</h4>
+                            <p className="text-xs md:text-sm text-muted-foreground leading-relaxed">A: {item.a}</p>
                           </div>
                         ))}
                       </div>
@@ -1311,137 +1309,136 @@ function DashboardContent() {
               )}
 
               {stagingStep === 'checkout' && selectedServiceId && (
-                <Card className="max-w-4xl mx-auto rounded-[3rem] border-border bg-card/60 shadow-2xl animate-reveal">
-                  <CardHeader className="p-12 pb-6 border-b border-border/50 bg-primary/5">
-                    <Button variant="ghost" className="w-fit mb-6 rounded-xl gap-2 font-bold" onClick={() => setStagingStep('get-device')}>
+                <Card className="max-w-4xl mx-auto rounded-[2rem] md:rounded-[3rem] border-border bg-card/60 shadow-2xl animate-reveal">
+                  <CardHeader className="p-8 md:p-12 pb-6 border-b border-border/50 bg-primary/5">
+                    <Button variant="ghost" className="w-fit mb-4 md:mb-6 rounded-xl gap-2 font-bold text-xs" onClick={() => setStagingStep('get-device')}>
                       <ChevronLeft className="w-4 h-4" /> Back to Selection
                     </Button>
-                    <CardTitle className="text-4xl font-black">Checkout</CardTitle>
-                    <CardDescription className="text-lg font-light mt-2">Provide delivery details for your SafeRwanda hardware.</CardDescription>
+                    <CardTitle className="text-2xl md:text-4xl font-black">Checkout</CardTitle>
+                    <CardDescription className="text-base md:text-lg font-light mt-2">Provide delivery details for your SafeRwanda hardware.</CardDescription>
                   </CardHeader>
-                  <CardContent className="p-12 space-y-8">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <CardContent className="p-8 md:p-12 space-y-6 md:space-y-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
                       <div className="space-y-4">
                         <div className="space-y-2">
-                          <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Full Name</Label>
+                          <Label className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Full Name</Label>
                           <div className="relative">
                             <Input 
                               placeholder="Your full name" 
                               value={checkoutData.fullName}
                               onChange={(e) => setCheckoutData({...checkoutData, fullName: e.target.value})}
-                              className="h-14 rounded-xl border-border bg-secondary/20 pl-12" 
+                              className="h-12 md:h-14 rounded-xl border-border bg-secondary/20 pl-10 md:pl-12 text-sm" 
                             />
-                            <UserIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                            <UserIcon className="absolute left-3.5 md:left-4 top-1/2 -translate-y-1/2 w-3.5 md:w-4 h-3.5 md:h-4 text-muted-foreground" />
                           </div>
                         </div>
                         <div className="space-y-2">
-                          <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Email Address</Label>
+                          <Label className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Email Address</Label>
                           <div className="relative">
                             <Input 
                               type="email"
                               placeholder="you@email.com" 
                               value={checkoutData.email}
                               onChange={(e) => setCheckoutData({...checkoutData, email: e.target.value})}
-                              className="h-14 rounded-xl border-border bg-secondary/20 pl-12" 
+                              className="h-12 md:h-14 rounded-xl border-border bg-secondary/20 pl-10 md:pl-12 text-sm" 
                             />
-                            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                            <Mail className="absolute left-3.5 md:left-4 top-1/2 -translate-y-1/2 w-3.5 md:w-4 h-3.5 md:h-4 text-muted-foreground" />
                           </div>
                         </div>
                         <div className="space-y-2">
-                          <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Phone Number</Label>
+                          <Label className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Phone Number</Label>
                           <div className="relative">
                             <Input 
                               placeholder="+250 7XX XXX XXX" 
                               value={checkoutData.phone}
                               onChange={(e) => setCheckoutData({...checkoutData, phone: e.target.value})}
-                              className="h-14 rounded-xl border-border bg-secondary/20 pl-12" 
+                              className="h-12 md:h-14 rounded-xl border-border bg-secondary/20 pl-10 md:pl-12 text-sm" 
                             />
-                            <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                            <Phone className="absolute left-3.5 md:left-4 top-1/2 -translate-y-1/2 w-3.5 md:w-4 h-3.5 md:h-4 text-muted-foreground" />
                           </div>
                         </div>
                       </div>
 
                       <div className="space-y-4">
                         <div className="space-y-2">
-                          <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Delivery Region Validation</Label>
+                          <Label className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Delivery Region Validation</Label>
                           <Button 
                             variant="outline" 
-                            className="w-full h-14 rounded-xl gap-2 font-bold border-dashed border-primary/40 text-primary"
+                            className="w-full h-12 md:h-14 rounded-xl gap-2 font-bold border-dashed border-primary/40 text-primary text-xs"
                             onClick={handleGetCurrentLocation}
                             disabled={isLocating}
                           >
                             {isLocating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Navigation className="w-4 h-4" />}
-                            {isLocating ? "Validating Coordinates..." : "Get My Current Location"}
+                            {isLocating ? "Validating..." : "Get My Current Location"}
                           </Button>
                           {locationError ? (
-                            <p className="text-[10px] text-destructive font-bold mt-1 flex items-center gap-1">
+                            <p className="text-[9px] text-destructive font-bold mt-1 flex items-center gap-1">
                               <AlertTriangle className="w-3 h-3" /> {locationError}
                             </p>
                           ) : !isLocating && navigator.geolocation && (
-                            <p className="text-[10px] text-rwanda-green font-bold mt-1 flex items-center gap-1">
-                              <CheckCircle2 className="w-3 h-3" /> Location validated within Rwanda service area.
+                            <p className="text-[9px] text-rwanda-green font-bold mt-1 flex items-center gap-1">
+                              <CheckCircle2 className="w-3 h-3" /> Area validated.
                             </p>
                           )}
                         </div>
                         <div className="space-y-2">
-                          <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Country</Label>
-                          <Input value="Rwanda" disabled className="h-14 rounded-xl border-border bg-secondary/40 font-bold" />
+                          <Label className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Country</Label>
+                          <Input value="Rwanda" disabled className="h-12 md:h-14 rounded-xl border-border bg-secondary/40 font-bold text-sm" />
                         </div>
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-2 gap-3 md:gap-4">
                       <div className="space-y-2">
-                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Province</Label>
+                        <Label className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Province</Label>
                         <Input 
-                          placeholder="e.g. Kigali" 
+                          placeholder="Province" 
                           value={checkoutData.province}
                           onChange={(e) => setCheckoutData({...checkoutData, province: e.target.value})}
-                          className="h-12 rounded-xl border-border bg-secondary/20" 
+                          className="h-11 md:h-12 rounded-xl border-border bg-secondary/20 text-sm" 
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">District</Label>
+                        <Label className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">District</Label>
                         <Input 
                           placeholder="District" 
                           value={checkoutData.district}
                           onChange={(e) => setCheckoutData({...checkoutData, district: e.target.value})}
-                          className="h-12 rounded-xl border-border bg-secondary/20" 
+                          className="h-11 md:h-12 rounded-xl border-border bg-secondary/20 text-sm" 
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Sector</Label>
+                        <Label className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Sector</Label>
                         <Input 
                           placeholder="Sector" 
                           value={checkoutData.sector}
                           onChange={(e) => setCheckoutData({...checkoutData, sector: e.target.value})}
-                          className="h-12 rounded-xl border-border bg-secondary/20" 
+                          className="h-11 md:h-12 rounded-xl border-border bg-secondary/20 text-sm" 
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Cell</Label>
+                        <Label className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Cell</Label>
                         <Input 
                           placeholder="Cell" 
                           value={checkoutData.cell}
                           onChange={(e) => setCheckoutData({...checkoutData, cell: e.target.value})}
-                          className="h-12 rounded-xl border-border bg-secondary/20" 
+                          className="h-11 md:h-12 rounded-xl border-border bg-secondary/20 text-sm" 
                         />
                       </div>
                     </div>
 
-                    {/* Summary Section */}
-                    <div className="bg-primary/5 border border-primary/10 rounded-[2rem] p-8 mb-8 space-y-6">
+                    <div className="bg-primary/5 border border-primary/10 rounded-[1.5rem] md:rounded-[2rem] p-6 md:p-8 space-y-4 md:space-y-6">
                       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                         <div>
-                          <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">Service Tier</p>
-                          <p className="text-xl font-black capitalize">
+                          <p className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">Service Tier</p>
+                          <p className="text-lg md:text-xl font-black capitalize leading-tight">
                             {checkoutData.quantity}x {selectedServiceId?.replace('-', ' ')} {selectedServiceId === 'child-protection' && childOption === 'option1' ? '(Standard)' : childOption === 'option2' ? '(Advanced)' : ''}
                           </p>
-                          <p className="text-[10px] font-bold text-primary mt-1">Color: {checkoutData.color}</p>
+                          <p className="text-[9px] md:text-[10px] font-bold text-primary mt-1">Color: {checkoutData.color}</p>
                         </div>
                         <div className="text-left md:text-right">
-                          <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">Transaction Type</p>
-                          <Badge variant="outline" className="border-primary text-primary font-bold px-3 py-1">
+                          <p className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">Transaction Type</p>
+                          <Badge variant="outline" className="border-primary text-primary font-bold px-3 py-1 text-[9px] md:text-xs">
                             {tempSelection === 'purchased' ? 'Full Purchase' : 'Lease to Own'}
                           </Badge>
                         </div>
@@ -1451,28 +1448,28 @@ function DashboardContent() {
 
                       <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
                         <div className="text-center sm:text-left">
-                          <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">
+                          <p className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">
                             {tempSelection === 'purchased' ? 'One-time Payment' : 'Payment Schedule'}
                           </p>
-                          <p className="text-sm font-bold">
-                            {tempSelection === 'purchased' ? 'Full ownership upon delivery' : '4 Installments (1 Year Plan)'}
+                          <p className="text-[10px] md:text-sm font-bold">
+                            {tempSelection === 'purchased' ? 'Full ownership' : '4 Installments (1 Year Plan)'}
                           </p>
                         </div>
                         <div className="text-center sm:text-right">
-                          <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">
-                            {tempSelection === 'purchased' ? 'Total Amount' : 'Amount per Installment'}
+                          <p className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">
+                            {tempSelection === 'purchased' ? 'Total Amount' : 'Per Installment'}
                           </p>
-                          <p className="text-3xl font-black text-primary">
+                          <p className="text-2xl md:text-3xl font-black text-primary">
                             {(parseInt((tempSelection === 'purchased' ? activeDeviceData?.buyPrice : activeDeviceData?.leasePrice).replace(/[^0-9]/g, '')) * checkoutData.quantity).toLocaleString()} RWF
                           </p>
                           {tempSelection === 'leased' && (
-                            <p className="text-[10px] text-muted-foreground font-bold mt-1">Pay every 3 months</p>
+                            <p className="text-[8px] md:text-[10px] text-muted-foreground font-bold mt-1">Pay every 3 months</p>
                           )}
                         </div>
                       </div>
                     </div>
 
-                    <div className="pt-8">
+                    <div className="pt-4 md:pt-8">
                       <Button 
                         onClick={handleCompleteCheckout}
                         disabled={
@@ -1486,11 +1483,11 @@ function DashboardContent() {
                           !!locationError ||
                           isLocating
                         }
-                        className="w-full h-16 rounded-2xl bg-primary hover:bg-primary/90 font-black uppercase tracking-widest text-sm shadow-xl"
+                        className="w-full h-14 md:h-16 rounded-2xl bg-primary hover:bg-primary/90 font-black uppercase tracking-widest text-xs md:text-sm shadow-xl"
                       >
                         Proceed to Payment
                       </Button>
-                      <p className="text-[9px] text-center text-muted-foreground mt-4 uppercase font-bold tracking-widest">
+                      <p className="text-[8px] md:text-[9px] text-center text-muted-foreground mt-4 uppercase font-bold tracking-widest leading-relaxed">
                         By clicking proceed, you agree to our terms of hardware service and deployment.
                       </p>
                     </div>
@@ -1499,44 +1496,44 @@ function DashboardContent() {
               )}
 
               {stagingStep === 'setup' && selectedServiceId && (
-                <Card className="bg-card/60 border-border rounded-[3rem] overflow-hidden shadow-2xl animate-reveal">
-                  <CardHeader className="p-12 pb-6 border-b border-border/50 bg-secondary/20">
-                    <Button variant="ghost" className="w-fit mb-6 rounded-xl gap-2 font-bold" onClick={() => setStagingStep('list')}>
+                <Card className="bg-card/60 border-border rounded-[2rem] md:rounded-[3rem] overflow-hidden shadow-2xl animate-reveal">
+                  <CardHeader className="p-8 md:p-12 pb-6 border-b border-border/50 bg-secondary/20">
+                    <Button variant="ghost" className="w-fit mb-4 md:mb-6 rounded-xl gap-2 font-bold text-xs" onClick={() => setStagingStep('list')}>
                       <ChevronLeft className="w-4 h-4" /> Back to My Services
                     </Button>
-                    <CardTitle className="text-4xl font-black uppercase">Setting Up Your {selectedServiceId.replace('-', ' ')}</CardTitle>
+                    <CardTitle className="text-xl md:text-4xl font-black uppercase">Setting Up Your {selectedServiceId.replace('-', ' ')}</CardTitle>
                   </CardHeader>
-                  <CardContent className="p-12 space-y-12">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                      <div className="space-y-8">
-                        <h3 className="text-2xl font-black">Final Steps to Protect</h3>
-                        <div className="space-y-6">
+                  <CardContent className="p-8 md:p-12 space-y-10 md:space-y-12">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-12">
+                      <div className="space-y-6 md:space-y-8">
+                        <h3 className="text-xl md:text-2xl font-black">Final Steps to Protect</h3>
+                        <div className="space-y-4 md:space-y-6">
                           {[
                             { step: "01", title: "Deployment", desc: "Mount your hardware in the recommended tactical position." },
                             { step: "02", title: "Activation", desc: "Power on the device and wait for the green network link light." },
                             { step: "03", title: "Digital Link", desc: "Use the 'Connect Device' button at the top to register your Device ID." },
                             { step: "04", title: "Grid Sync", desc: "Once linked, our central monitor will begin tracking 24/7." }
                           ].map((item, i) => (
-                            <div key={i} className="flex gap-6 items-start">
-                              <span className="text-primary font-black text-3xl opacity-20">{item.step}</span>
+                            <div key={i} className="flex gap-4 md:gap-6 items-start">
+                              <span className="text-primary font-black text-2xl md:text-3xl opacity-20">{item.step}</span>
                               <div>
-                                <h4 className="font-bold text-lg mb-1">{item.title}</h4>
-                                <p className="text-sm text-muted-foreground font-light">{item.desc}</p>
+                                <h4 className="font-bold text-base md:text-lg mb-1">{item.title}</h4>
+                                <p className="text-[10px] md:text-sm text-muted-foreground font-light leading-relaxed">{item.desc}</p>
                               </div>
                             </div>
                           ))}
                         </div>
                         <Button 
                           onClick={handleDownloadGuide}
-                          className="h-16 rounded-2xl font-black uppercase tracking-widest text-xs bg-primary gap-2 w-full md:w-auto"
+                          className="h-14 md:h-16 rounded-2xl font-black uppercase tracking-widest text-[10px] md:text-xs bg-primary gap-2 w-full md:w-auto"
                         >
-                          <Download className="w-5 h-5" /> Download Technical Guide (PDF)
+                          <Download className="w-4 h-4 md:w-5 md:h-5" /> Download Technical Guide (PDF)
                         </Button>
                       </div>
-                      <div className="bg-primary/5 rounded-[2.5rem] border border-primary/10 p-10 flex flex-col justify-center text-center">
-                        <FileText className="w-20 h-20 text-primary mx-auto mb-6 opacity-20" />
-                        <h4 className="text-2xl font-black mb-4">Strategic Onboarding</h4>
-                        <p className="text-sm text-muted-foreground mb-8 leading-relaxed">
+                      <div className="bg-primary/5 rounded-[1.5rem] md:rounded-[2.5rem] border border-primary/10 p-8 md:p-10 flex flex-col justify-center text-center">
+                        <FileText className="w-12 h-12 md:w-20 md:h-20 text-primary mx-auto mb-4 md:mb-6 opacity-20" />
+                        <h4 className="text-xl md:text-2xl font-black mb-3 md:mb-4">Strategic Onboarding</h4>
+                        <p className="text-[10px] md:text-sm text-muted-foreground mb-6 md:mb-8 leading-relaxed">
                           {profile?.hasPaidSetupFee 
                             ? "SafeRwanda Technical Staff will handle the physical deployment. Use the guide on the left to understand your system."
                             : "Follow the technical steps to link your hardware. Once connected, monitoring begins immediately."}
@@ -1551,78 +1548,87 @@ function DashboardContent() {
 
           {/* Subscription Popup Dialog */}
           <Dialog open={isSubscriptionOpen} onOpenChange={setIsSubscriptionOpen}>
-            <DialogContent className="sm:max-w-[800px] p-0 overflow-hidden border-border/50 bg-background shadow-2xl rounded-[3rem]">
-              <div className="relative p-12">
-                <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-rwanda-green via-primary to-accent" />
-                <DialogHeader className="mb-10 text-center">
-                  <div className="w-24 h-24 rounded-[2.5rem] bg-rwanda-green/10 flex items-center justify-center mx-auto mb-6">
-                    <Zap className="w-12 h-12 text-rwanda-green" />
-                  </div>
-                  <DialogTitle className="text-5xl font-black tracking-tight">Activate Monitoring</DialogTitle>
-                  <DialogDescription className="text-lg mt-4 font-light max-w-lg mx-auto">
-                    Device connected successfully! Select a plan to start your 24/7 strategic security monitoring for <b>{profile?.deviceName || 'your device'}</b>.
-                  </DialogDescription>
-                </DialogHeader>
+            <DialogContent className="w-[95vw] sm:max-w-[800px] p-0 overflow-hidden border-border/50 bg-background shadow-2xl rounded-[2rem] md:rounded-[3rem]">
+              <ScrollArea className="max-h-[90vh] w-full">
+                <div className="relative p-8 md:p-12">
+                  <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-rwanda-green via-primary to-accent" />
+                  <DialogHeader className="mb-8 md:mb-10 text-center">
+                    <div className="w-16 h-16 md:w-24 md:h-24 rounded-[1.5rem] md:rounded-[2.5rem] bg-rwanda-green/10 flex items-center justify-center mx-auto mb-4 md:mb-6">
+                      <Zap className="w-8 h-8 md:w-12 md:h-12 text-rwanda-green" />
+                    </div>
+                    <DialogTitle className="text-2xl md:text-5xl font-black tracking-tight">Activate Monitoring</DialogTitle>
+                    <DialogDescription className="text-xs md:text-lg mt-2 md:mt-4 font-light max-w-lg mx-auto leading-relaxed">
+                      Device connected successfully! Select a plan to start your 24/7 strategic security monitoring for <b>{profile?.deviceName || 'your device'}</b>.
+                    </DialogDescription>
+                  </DialogHeader>
 
-                <div className="space-y-10">
-                  <RadioGroup value={subType} onValueChange={setSubType} className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {[
-                      { id: 'weekly', label: 'Weekly Guard', price: 'RWF 5,000', note: 'Flexible Protection' },
-                      { id: 'monthly', label: 'Standard Guard', price: 'RWF 18,000', note: 'Full Coverage' },
-                      { id: 'yearly', label: 'Elite Guard', price: 'RWF 180,000', note: 'Strategic Value' }
-                    ].map((plan) => (
-                      <div 
-                        key={plan.id}
-                        onClick={() => setSubType(plan.id)}
-                        className={cn(
-                          "p-8 rounded-[2.5rem] border-4 transition-all cursor-pointer flex flex-col justify-between text-center relative overflow-hidden group",
-                          subType === plan.id ? 'border-primary bg-primary/[0.03] shadow-2xl shadow-primary/10' : 'border-border bg-background hover:border-primary/40'
-                        )}
-                      >
-                        <RadioGroupItem value={plan.id} id={plan.id} className="sr-only" />
-                        <div>
-                          <p className="text-[9px] font-black uppercase text-muted-foreground mb-4 opacity-60">{plan.note}</p>
-                          <h4 className="font-black text-xl tracking-tighter mb-2">{plan.label}</h4>
-                          <div className="text-2xl font-black text-primary mt-4">{plan.price}</div>
+                  <div className="space-y-6 md:space-y-10">
+                    <RadioGroup value={subType} onValueChange={setSubType} className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+                      {[
+                        { id: 'weekly', label: 'Weekly Guard', price: 'RWF 5,000', note: 'Flexible Protection' },
+                        { id: 'monthly', label: 'Standard Guard', price: 'RWF 18,000', note: 'Full Coverage' },
+                        { id: 'yearly', label: 'Elite Guard', price: 'RWF 180,000', note: 'Strategic Value' }
+                      ].map((plan) => (
+                        <div 
+                          key={plan.id}
+                          onClick={() => setSubType(plan.id)}
+                          className={cn(
+                            "p-6 md:p-8 rounded-[1.5rem] md:rounded-[2.5rem] border-2 md:border-4 transition-all cursor-pointer flex flex-col justify-between text-center relative overflow-hidden group",
+                            subType === plan.id ? 'border-primary bg-primary/[0.03] shadow-2xl shadow-primary/10' : 'border-border bg-background hover:border-primary/40'
+                          )}
+                        >
+                          <RadioGroupItem value={plan.id} id={plan.id} className="sr-only" />
+                          <div>
+                            <p className="text-[7px] md:text-[9px] font-black uppercase text-muted-foreground mb-3 md:mb-4 opacity-60">{plan.note}</p>
+                            <h4 className="font-black text-lg md:text-xl tracking-tighter mb-1 md:mb-2">{plan.label}</h4>
+                            <div className="text-xl md:text-2xl font-black text-primary mt-2 md:mt-4">{plan.price}</div>
+                          </div>
                         </div>
-                      </div>
-                    ))}
-                  </RadioGroup>
+                      ))}
+                    </RadioGroup>
 
-                  <div className="pt-6">
-                    <Button 
-                      onClick={() => {
-                        updateProfileData({ subscriptionActive: true, subscriptionType: subType });
-                        setIsSubscriptionOpen(false);
-                        toast({
-                          title: "Monitoring Active",
-                          description: `Protection grid is now live for ${profile?.deviceName || 'your device'}.`,
-                        });
-                      }}
-                      className="w-full h-20 rounded-[1.5rem] bg-primary text-2xl font-black shadow-xl"
-                      disabled={updating}
-                    >
-                      {updating ? <Loader2 className="w-8 h-8 animate-spin" /> : "Activate Guard"}
-                    </Button>
+                    <div className="pt-4 md:pt-6">
+                      <Button 
+                        onClick={() => {
+                          updateProfileData({ subscriptionActive: true, subscriptionType: subType });
+                          setIsSubscriptionOpen(false);
+                          toast({
+                            title: "Monitoring Active",
+                            description: `Protection grid is now live for ${profile?.deviceName || 'your device'}.`,
+                          });
+                        }}
+                        className="w-full h-16 md:h-20 rounded-2xl md:rounded-[1.5rem] bg-primary text-lg md:text-2xl font-black shadow-xl"
+                        disabled={updating}
+                      >
+                        {updating ? <Loader2 className="w-8 h-8 animate-spin" /> : "Activate Guard"}
+                      </Button>
+                    </div>
                   </div>
                 </div>
-              </div>
+              </ScrollArea>
             </DialogContent>
           </Dialog>
 
           {/* Full-screen Image Preview Dialog */}
           <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
-            <DialogContent className="max-w-[100vw] w-screen h-screen p-0 m-0 border-none bg-black/95 rounded-none flex items-center justify-center [&>button]:text-white">
+            <DialogContent className="max-w-[100vw] w-screen h-screen p-0 m-0 border-none bg-black/95 rounded-none flex items-center justify-center [&>button]:text-white [&>button]:bg-white/10 [&>button]:backdrop-blur-md [&>button]:hover:bg-white/20 [&>button]:transition-all [&>button]:rounded-full [&>button]:p-2 [&>button]:border [&>button]:border-white/20">
               <div className="sr-only">
                 <DialogTitle>Hardware Preview</DialogTitle>
                 <DialogDescription>Viewing full-screen images of the security device.</DialogDescription>
               </div>
-              <div className="relative w-full max-w-5xl h-[80vh] px-4">
+              {/* Manual Close Button for extra visibility on mobile */}
+              <button 
+                onClick={() => setIsPreviewOpen(false)}
+                className="fixed top-6 right-6 z-[250] p-3 bg-white/10 hover:bg-white/20 backdrop-blur-xl rounded-full border border-white/20 transition-all active:scale-90"
+              >
+                <X className="w-6 h-6 text-white" />
+              </button>
+              <div className="relative w-full max-w-5xl h-[70vh] md:h-[80vh] px-4">
                 <Carousel className="w-full h-full">
                   <CarouselContent>
                     {activeDeviceData?.images?.map((imgUrl: string, idx: number) => (
                       <CarouselItem key={idx}>
-                        <div className="relative h-[80vh] w-full">
+                        <div className="relative h-[70vh] md:h-[80vh] w-full">
                           <Image src={imgUrl} alt={`${activeDeviceData.name} preview ${idx + 1}`} fill className="object-contain" />
                         </div>
                       </CarouselItem>
@@ -1630,8 +1636,8 @@ function DashboardContent() {
                   </CarouselContent>
                   {activeDeviceData?.images?.length > 1 && (
                     <>
-                      <CarouselPrevious className="left-4 bg-white/10 hover:bg-white/20 text-white border-white/20" />
-                      <CarouselNext className="right-4 bg-white/10 hover:bg-white/20 text-white border-white/20" />
+                      <CarouselPrevious className="left-4 bg-white/10 hover:bg-white/20 text-white border-white/20 hidden xs:flex" />
+                      <CarouselNext className="right-4 bg-white/10 hover:bg-white/20 text-white border-white/20 hidden xs:flex" />
                     </>
                   )}
                 </Carousel>
@@ -1642,9 +1648,9 @@ function DashboardContent() {
         </div>
       </main>
 
-      <footer className="py-16 border-t border-border/50 bg-background/50 backdrop-blur-md relative z-10">
+      <footer className="py-12 md:py-16 border-t border-border/50 bg-background/50 backdrop-blur-md relative z-10">
         <div className="container mx-auto px-4 text-center">
-           <p className="text-[10px] text-muted-foreground font-black tracking-[0.2em] uppercase opacity-30">
+           <p className="text-[8px] md:text-[10px] text-muted-foreground font-black tracking-[0.2em] uppercase opacity-30 leading-relaxed">
              © {new Date().getFullYear()} SafeRwanda Security. Strategic Operations Grid.
            </p>
         </div>
