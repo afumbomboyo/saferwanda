@@ -1517,7 +1517,7 @@ function DashboardContent() {
                             <div key={i} className="flex gap-4 md:gap-6 items-start">
                               <span className="text-primary font-black text-2xl md:text-3xl opacity-20">{item.step}</span>
                               <div>
-                                <h4 className="font-bold text-base md:text-lg mb-1">{item.title}</h4>
+                                <h4 className="font-bold text-base md:lg mb-1">{item.title}</h4>
                                 <p className="text-[10px] md:text-sm text-muted-foreground font-light leading-relaxed">{item.desc}</p>
                               </div>
                             </div>
@@ -1611,18 +1611,11 @@ function DashboardContent() {
 
           {/* Full-screen Image Preview Dialog */}
           <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
-            <DialogContent className="max-w-[100vw] w-screen h-screen p-0 m-0 border-none bg-black/95 rounded-none flex items-center justify-center [&>button]:text-white [&>button]:bg-white/10 [&>button]:backdrop-blur-md [&>button]:hover:bg-white/20 [&>button]:transition-all [&>button]:rounded-full [&>button]:p-2 [&>button]:border [&>button]:border-white/20">
+            <DialogContent className="max-w-[100vw] w-screen h-screen p-0 m-0 border-none bg-black/95 rounded-none flex items-center justify-center [&>button]:text-white [&>button]:bg-white/10 [&>button]:backdrop-blur-md [&>button]:hover:bg-white/20 [&>button]:transition-all [&>button]:rounded-full [&>button]:p-3 [&>button]:border [&>button]:border-white/20 [&>button]:right-6 [&>button]:top-6 [&>button_svg]:size-6">
               <div className="sr-only">
                 <DialogTitle>Hardware Preview</DialogTitle>
                 <DialogDescription>Viewing full-screen images of the security device.</DialogDescription>
               </div>
-              {/* Manual Close Button for extra visibility on mobile */}
-              <button 
-                onClick={() => setIsPreviewOpen(false)}
-                className="fixed top-6 right-6 z-[250] p-3 bg-white/10 hover:bg-white/20 backdrop-blur-xl rounded-full border border-white/20 transition-all active:scale-90"
-              >
-                <X className="w-6 h-6 text-white" />
-              </button>
               <div className="relative w-full max-w-5xl h-[70vh] md:h-[80vh] px-4">
                 <Carousel className="w-full h-full">
                   <CarouselContent>
