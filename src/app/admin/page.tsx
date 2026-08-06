@@ -71,9 +71,9 @@ export default function AdminDashboardPage() {
     camera_id: '',
     name: '',
     location: {
-      road: '',
-      district: '',
       city: 'Kigali',
+      district: '',
+      road: '',
       latitude: -1.944,
       longitude: 30.061
     },
@@ -81,11 +81,11 @@ export default function AdminDashboardPage() {
       organization: 'Traffic Authority'
     },
     services: {
-      traffic_enforcement: true,
       live_stream: true,
-      information_storage: true,
       abnormal_activity_alert: true,
-      information_retrieval: true
+      information_storage: false,
+      information_retrieval: false,
+      traffic_enforcement: true
     },
     rules: {
       allowed_events: ['Line Crossing', 'Loitering', 'Region Entrance']
@@ -150,37 +150,43 @@ export default function AdminDashboardPage() {
       await setDoc(cameraRef, newCamera);
 
       // Step 2: Send POST to Node-RED
-      const response = await fetch('http://159.65.234.249:1880/api/cameras/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(newCamera),
-      });
+      const response = await fetch(
+        'http://159.65.234.249:1880/api/cameras/register',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(newCamera),
+        }
+      );
+
+      const result = await response.text();
 
       if (!response.ok) {
-        throw new Error('Integration API failed');
+        throw new Error(result);
       }
 
-      // Step 3: Node-RED responds with webhook_url
-      const result = await response.json();
+      console.log("Camera registration successful:", result);
+
+      // Step 3 & 4: Parse result and update Firestore with webhook_url
+      const resultJson = JSON.parse(result);
       
-      if (result.success && result.webhook_url) {
-        // Step 4: Update Firestore with the webhook_url
+      if (resultJson.success && resultJson.webhook_url) {
         await updateDoc(cameraRef, {
-          webhook_url: result.webhook_url
+          webhook_url: resultJson.webhook_url
         });
-        setGeneratedWebhook(result.webhook_url);
+        setGeneratedWebhook(resultJson.webhook_url);
         
         toast({
           title: "Registration Success",
-          description: "Integration complete. Webhook URL generated.",
+          description: "Camera registered and synced with Node-RED.",
         });
       } else {
         toast({
           variant: "destructive",
-          title: "Integration Error",
-          description: "Camera saved but webhook generation failed.",
+          title: "Integration Issue",
+          description: "Camera saved but Node-RED sync was incomplete.",
         });
       }
 
@@ -401,14 +407,14 @@ export default function AdminDashboardPage() {
                         setNewCamera({
                           camera_id: '',
                           name: '',
-                          location: { road: '', district: '', city: 'Kigali', latitude: -1.944, longitude: 30.061 },
+                          location: { city: 'Kigali', district: '', road: '', latitude: -1.944, longitude: 30.061 },
                           owner: { organization: 'Traffic Authority' },
                           services: { 
-                            traffic_enforcement: true, 
                             live_stream: true, 
-                            information_storage: true,
-                            abnormal_activity_alert: true,
-                            information_retrieval: true
+                            abnormal_activity_alert: true, 
+                            information_storage: false, 
+                            information_retrieval: false, 
+                            traffic_enforcement: true 
                           },
                           rules: { allowed_events: ['Line Crossing', 'Loitering', 'Region Entrance'] }
                         });
