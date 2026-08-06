@@ -4,7 +4,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useUser, useFirestore, useCollection, useDoc } from '@/firebase';
 import { useRouter } from 'next/navigation';
-import { collection, doc, query, orderBy, setDoc } from 'firebase/firestore';
+import { collection, doc, query, orderBy, setDoc, updateDoc } from 'firebase/firestore';
 import { 
   Users, 
   Shield, 
@@ -22,7 +22,10 @@ import {
   Plus,
   MapPin,
   Settings,
-  X
+  X,
+  Link as LinkIcon,
+  Copy,
+  ExternalLink
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -60,6 +63,8 @@ export default function AdminDashboardPage() {
   const [cameraSearchTerm, setCameraSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState('citizens');
   const [isCameraDialogOpen, setIsCameraDialogOpen] = useState(false);
+  const [isRegistering, setIsRegistering] = useState(false);
+  const [generatedWebhook, setGeneratedWebhook] = useState<string | null>(null);
 
   // Form State for New Camera
   const [newCamera, setNewCamera] = useState({
@@ -136,31 +141,67 @@ export default function AdminDashboardPage() {
   const handleRegisterCamera = async () => {
     if (!db || !newCamera.camera_id || !newCamera.name) return;
     
+    setIsRegistering(true);
+    setGeneratedWebhook(null);
+
     try {
-      await setDoc(doc(db, 'cameras', newCamera.camera_id), newCamera);
-      toast({
-        title: "Camera Registered",
-        description: `${newCamera.name} (${newCamera.camera_id}) added to registry.`,
-      });
-      setIsCameraDialogOpen(false);
-      // Reset form
-      setNewCamera({
-        camera_id: '',
-        name: '',
-        location: { road: '', district: '', city: 'Kigali', latitude: -1.944, longitude: 30.061 },
-        owner: { organization: 'Traffic Authority' },
-        services: { 
-          traffic_enforcement: true, 
-          live_stream: true, 
-          information_storage: true,
-          abnormal_activity_alert: true,
-          information_retrieval: true
+      // Step 1: Create the camera record in Firestore
+      const cameraRef = doc(db, 'cameras', newCamera.camera_id);
+      await setDoc(cameraRef, newCamera);
+
+      // Step 2: Send POST to Node-RED
+      const response = await fetch('http://159.65.234.249:1880/api/cameras/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-        rules: { allowed_events: ['Line Crossing', 'Loitering', 'Region Entrance'] }
+        body: JSON.stringify(newCamera),
       });
-    } catch (error) {
+
+      if (!response.ok) {
+        throw new Error('Integration API failed');
+      }
+
+      // Step 3: Node-RED responds with webhook_url
+      const result = await response.json();
+      
+      if (result.success && result.webhook_url) {
+        // Step 4: Update Firestore with the webhook_url
+        await updateDoc(cameraRef, {
+          webhook_url: result.webhook_url
+        });
+        setGeneratedWebhook(result.webhook_url);
+        
+        toast({
+          title: "Registration Success",
+          description: "Integration complete. Webhook URL generated.",
+        });
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Integration Error",
+          description: "Camera saved but webhook generation failed.",
+        });
+      }
+
+    } catch (error: any) {
       console.error("Error registering camera:", error);
+      toast({
+        variant: "destructive",
+        title: "Registration Failed",
+        description: error.message || "An unexpected error occurred.",
+      });
+    } finally {
+      setIsRegistering(false);
     }
+  };
+
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    toast({
+      title: "Copied",
+      description: "Webhook URL copied to clipboard.",
+    });
   };
 
   if (userLoading || profileLoading || usersLoading || camerasLoading) {
@@ -211,7 +252,6 @@ export default function AdminDashboardPage() {
           </div>
         </div>
 
-        {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
           {[
             { label: 'Total Citizens', value: stats.total, icon: Users, color: 'text-primary' },
@@ -356,7 +396,23 @@ export default function AdminDashboardPage() {
                   
                   <Dialog open={isCameraDialogOpen} onOpenChange={setIsCameraDialogOpen}>
                     <DialogTrigger asChild>
-                      <Button className="h-12 rounded-xl font-black uppercase tracking-widest text-xs gap-2 px-6">
+                      <Button className="h-12 rounded-xl font-black uppercase tracking-widest text-xs gap-2 px-6" onClick={() => {
+                        setGeneratedWebhook(null);
+                        setNewCamera({
+                          camera_id: '',
+                          name: '',
+                          location: { road: '', district: '', city: 'Kigali', latitude: -1.944, longitude: 30.061 },
+                          owner: { organization: 'Traffic Authority' },
+                          services: { 
+                            traffic_enforcement: true, 
+                            live_stream: true, 
+                            information_storage: true,
+                            abnormal_activity_alert: true,
+                            information_retrieval: true
+                          },
+                          rules: { allowed_events: ['Line Crossing', 'Loitering', 'Region Entrance'] }
+                        });
+                      }}>
                         <Plus className="w-4 h-4" /> Register Camera
                       </Button>
                     </DialogTrigger>
@@ -365,91 +421,129 @@ export default function AdminDashboardPage() {
                         <div className="p-10 space-y-8">
                           <DialogHeader>
                             <DialogTitle className="text-3xl font-black">New Camera Registry</DialogTitle>
-                            <DialogDescription>Initialize a new surveillance node on the platform.</DialogDescription>
+                            <DialogDescription>Initialize a new surveillance node and generate unique webhook integration.</DialogDescription>
                           </DialogHeader>
 
-                          <div className="grid grid-cols-2 gap-6">
-                            <div className="space-y-2">
-                              <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Camera ID</Label>
-                              <Input 
-                                placeholder="CAM_KGL_001" 
-                                value={newCamera.camera_id}
-                                onChange={(e) => setNewCamera({...newCamera, camera_id: e.target.value})}
-                                className="h-12 rounded-xl"
-                              />
-                            </div>
-                            <div className="space-y-2">
-                              <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Name</Label>
-                              <Input 
-                                placeholder="KN 5 Road Camera" 
-                                value={newCamera.name}
-                                onChange={(e) => setNewCamera({...newCamera, name: e.target.value})}
-                                className="h-12 rounded-xl"
-                              />
-                            </div>
-                          </div>
-
-                          <div className="space-y-4">
-                            <h4 className="text-[10px] font-black uppercase tracking-widest text-primary">Location Profile</h4>
-                            <div className="grid grid-cols-3 gap-4">
-                              <div className="space-y-2">
-                                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Road</Label>
-                                <Input 
-                                  placeholder="KN 5 Road" 
-                                  value={newCamera.location.road}
-                                  onChange={(e) => setNewCamera({...newCamera, location: {...newCamera.location, road: e.target.value}})}
-                                  className="h-11 rounded-xl"
-                                />
-                              </div>
-                              <div className="space-y-2">
-                                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">District</Label>
-                                <Input 
-                                  placeholder="Gasabo" 
-                                  value={newCamera.location.district}
-                                  onChange={(e) => setNewCamera({...newCamera, location: {...newCamera.location, district: e.target.value}})}
-                                  className="h-11 rounded-xl"
-                                />
-                              </div>
-                              <div className="space-y-2">
-                                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">City</Label>
-                                <Input 
-                                  placeholder="Kigali" 
-                                  value={newCamera.location.city}
-                                  onChange={(e) => setNewCamera({...newCamera, location: {...newCamera.location, city: e.target.value}})}
-                                  className="h-11 rounded-xl"
-                                />
-                              </div>
-                            </div>
-                          </div>
-
-                          <div className="space-y-4">
-                            <h4 className="text-[10px] font-black uppercase tracking-widest text-primary">Active Services</h4>
-                            <div className="grid grid-cols-2 gap-4">
-                              {Object.entries(newCamera.services).map(([key, val]) => (
-                                <div key={key} className="flex items-center space-x-2 bg-secondary/30 p-4 rounded-xl border border-border">
-                                  <Checkbox 
-                                    id={key} 
-                                    checked={val} 
-                                    onCheckedChange={(checked) => setNewCamera({
-                                      ...newCamera, 
-                                      services: {...newCamera.services, [key]: !!checked}
-                                    })} 
-                                  />
-                                  <Label htmlFor={key} className="text-[10px] font-bold uppercase cursor-pointer">
-                                    {key.replace(/_/g, ' ')}
-                                  </Label>
+                          {generatedWebhook ? (
+                            <div className="bg-rwanda-green/5 border border-rwanda-green/20 rounded-2xl p-8 space-y-6 animate-in zoom-in-95">
+                              <div className="flex items-center gap-4 text-rwanda-green">
+                                <div className="w-12 h-12 rounded-full bg-rwanda-green/10 flex items-center justify-center">
+                                  <CheckCircle2 className="w-6 h-6" />
                                 </div>
-                              ))}
+                                <div>
+                                  <h4 className="font-black uppercase tracking-widest text-xs">Integration Ready</h4>
+                                  <p className="text-sm opacity-80">Copy the following URL into the Milesight camera settings.</p>
+                                </div>
+                              </div>
+                              <div className="relative">
+                                <Input 
+                                  readOnly 
+                                  value={generatedWebhook} 
+                                  className="pr-24 h-14 bg-background border-rwanda-green/30 font-mono text-xs"
+                                />
+                                <Button 
+                                  size="sm"
+                                  className="absolute right-2 top-1/2 -translate-y-1/2 h-10 rounded-lg px-4 gap-2"
+                                  onClick={() => copyToClipboard(generatedWebhook)}
+                                >
+                                  <Copy className="w-3.5 h-3.5" /> Copy
+                                </Button>
+                              </div>
+                              <Button 
+                                variant="outline" 
+                                className="w-full h-12 rounded-xl border-rwanda-green/30 text-rwanda-green"
+                                onClick={() => setIsCameraDialogOpen(false)}
+                              >
+                                Close & Return to Grid
+                              </Button>
                             </div>
-                          </div>
+                          ) : (
+                            <>
+                              <div className="grid grid-cols-2 gap-6">
+                                <div className="space-y-2">
+                                  <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Camera ID</Label>
+                                  <Input 
+                                    placeholder="CAM_RW_000001" 
+                                    value={newCamera.camera_id}
+                                    onChange={(e) => setNewCamera({...newCamera, camera_id: e.target.value})}
+                                    className="h-12 rounded-xl"
+                                  />
+                                </div>
+                                <div className="space-y-2">
+                                  <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Name</Label>
+                                  <Input 
+                                    placeholder="KN 5 Road Camera" 
+                                    value={newCamera.name}
+                                    onChange={(e) => setNewCamera({...newCamera, name: e.target.value})}
+                                    className="h-12 rounded-xl"
+                                  />
+                                </div>
+                              </div>
 
-                          <Button 
-                            className="w-full h-14 rounded-xl font-black uppercase tracking-widest"
-                            onClick={handleRegisterCamera}
-                            disabled={!newCamera.camera_id || !newCamera.name}
-                          >
-                            Add to Registry
-                          </Button>
+                              <div className="space-y-4">
+                                <h4 className="text-[10px] font-black uppercase tracking-widest text-primary">Location Profile</h4>
+                                <div className="grid grid-cols-3 gap-4">
+                                  <div className="space-y-2">
+                                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Road</Label>
+                                    <Input 
+                                      placeholder="KN 5 Road" 
+                                      value={newCamera.location.road}
+                                      onChange={(e) => setNewCamera({...newCamera, location: {...newCamera.location, road: e.target.value}})}
+                                      className="h-11 rounded-xl"
+                                    />
+                                  </div>
+                                  <div className="space-y-2">
+                                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">District</Label>
+                                    <Input 
+                                      placeholder="Gasabo" 
+                                      value={newCamera.location.district}
+                                      onChange={(e) => setNewCamera({...newCamera, location: {...newCamera.location, district: e.target.value}})}
+                                      className="h-11 rounded-xl"
+                                    />
+                                  </div>
+                                  <div className="space-y-2">
+                                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">City</Label>
+                                    <Input 
+                                      placeholder="Kigali" 
+                                      value={newCamera.location.city}
+                                      onChange={(e) => setNewCamera({...newCamera, location: {...newCamera.location, city: e.target.value}})}
+                                      className="h-11 rounded-xl"
+                                    />
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className="space-y-4">
+                                <h4 className="text-[10px] font-black uppercase tracking-widest text-primary">Active Services</h4>
+                                <div className="grid grid-cols-2 gap-4">
+                                  {Object.entries(newCamera.services).map(([key, val]) => (
+                                    <div key={key} className="flex items-center space-x-2 bg-secondary/30 p-4 rounded-xl border border-border">
+                                      <Checkbox 
+                                        id={key} 
+                                        checked={val} 
+                                        onCheckedChange={(checked) => setNewCamera({
+                                          ...newCamera, 
+                                          services: {...newCamera.services, [key]: !!checked}
+                                        })} 
+                                      />
+                                      <Label htmlFor={key} className="text-[10px] font-bold uppercase cursor-pointer">
+                                        {key.replace(/_/g, ' ')}
+                                      </Label>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+
+                              <Button 
+                                className="w-full h-14 rounded-xl font-black uppercase tracking-widest gap-2"
+                                onClick={handleRegisterCamera}
+                                disabled={isRegistering || !newCamera.camera_id || !newCamera.name}
+                              >
+                                {isRegistering ? <Loader2 className="w-5 h-5 animate-spin" /> : <Activity className="w-4 h-4" />}
+                                {isRegistering ? "Initializing Integration..." : "Register & Sync Webhook"}
+                              </Button>
+                            </>
+                          )}
                         </div>
                       </ScrollArea>
                     </DialogContent>
@@ -463,8 +557,8 @@ export default function AdminDashboardPage() {
                       <TableRow className="border-none">
                         <TableHead className="text-[10px] font-black uppercase tracking-widest h-14 pl-10">Camera Profile</TableHead>
                         <TableHead className="text-[10px] font-black uppercase tracking-widest h-14 text-center">Location</TableHead>
-                        <TableHead className="text-[10px] font-black uppercase tracking-widest h-14 text-center">Owner</TableHead>
-                        <TableHead className="text-[10px] font-black uppercase tracking-widest h-14 text-center">Active Services</TableHead>
+                        <TableHead className="text-[10px] font-black uppercase tracking-widest h-14 text-center">Webhook</TableHead>
+                        <TableHead className="text-[10px] font-black uppercase tracking-widest h-14 text-center">Status</TableHead>
                         <TableHead className="text-[10px] font-black uppercase tracking-widest h-14 text-right pr-10">Grid Control</TableHead>
                       </TableRow>
                     </TableHeader>
@@ -493,16 +587,26 @@ export default function AdminDashboardPage() {
                               </div>
                             </TableCell>
                             <TableCell className="text-center">
-                              <Badge variant="outline" className="text-[9px] font-bold uppercase border-primary/30 text-primary">
-                                {camera.owner?.organization}
-                              </Badge>
+                              {camera.webhook_url ? (
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm" 
+                                  className="h-8 gap-2 rounded-lg text-[10px] font-bold text-rwanda-green bg-rwanda-green/5 hover:bg-rwanda-green hover:text-white"
+                                  onClick={() => copyToClipboard(camera.webhook_url!)}
+                                >
+                                  <LinkIcon className="w-3.5 h-3.5" /> Copy URL
+                                </Button>
+                              ) : (
+                                <Badge variant="outline" className="text-[8px] font-bold opacity-30">NO LINK</Badge>
+                              )}
                             </TableCell>
                             <TableCell className="text-center">
-                              <div className="flex justify-center gap-2">
-                                {Object.entries(camera.services || {}).map(([key, val]) => (
-                                  val && <div key={key} className="w-2 h-2 rounded-full bg-rwanda-green" title={key.replace(/_/g, ' ')} />
-                                ))}
-                              </div>
+                              <Badge variant="outline" className={cn(
+                                "text-[9px] font-bold uppercase",
+                                camera.webhook_url ? "border-rwanda-green text-rwanda-green" : "border-amber-500 text-amber-500"
+                              )}>
+                                {camera.webhook_url ? 'SYNCED' : 'PENDING'}
+                              </Badge>
                             </TableCell>
                             <TableCell className="text-right pr-10">
                               <Button variant="ghost" size="icon" className="rounded-lg h-10 w-10">
