@@ -34,6 +34,49 @@
         "createdAt": { "type": "string", "format": "date-time" }
       },
       "required": ["uid", "email", "isOnboarded"]
+    },
+    "Camera": {
+      "title": "Camera",
+      "description": "Information about registered security and traffic cameras.",
+      "type": "object",
+      "properties": {
+        "camera_id": { "type": "string" },
+        "name": { "type": "string" },
+        "location": {
+          "type": "object",
+          "properties": {
+            "road": { "type": "string" },
+            "district": { "type": "string" },
+            "city": { "type": "string" },
+            "latitude": { "type": "number" },
+            "longitude": { "type": "number" }
+          }
+        },
+        "owner": {
+          "type": "object",
+          "properties": {
+            "organization": { "type": "string" }
+          }
+        },
+        "services": {
+          "type": "object",
+          "properties": {
+            "traffic_enforcement": { "type": "boolean" },
+            "live_stream": { "type": "boolean" },
+            "storage": { "type": "boolean" }
+          }
+        },
+        "rules": {
+          "type": "object",
+          "properties": {
+            "allowed_events": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          }
+        }
+      },
+      "required": ["camera_id", "name"]
     }
   },
   "auth": {
@@ -43,6 +86,10 @@
     "/users/{userId}": {
       "schema": "#/backend/entities/UserProfile",
       "description": "User profile document containing account settings, hardware status, and chosen services."
+    },
+    "/cameras/{cameraId}": {
+      "schema": "#/backend/entities/Camera",
+      "description": "Individual camera records in the registry."
     }
   }
 }

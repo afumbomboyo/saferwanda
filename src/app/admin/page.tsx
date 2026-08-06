@@ -1,9 +1,10 @@
+
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
 import { useUser, useFirestore, useCollection, useDoc } from '@/firebase';
 import { useRouter } from 'next/navigation';
-import { collection, doc, query, orderBy } from 'firebase/firestore';
+import { collection, doc, query, orderBy, setDoc } from 'firebase/firestore';
 import { 
   Users, 
   Shield, 
@@ -16,7 +17,12 @@ import {
   BarChart3,
   AlertCircle,
   Loader2,
-  Lock
+  Lock,
+  Camera,
+  Plus,
+  MapPin,
+  Settings,
+  X
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -31,13 +37,53 @@ import {
   TableRow 
 } from '@/components/ui/table';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogHeader, 
+  DialogTitle, 
+  DialogDescription,
+  DialogTrigger 
+} from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 import { cn } from '@/lib/utils';
+import { useToast } from '@/hooks/use-toast';
 
 export default function AdminDashboardPage() {
   const router = useRouter();
+  const { toast } = useToast();
   const { user, loading: userLoading } = useUser();
   const db = useFirestore();
   const [searchTerm, setSearchTerm] = useState('');
+  const [cameraSearchTerm, setCameraSearchTerm] = useState('');
+  const [activeTab, setActiveTab] = useState('citizens');
+  const [isCameraDialogOpen, setIsCameraDialogOpen] = useState(false);
+
+  // Form State for New Camera
+  const [newCamera, setNewCamera] = useState({
+    camera_id: '',
+    name: '',
+    location: {
+      road: '',
+      district: '',
+      city: 'Kigali',
+      latitude: -1.944,
+      longitude: 30.061
+    },
+    owner: {
+      organization: 'Traffic Authority'
+    },
+    services: {
+      traffic_enforcement: true,
+      live_stream: true,
+      storage: true
+    },
+    rules: {
+      allowed_events: ['Line Crossing', 'Loitering', 'Region Entrance']
+    }
+  });
 
   // Check admin status
   const profileRef = useMemo(() => (user && db ? doc(db, 'users', user.uid) : null), [user, db]);
@@ -46,6 +92,10 @@ export default function AdminDashboardPage() {
   // Fetch all users
   const usersQuery = useMemo(() => (db ? query(collection(db, 'users'), orderBy('createdAt', 'desc')) : null), [db]);
   const { data: allUsers, loading: usersLoading } = useCollection(usersQuery);
+
+  // Fetch all cameras
+  const camerasQuery = useMemo(() => (db ? collection(db, 'cameras') : null), [db]);
+  const { data: allCameras, loading: camerasLoading } = useCollection(camerasQuery);
 
   useEffect(() => {
     if (!userLoading && !user) {
@@ -62,16 +112,50 @@ export default function AdminDashboardPage() {
     );
   }, [allUsers, searchTerm]);
 
+  const filteredCameras = useMemo(() => {
+    if (!allCameras) return [];
+    return allCameras.filter(c => 
+      c.camera_id?.toLowerCase().includes(cameraSearchTerm.toLowerCase()) || 
+      c.name?.toLowerCase().includes(cameraSearchTerm.toLowerCase()) ||
+      c.location?.road?.toLowerCase().includes(cameraSearchTerm.toLowerCase())
+    );
+  }, [allCameras, cameraSearchTerm]);
+
   const stats = useMemo(() => {
-    if (!allUsers) return { total: 0, activeSubs: 0, devices: 0 };
+    if (!allUsers) return { total: 0, activeSubs: 0, devices: 0, cameras: 0 };
     return {
       total: allUsers.length,
       activeSubs: allUsers.filter(u => u.subscriptionActive).length,
-      devices: allUsers.filter(u => u.deviceId).length
+      devices: allUsers.filter(u => u.deviceId).length,
+      cameras: allCameras?.length || 0
     };
-  }, [allUsers]);
+  }, [allUsers, allCameras]);
 
-  if (userLoading || profileLoading || usersLoading) {
+  const handleRegisterCamera = async () => {
+    if (!db || !newCamera.camera_id || !newCamera.name) return;
+    
+    try {
+      await setDoc(doc(db, 'cameras', newCamera.camera_id), newCamera);
+      toast({
+        title: "Camera Registered",
+        description: `${newCamera.name} (${newCamera.camera_id}) added to registry.`,
+      });
+      setIsCameraDialogOpen(false);
+      // Reset form
+      setNewCamera({
+        camera_id: '',
+        name: '',
+        location: { road: '', district: '', city: 'Kigali', latitude: -1.944, longitude: 30.061 },
+        owner: { organization: 'Traffic Authority' },
+        services: { traffic_enforcement: true, live_stream: true, storage: true },
+        rules: { allowed_events: ['Line Crossing', 'Loitering', 'Region Entrance'] }
+      });
+    } catch (error) {
+      console.error("Error registering camera:", error);
+    }
+  };
+
+  if (userLoading || profileLoading || usersLoading || camerasLoading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-background">
         <Loader2 className="w-10 h-10 animate-spin text-primary mb-4" />
@@ -120,11 +204,12 @@ export default function AdminDashboardPage() {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
           {[
             { label: 'Total Citizens', value: stats.total, icon: Users, color: 'text-primary' },
             { label: 'Active Guards', value: stats.activeSubs, icon: CheckCircle2, color: 'text-rwanda-green' },
-            { label: 'Hardware Nodes', value: stats.devices, icon: Smartphone, color: 'text-accent' }
+            { label: 'Hardware Nodes', value: stats.devices, icon: Smartphone, color: 'text-accent' },
+            { label: 'Registry Cameras', value: stats.cameras, icon: Camera, color: 'text-sky-500' }
           ].map((stat, i) => (
             <Card key={i} className="bg-card/40 border-border rounded-[2.5rem] shadow-xl overflow-hidden relative">
               <div className="absolute top-0 right-0 p-8 opacity-5">
@@ -141,96 +226,297 @@ export default function AdminDashboardPage() {
           ))}
         </div>
 
-        {/* User Management Section */}
-        <Card className="bg-card/60 border-border rounded-[3rem] shadow-2xl overflow-hidden">
-          <CardHeader className="p-10 pb-6 border-b border-border/50 bg-secondary/10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-            <div>
-              <CardTitle className="text-3xl font-black">Citizen Directory</CardTitle>
-              <CardDescription className="text-sm font-light">Monitor individual security statuses across the nation.</CardDescription>
-            </div>
-            <div className="flex w-full md:w-auto gap-2">
-              <div className="relative flex-grow md:w-80">
-                <Input 
-                  placeholder="Search name, email, or node..." 
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="h-12 rounded-xl bg-background border-border pl-12"
-                />
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50" />
-              </div>
-              <Button variant="outline" className="h-12 w-12 rounded-xl p-0 shrink-0"><Filter className="w-4 h-4" /></Button>
-            </div>
-          </CardHeader>
-          <CardContent className="p-0">
-            <ScrollArea className="h-[600px] w-full">
-              <Table>
-                <TableHeader className="bg-secondary/20 sticky top-0 z-10">
-                  <TableRow className="border-none">
-                    <TableHead className="text-[10px] font-black uppercase tracking-widest h-14 pl-10">Citizen / Operator</TableHead>
-                    <TableHead className="text-[10px] font-black uppercase tracking-widest h-14 text-center">Security Status</TableHead>
-                    <TableHead className="text-[10px] font-black uppercase tracking-widest h-14 text-center">Services</TableHead>
-                    <TableHead className="text-[10px] font-black uppercase tracking-widest h-14 text-center">Hardware Node</TableHead>
-                    <TableHead className="text-[10px] font-black uppercase tracking-widest h-14 text-right pr-10">Operations</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredUsers.length > 0 ? (
-                    filteredUsers.map((user) => (
-                      <TableRow key={user.uid} className="hover:bg-secondary/10 transition-colors border-border/50">
-                        <TableCell className="pl-10 py-6">
-                          <div className="flex flex-col">
-                            <span className="font-bold text-base flex items-center gap-2">
-                              {user.fullName}
-                              {user.isAdmin && <Badge className="bg-destructive text-[7px] h-4 py-0">Admin</Badge>}
-                            </span>
-                            <span className="text-xs text-muted-foreground opacity-60">{user.email}</span>
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-center">
-                          <Badge variant="outline" className={cn(
-                            "font-black text-[8px] uppercase tracking-widest px-3 py-1",
-                            user.subscriptionActive ? "border-rwanda-green text-rwanda-green bg-rwanda-green/5" : "border-muted text-muted-foreground"
-                          )}>
-                            {user.subscriptionActive ? 'GRID ACTIVE' : 'INACTIVE'}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-center">
-                          <div className="flex justify-center gap-1">
-                            {user.servicesSelected?.map((s: string) => (
-                              <div key={s} className="w-2 h-2 rounded-full bg-primary" title={s} />
-                            ))}
-                            {!user.servicesSelected?.length && <span className="text-[10px] text-muted-foreground opacity-40">None</span>}
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-center">
-                          {user.deviceId ? (
-                            <div className="flex flex-col items-center">
-                              <span className="text-[10px] font-mono font-bold text-primary">{user.deviceId}</span>
-                              <span className="text-[8px] uppercase opacity-50">{user.deviceName}</span>
-                            </div>
-                          ) : (
-                            <AlertCircle className="w-4 h-4 mx-auto text-muted-foreground/30" />
-                          )}
-                        </TableCell>
-                        <TableCell className="text-right pr-10">
-                          <Button variant="ghost" size="icon" className="rounded-lg h-10 w-10 hover:bg-primary/10 hover:text-primary">
-                            <ChevronRight className="w-5 h-5" />
-                          </Button>
-                        </TableCell>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
+          <TabsList className="bg-secondary/30 p-1.5 rounded-2xl border border-border h-auto">
+            <TabsTrigger value="citizens" className="rounded-xl py-3 px-8 font-black uppercase tracking-widest text-xs data-[state=active]:bg-primary data-[state=active]:text-white">
+              Citizens
+            </TabsTrigger>
+            <TabsTrigger value="cameras" className="rounded-xl py-3 px-8 font-black uppercase tracking-widest text-xs data-[state=active]:bg-primary data-[state=active]:text-white">
+              Camera Registry
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="citizens">
+            <Card className="bg-card/60 border-border rounded-[3rem] shadow-2xl overflow-hidden">
+              <CardHeader className="p-10 pb-6 border-b border-border/50 bg-secondary/10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                <div>
+                  <CardTitle className="text-3xl font-black">Citizen Directory</CardTitle>
+                  <CardDescription className="text-sm font-light">Monitor individual security statuses across the nation.</CardDescription>
+                </div>
+                <div className="flex w-full md:w-auto gap-2">
+                  <div className="relative flex-grow md:w-80">
+                    <Input 
+                      placeholder="Search name, email, or node..." 
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="h-12 rounded-xl bg-background border-border pl-12"
+                    />
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50" />
+                  </div>
+                  <Button variant="outline" className="h-12 w-12 rounded-xl p-0 shrink-0"><Filter className="w-4 h-4" /></Button>
+                </div>
+              </CardHeader>
+              <CardContent className="p-0">
+                <ScrollArea className="h-[600px] w-full">
+                  <Table>
+                    <TableHeader className="bg-secondary/20 sticky top-0 z-10">
+                      <TableRow className="border-none">
+                        <TableHead className="text-[10px] font-black uppercase tracking-widest h-14 pl-10">Citizen / Operator</TableHead>
+                        <TableHead className="text-[10px] font-black uppercase tracking-widest h-14 text-center">Security Status</TableHead>
+                        <TableHead className="text-[10px] font-black uppercase tracking-widest h-14 text-center">Services</TableHead>
+                        <TableHead className="text-[10px] font-black uppercase tracking-widest h-14 text-center">Hardware Node</TableHead>
+                        <TableHead className="text-[10px] font-black uppercase tracking-widest h-14 text-right pr-10">Operations</TableHead>
                       </TableRow>
-                    ))
-                  ) : (
-                    <TableRow>
-                      <TableCell colSpan={5} className="py-24 text-center">
-                        <p className="text-muted-foreground font-bold">No results matching your query.</p>
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </ScrollArea>
-          </CardContent>
-        </Card>
+                    </TableHeader>
+                    <TableBody>
+                      {filteredUsers.length > 0 ? (
+                        filteredUsers.map((user) => (
+                          <TableRow key={user.uid} className="hover:bg-secondary/10 transition-colors border-border/50">
+                            <TableCell className="pl-10 py-6">
+                              <div className="flex flex-col">
+                                <span className="font-bold text-base flex items-center gap-2">
+                                  {user.fullName}
+                                  {user.isAdmin && <Badge className="bg-destructive text-[7px] h-4 py-0">Admin</Badge>}
+                                </span>
+                                <span className="text-xs text-muted-foreground opacity-60">{user.email}</span>
+                              </div>
+                            </TableCell>
+                            <TableCell className="text-center">
+                              <Badge variant="outline" className={cn(
+                                "font-black text-[8px] uppercase tracking-widest px-3 py-1",
+                                user.subscriptionActive ? "border-rwanda-green text-rwanda-green bg-rwanda-green/5" : "border-muted text-muted-foreground"
+                              )}>
+                                {user.subscriptionActive ? 'GRID ACTIVE' : 'INACTIVE'}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-center">
+                              <div className="flex justify-center gap-1">
+                                {user.servicesSelected?.map((s: string) => (
+                                  <div key={s} className="w-2 h-2 rounded-full bg-primary" title={s} />
+                                ))}
+                                {!user.servicesSelected?.length && <span className="text-[10px] text-muted-foreground opacity-40">None</span>}
+                              </div>
+                            </TableCell>
+                            <TableCell className="text-center">
+                              {user.deviceId ? (
+                                <div className="flex flex-col items-center">
+                                  <span className="text-[10px] font-mono font-bold text-primary">{user.deviceId}</span>
+                                  <span className="text-[8px] uppercase opacity-50">{user.deviceName}</span>
+                                </div>
+                              ) : (
+                                <AlertCircle className="w-4 h-4 mx-auto text-muted-foreground/30" />
+                              )}
+                            </TableCell>
+                            <TableCell className="text-right pr-10">
+                              <Button variant="ghost" size="icon" className="rounded-lg h-10 w-10 hover:bg-primary/10 hover:text-primary">
+                                <ChevronRight className="w-5 h-5" />
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      ) : (
+                        <TableRow>
+                          <TableCell colSpan={5} className="py-24 text-center">
+                            <p className="text-muted-foreground font-bold">No results matching your query.</p>
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </ScrollArea>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="cameras">
+            <Card className="bg-card/60 border-border rounded-[3rem] shadow-2xl overflow-hidden">
+              <CardHeader className="p-10 pb-6 border-b border-border/50 bg-secondary/10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                <div>
+                  <CardTitle className="text-3xl font-black">Camera Registry</CardTitle>
+                  <CardDescription className="text-sm font-light">Global surveillance grid management.</CardDescription>
+                </div>
+                <div className="flex w-full md:w-auto gap-4">
+                  <div className="relative flex-grow md:w-80">
+                    <Input 
+                      placeholder="Search ID, name, or location..." 
+                      value={cameraSearchTerm}
+                      onChange={(e) => setCameraSearchTerm(e.target.value)}
+                      className="h-12 rounded-xl bg-background border-border pl-12"
+                    />
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50" />
+                  </div>
+                  
+                  <Dialog open={isCameraDialogOpen} onOpenChange={setIsCameraDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button className="h-12 rounded-xl font-black uppercase tracking-widest text-xs gap-2 px-6">
+                        <Plus className="w-4 h-4" /> Register Camera
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-2xl bg-background border-border rounded-[2.5rem] shadow-2xl p-0 overflow-hidden">
+                      <ScrollArea className="max-h-[85vh]">
+                        <div className="p-10 space-y-8">
+                          <DialogHeader>
+                            <DialogTitle className="text-3xl font-black">New Camera Registry</DialogTitle>
+                            <DialogDescription>Initialize a new surveillance node on the platform.</DialogDescription>
+                          </DialogHeader>
+
+                          <div className="grid grid-cols-2 gap-6">
+                            <div className="space-y-2">
+                              <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Camera ID</Label>
+                              <Input 
+                                placeholder="CAM_KGL_001" 
+                                value={newCamera.camera_id}
+                                onChange={(e) => setNewCamera({...newCamera, camera_id: e.target.value})}
+                                className="h-12 rounded-xl"
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Name</Label>
+                              <Input 
+                                placeholder="KN 5 Road Camera" 
+                                value={newCamera.name}
+                                onChange={(e) => setNewCamera({...newCamera, name: e.target.value})}
+                                className="h-12 rounded-xl"
+                              />
+                            </div>
+                          </div>
+
+                          <div className="space-y-4">
+                            <h4 className="text-[10px] font-black uppercase tracking-widest text-primary">Location Profile</h4>
+                            <div className="grid grid-cols-3 gap-4">
+                              <div className="space-y-2">
+                                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Road</Label>
+                                <Input 
+                                  placeholder="KN 5 Road" 
+                                  value={newCamera.location.road}
+                                  onChange={(e) => setNewCamera({...newCamera, location: {...newCamera.location, road: e.target.value}})}
+                                  className="h-11 rounded-xl"
+                                />
+                              </div>
+                              <div className="space-y-2">
+                                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">District</Label>
+                                <Input 
+                                  placeholder="Gasabo" 
+                                  value={newCamera.location.district}
+                                  onChange={(e) => setNewCamera({...newCamera, location: {...newCamera.location, district: e.target.value}})}
+                                  className="h-11 rounded-xl"
+                                />
+                              </div>
+                              <div className="space-y-2">
+                                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">City</Label>
+                                <Input 
+                                  placeholder="Kigali" 
+                                  value={newCamera.location.city}
+                                  onChange={(e) => setNewCamera({...newCamera, location: {...newCamera.location, city: e.target.value}})}
+                                  className="h-11 rounded-xl"
+                                />
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="space-y-4">
+                            <h4 className="text-[10px] font-black uppercase tracking-widest text-primary">Active Services</h4>
+                            <div className="grid grid-cols-3 gap-4">
+                              {Object.entries(newCamera.services).map(([key, val]) => (
+                                <div key={key} className="flex items-center space-x-2 bg-secondary/30 p-4 rounded-xl border border-border">
+                                  <Checkbox 
+                                    id={key} 
+                                    checked={val} 
+                                    onCheckedChange={(checked) => setNewCamera({
+                                      ...newCamera, 
+                                      services: {...newCamera.services, [key]: !!checked}
+                                    })} 
+                                  />
+                                  <Label htmlFor={key} className="text-[10px] font-bold uppercase cursor-pointer">
+                                    {key.replace('_', ' ')}
+                                  </Label>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          <Button 
+                            className="w-full h-14 rounded-xl font-black uppercase tracking-widest"
+                            onClick={handleRegisterCamera}
+                            disabled={!newCamera.camera_id || !newCamera.name}
+                          >
+                            Add to Registry
+                          </Button>
+                        </div>
+                      </ScrollArea>
+                    </DialogContent>
+                  </Dialog>
+                </div>
+              </CardHeader>
+              <CardContent className="p-0">
+                <ScrollArea className="h-[600px] w-full">
+                  <Table>
+                    <TableHeader className="bg-secondary/20 sticky top-0 z-10">
+                      <TableRow className="border-none">
+                        <TableHead className="text-[10px] font-black uppercase tracking-widest h-14 pl-10">Camera Profile</TableHead>
+                        <TableHead className="text-[10px] font-black uppercase tracking-widest h-14 text-center">Location</TableHead>
+                        <TableHead className="text-[10px] font-black uppercase tracking-widest h-14 text-center">Owner</TableHead>
+                        <TableHead className="text-[10px] font-black uppercase tracking-widest h-14 text-center">Active Services</TableHead>
+                        <TableHead className="text-[10px] font-black uppercase tracking-widest h-14 text-right pr-10">Grid Control</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {filteredCameras.length > 0 ? (
+                        filteredCameras.map((camera) => (
+                          <TableRow key={camera.camera_id} className="hover:bg-secondary/10 transition-colors border-border/50">
+                            <TableCell className="pl-10 py-6">
+                              <div className="flex items-center gap-4">
+                                <div className="w-10 h-10 rounded-xl bg-sky-500/10 flex items-center justify-center border border-sky-500/20">
+                                  <Camera className="w-5 h-5 text-sky-500" />
+                                </div>
+                                <div className="flex flex-col">
+                                  <span className="font-bold text-base">{camera.name}</span>
+                                  <span className="text-[10px] font-mono font-bold text-primary">{camera.camera_id}</span>
+                                </div>
+                              </div>
+                            </TableCell>
+                            <TableCell className="text-center">
+                              <div className="flex flex-col items-center">
+                                <span className="text-xs font-bold flex items-center gap-1">
+                                  <MapPin className="w-3 h-3 text-destructive" />
+                                  {camera.location?.road}
+                                </span>
+                                <span className="text-[10px] text-muted-foreground uppercase">{camera.location?.district}, {camera.location?.city}</span>
+                              </div>
+                            </TableCell>
+                            <TableCell className="text-center">
+                              <Badge variant="outline" className="text-[9px] font-bold uppercase border-primary/30 text-primary">
+                                {camera.owner?.organization}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-center">
+                              <div className="flex justify-center gap-2">
+                                {Object.entries(camera.services || {}).map(([key, val]) => (
+                                  val && <div key={key} className="w-2 h-2 rounded-full bg-rwanda-green" title={key.replace('_', ' ')} />
+                                ))}
+                              </div>
+                            </TableCell>
+                            <TableCell className="text-right pr-10">
+                              <Button variant="ghost" size="icon" className="rounded-lg h-10 w-10">
+                                <Settings className="w-5 h-5 opacity-40 hover:opacity-100 hover:text-primary transition-all" />
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      ) : (
+                        <TableRow>
+                          <TableCell colSpan={5} className="py-24 text-center">
+                            <p className="text-muted-foreground font-bold">No cameras registered in this sector.</p>
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </ScrollArea>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
 
       </div>
     </div>
