@@ -511,6 +511,30 @@ export default function AdminDashboardPage() {
                                     />
                                   </div>
                                 </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                  <div className="space-y-2">
+                                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Latitude</Label>
+                                    <Input 
+                                      type="number"
+                                      step="any"
+                                      placeholder="-1.944" 
+                                      value={newCamera.location.latitude}
+                                      onChange={(e) => setNewCamera({...newCamera, location: {...newCamera.location, latitude: parseFloat(e.target.value) || 0}})}
+                                      className="h-11 rounded-xl"
+                                    />
+                                  </div>
+                                  <div className="space-y-2">
+                                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Longitude</Label>
+                                    <Input 
+                                      type="number"
+                                      step="any"
+                                      placeholder="30.061" 
+                                      value={newCamera.location.longitude}
+                                      onChange={(e) => setNewCamera({...newCamera, location: {...newCamera.location, longitude: parseFloat(e.target.value) || 0}})}
+                                      className="h-11 rounded-xl"
+                                    />
+                                  </div>
+                                </div>
                               </div>
 
                               <div className="space-y-4">
