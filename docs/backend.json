@@ -63,7 +63,9 @@
           "properties": {
             "traffic_enforcement": { "type": "boolean" },
             "live_stream": { "type": "boolean" },
-            "storage": { "type": "boolean" }
+            "information_storage": { "type": "boolean" },
+            "abnormal_activity_alert": { "type": "boolean" },
+            "information_retrieval": { "type": "boolean" }
           }
         },
         "rules": {

@@ -78,7 +78,9 @@ export default function AdminDashboardPage() {
     services: {
       traffic_enforcement: true,
       live_stream: true,
-      storage: true
+      information_storage: true,
+      abnormal_activity_alert: true,
+      information_retrieval: true
     },
     rules: {
       allowed_events: ['Line Crossing', 'Loitering', 'Region Entrance']
@@ -147,7 +149,13 @@ export default function AdminDashboardPage() {
         name: '',
         location: { road: '', district: '', city: 'Kigali', latitude: -1.944, longitude: 30.061 },
         owner: { organization: 'Traffic Authority' },
-        services: { traffic_enforcement: true, live_stream: true, storage: true },
+        services: { 
+          traffic_enforcement: true, 
+          live_stream: true, 
+          information_storage: true,
+          abnormal_activity_alert: true,
+          information_retrieval: true
+        },
         rules: { allowed_events: ['Line Crossing', 'Loitering', 'Region Entrance'] }
       });
     } catch (error) {
@@ -416,7 +424,7 @@ export default function AdminDashboardPage() {
 
                           <div className="space-y-4">
                             <h4 className="text-[10px] font-black uppercase tracking-widest text-primary">Active Services</h4>
-                            <div className="grid grid-cols-3 gap-4">
+                            <div className="grid grid-cols-2 gap-4">
                               {Object.entries(newCamera.services).map(([key, val]) => (
                                 <div key={key} className="flex items-center space-x-2 bg-secondary/30 p-4 rounded-xl border border-border">
                                   <Checkbox 
@@ -428,7 +436,7 @@ export default function AdminDashboardPage() {
                                     })} 
                                   />
                                   <Label htmlFor={key} className="text-[10px] font-bold uppercase cursor-pointer">
-                                    {key.replace('_', ' ')}
+                                    {key.replace(/_/g, ' ')}
                                   </Label>
                                 </div>
                               ))}
@@ -492,7 +500,7 @@ export default function AdminDashboardPage() {
                             <TableCell className="text-center">
                               <div className="flex justify-center gap-2">
                                 {Object.entries(camera.services || {}).map(([key, val]) => (
-                                  val && <div key={key} className="w-2 h-2 rounded-full bg-rwanda-green" title={key.replace('_', ' ')} />
+                                  val && <div key={key} className="w-2 h-2 rounded-full bg-rwanda-green" title={key.replace(/_/g, ' ')} />
                                 ))}
                               </div>
                             </TableCell>
