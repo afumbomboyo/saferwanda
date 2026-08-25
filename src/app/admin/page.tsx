@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
@@ -31,7 +30,8 @@ import {
   UserCheck,
   Key,
   BadgeAlert,
-  History
+  History,
+  Eye
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -67,7 +67,9 @@ import {
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { FingerprintEnrollmentDialog } from '@/components/biometrics/FingerprintEnrollmentDialog';
-import { EnrollmentResult } from '@/lib/biometrics/fingerprint-provider';
+import { FaceEnrollmentDialog } from '@/components/biometrics/FaceEnrollmentDialog';
+import { EnrollmentResult as FingerprintResult } from '@/lib/biometrics/fingerprint-provider';
+import { FaceEnrollmentResult } from '@/lib/biometrics/face-provider';
 
 export default function AdminDashboardPage() {
   const router = useRouter();
@@ -90,6 +92,7 @@ export default function AdminDashboardPage() {
   const [selectedOfficer, setSelectedOfficer] = useState<any>(null);
   const [isOfficerDetailOpen, setIsOfficerDetailOpen] = useState(false);
   const [isFingerprintEnrollOpen, setIsFingerprintEnrollOpen] = useState(false);
+  const [isFaceEnrollOpen, setIsFaceEnrollOpen] = useState(false);
 
   // Form State for New Camera
   const [newCamera, setNewCamera] = useState({
@@ -276,7 +279,7 @@ export default function AdminDashboardPage() {
     }
   };
 
-  const handleFingerprintSuccess = async (result: EnrollmentResult) => {
+  const handleFingerprintSuccess = async (result: FingerprintResult) => {
     if (!db || !user || !selectedOfficer) return;
     
     const officerRef = doc(db, 'police_officers', selectedOfficer.police_id);
@@ -309,25 +312,59 @@ export default function AdminDashboardPage() {
     await updateDoc(officerRef, updateData);
     await createAuditLog(selectedOfficer.police_id, 'FINGERPRINT_ENROLLMENT_COMPLETED', { provider: result.provider });
     
-    // Update local state to reflect change in the detail dialog
     setSelectedOfficer({ ...selectedOfficer, ...updateData });
-    
     toast({ title: "Fingerprint Verified", description: "Biometric enrollment successfully linked." });
   };
 
-  const simulateEnrollmentStep = async (officerId: string, step: 'face' | 'pin') => {
+  const handleFaceSuccess = async (result: FaceEnrollmentResult) => {
+    if (!db || !user || !selectedOfficer) return;
+    
+    const officerRef = doc(db, 'police_officers', selectedOfficer.police_id);
+    const updatedEnrollment = { 
+      ...selectedOfficer.enrollment,
+      face: {
+        enrolled: true,
+        provider: result.provider,
+        enrollment_id: result.enrollmentId,
+        liveness_verified: result.livenessVerified,
+        enrolled_at: new Date().toISOString(),
+        enrolled_by: user.uid
+      }
+    };
+
+    const isComplete = updatedEnrollment.fingerprint.enrolled && 
+                     updatedEnrollment.face.enrolled && 
+                     updatedEnrollment.pin.configured;
+    
+    updatedEnrollment.completed = isComplete;
+    
+    const updateData: any = {
+      enrollment: updatedEnrollment,
+      updated_at: serverTimestamp()
+    };
+    
+    if (isComplete && selectedOfficer.status === 'pending_enrollment') {
+      updateData.status = 'enrollment_ready';
+    }
+    
+    await updateDoc(officerRef, updateData);
+    await createAuditLog(selectedOfficer.police_id, 'FACE_ENROLLMENT_COMPLETED', { provider: result.provider, liveness_verified: result.livenessVerified });
+    
+    setSelectedOfficer({ ...selectedOfficer, ...updateData });
+    toast({ title: "Facial Registry Linked", description: "Secure biometric sample stored successfully." });
+  };
+
+  const handlePinEnrollment = async (officerId: string) => {
     if (!db || !user) return;
     const officerRef = doc(db, 'police_officers', officerId);
     
-    // Fetch latest data to ensure we don't overwrite fingerprint
     const officerDoc = await getDocs(query(collection(db, 'police_officers'), where('police_id', '==', officerId), limit(1)));
     if (officerDoc.empty) return;
     
     const officerData = officerDoc.docs[0].data();
     const newEnrollment = { ...officerData.enrollment };
     
-    if (step === 'face') newEnrollment.face.enrolled = true;
-    if (step === 'pin') newEnrollment.pin.configured = true;
+    newEnrollment.pin.configured = true;
     
     const isComplete = newEnrollment.fingerprint.enrolled && 
                      newEnrollment.face.enrolled && 
@@ -345,14 +382,13 @@ export default function AdminDashboardPage() {
     }
     
     await updateDoc(officerRef, updateData);
-    await createAuditLog(officerId, `${step.toUpperCase()}_ENROLLMENT_COMPLETED`);
+    await createAuditLog(officerId, 'PIN_ENROLLMENT_COMPLETED');
     
-    // Update local state
     if (selectedOfficer?.police_id === officerId) {
       setSelectedOfficer({ ...selectedOfficer, ...updateData });
     }
     
-    toast({ title: "Step Complete", description: `${step} enrollment successful.` });
+    toast({ title: "PIN Configured", description: "Security code has been set." });
   };
 
   const handleUpdateOfficerStatus = async (officerId: string, newStatus: string) => {
@@ -843,7 +879,8 @@ export default function AdminDashboardPage() {
                                 className="h-8 text-[9px] font-black uppercase" 
                                 onClick={() => {
                                   if (step.id === 'fingerprint') setIsFingerprintEnrollOpen(true);
-                                  else simulateEnrollmentStep(selectedOfficer.police_id, step.id as any);
+                                  else if (step.id === 'face') setIsFaceEnrollOpen(true);
+                                  else handlePinEnrollment(selectedOfficer.police_id);
                                 }}
                               >
                                 Enroll Now
@@ -909,7 +946,7 @@ export default function AdminDashboardPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Real Biometric Enrollment Dialog */}
+      {/* Fingerprint Enrollment Dialog */}
       {selectedOfficer && (
         <FingerprintEnrollmentDialog
           isOpen={isFingerprintEnrollOpen}
@@ -918,6 +955,17 @@ export default function AdminDashboardPage() {
           serviceNumber={selectedOfficer.service_number}
           fullName={selectedOfficer.identity?.full_name}
           onSuccess={handleFingerprintSuccess}
+        />
+      )}
+
+      {/* Face Enrollment Dialog */}
+      {selectedOfficer && (
+        <FaceEnrollmentDialog
+          isOpen={isFaceEnrollOpen}
+          onOpenChange={setIsFaceEnrollOpen}
+          policeId={selectedOfficer.police_id}
+          fullName={selectedOfficer.identity?.full_name}
+          onSuccess={handleFaceSuccess}
         />
       )}
     </div>
