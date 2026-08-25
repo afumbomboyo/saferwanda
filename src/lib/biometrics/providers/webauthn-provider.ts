@@ -1,11 +1,9 @@
-
 /**
  * @fileOverview WebAuthn (Platform Authenticator) Fingerprint Provider
  * Coordinates the server-driven registration ceremony using SimpleWebAuthn.
  */
 
 import { FingerprintProvider, FingerprintProviderCapabilities, EnrollmentResult } from '../fingerprint-provider';
-import { startRegistration } from '@simplewebauthn/browser';
 
 export class WebAuthnProvider implements FingerprintProvider {
   id = 'webauthn_platform';
@@ -36,10 +34,16 @@ export class WebAuthnProvider implements FingerprintProvider {
 
       const options = await optionsResponse.json();
       if (!optionsResponse.ok) {
-        throw new Error(options.error || 'Unable to start enrollment ceremony');
+        console.error('WebAuthn registration-options failed:', options);
+        throw new Error(
+          options.error || 
+          options.message || 
+          `Unable to start enrollment ceremony (${optionsResponse.status})`
+        );
       }
 
       // 2. Start real WebAuthn hardware interaction
+      const { startRegistration } = await import('@simplewebauthn/browser');
       const attestationResponse = await startRegistration({
         optionsJSON: options
       });
@@ -57,7 +61,12 @@ export class WebAuthnProvider implements FingerprintProvider {
 
       const result = await verifyResponse.json();
       if (!verifyResponse.ok || !result.verified) {
-        throw new Error(result.error || 'Biometric verification failed');
+        console.error('WebAuthn registration-verify failed:', result);
+        throw new Error(
+          result.error || 
+          result.message || 
+          'Biometric verification failed'
+        );
       }
 
       return {

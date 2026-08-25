@@ -1,34 +1,67 @@
-
 import { NextRequest, NextResponse } from 'next/server';
-import { generateRegistrationOptions } from '@simplewebauthn/server';
+import {
+  generateRegistrationOptions,
+} from '@simplewebauthn/server';
 import { webauthnConfig } from '@/lib/webauthn/server';
-import { initializeFirebase } from '@/firebase';
-import { doc, getDoc, updateDoc, collection, getDocs, query, where } from 'firebase/firestore';
+import { adminDb } from '@/lib/firebase-admin';
 
-export async function POST(request: NextRequest) {
+export async function POST(
+  request: NextRequest
+) {
   try {
     const body = await request.json();
-    const { policeId, adminId } = body;
+    const {
+      policeId,
+      adminId,
+    } = body;
 
-    if (!policeId) return NextResponse.json({ error: 'Police ID is required' }, { status: 400 });
-    if (!adminId) return NextResponse.json({ error: 'Administrator authentication required' }, { status: 401 });
+    if (!policeId) {
+      return NextResponse.json(
+        { error: 'Police ID is required' },
+        { status: 400 }
+      );
+    }
 
-    const { db } = initializeFirebase();
-    const officerRef = doc(db, 'police_officers', policeId);
-    const officerSnapshot = await getDoc(officerRef);
+    if (!adminId) {
+      return NextResponse.json(
+        { error: 'Administrator authentication required' },
+        { status: 401 }
+      );
+    }
 
-    if (!officerSnapshot.exists()) {
-      return NextResponse.json({ error: 'Police officer not found' }, { status: 404 });
+    // -----------------------------------------
+    // Get officer
+    // -----------------------------------------
+    const officerRef = adminDb.collection('police_officers').doc(policeId);
+    const officerSnapshot = await officerRef.get();
+
+    if (!officerSnapshot.exists) {
+      return NextResponse.json(
+        { error: 'Police officer not found' },
+        { status: 404 }
+      );
     }
 
     const officer = officerSnapshot.data();
+
+    // -----------------------------------------
+    // Enrollment status
+    // -----------------------------------------
     if (officer?.enrollment?.fingerprint?.enrolled === true) {
-      return NextResponse.json({ error: 'Fingerprint is already enrolled' }, { status: 409 });
+      return NextResponse.json(
+        { error: 'Fingerprint is already enrolled' },
+        { status: 409 }
+      );
     }
 
-    // Get existing credentials to exclude from registration
-    const credentialsQuery = query(collection(db, 'webauthn_credentials'), where('police_id', '==', policeId));
-    const credentialsSnapshot = await getDocs(credentialsQuery);
+    // -----------------------------------------
+    // Get existing credentials
+    // -----------------------------------------
+    const credentialsSnapshot = await adminDb
+      .collection('webauthn_credentials')
+      .where('police_id', '==', policeId)
+      .get();
+
     const excludeCredentials = credentialsSnapshot.docs.map(doc => {
       const data = doc.data();
       return {
@@ -37,6 +70,9 @@ export async function POST(request: NextRequest) {
       };
     });
 
+    // -----------------------------------------
+    // Generate WebAuthn options
+    // -----------------------------------------
     const options = await generateRegistrationOptions({
       rpName: webauthnConfig.rpName,
       rpID: webauthnConfig.rpID,
@@ -49,18 +85,29 @@ export async function POST(request: NextRequest) {
         residentKey: 'required',
         userVerification: 'required'
       },
-      supportedAlgorithmIDs: [-7, -257]
+      supportedAlgorithmIDs: [
+        -7,
+        -257
+      ]
     });
 
-    // Store the challenge for verification
-    await updateDoc(officerRef, {
+    // -----------------------------------------
+    // Save challenge
+    // -----------------------------------------
+    await officerRef.update({
       'enrollment.fingerprint.registration_challenge': options.challenge,
-      'enrollment.fingerprint.registration_challenge_at': new Date().toISOString()
+      'enrollment.fingerprint.registration_challenge_created_at': new Date().toISOString()
     });
 
     return NextResponse.json(options);
+
   } catch (error: any) {
     console.error('WebAuthn registration options error:', error);
-    return NextResponse.json({ error: error.message || 'Unable to generate options' }, { status: 500 });
+    return NextResponse.json(
+      {
+        error: error.message || 'Unable to generate WebAuthn registration options'
+      },
+      { status: 500 }
+    );
   }
 }
