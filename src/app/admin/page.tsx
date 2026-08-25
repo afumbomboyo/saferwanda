@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
@@ -32,7 +31,8 @@ import {
   Key,
   BadgeAlert,
   History,
-  Eye
+  Eye,
+  RefreshCw
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -96,6 +96,8 @@ export default function AdminDashboardPage() {
   const [isFingerprintEnrollOpen, setIsFingerprintEnrollOpen] = useState(false);
   const [isFaceEnrollOpen, setIsFaceEnrollOpen] = useState(false);
   const [isPinEnrollOpen, setIsPinEnrollOpen] = useState(false);
+  const [isResetDialogOpen, setIsResetDialogOpen] = useState(false);
+  const [resetConfirmationName, setResetConfirmationName] = useState('');
 
   // Form State for New Camera
   const [newCamera, setNewCamera] = useState({
@@ -407,6 +409,36 @@ export default function AdminDashboardPage() {
     }
     
     toast({ title: "Status Updated", description: `Officer status is now ${newStatus.replace('_', ' ')}.` });
+  };
+
+  const handleResetEnrollment = async () => {
+    if (!db || !selectedOfficer || resetConfirmationName !== selectedOfficer.identity?.full_name) return;
+
+    try {
+      const officerRef = doc(db, 'police_officers', selectedOfficer.police_id);
+      const resetData = {
+        enrollment: {
+          fingerprint: { enrolled: false },
+          face: { enrolled: false },
+          pin: { configured: false },
+          completed: false,
+          enrolled_at: null,
+          enrolled_by: null
+        },
+        status: 'pending_enrollment',
+        updated_at: serverTimestamp()
+      };
+
+      await updateDoc(officerRef, resetData);
+      await createAuditLog(selectedOfficer.police_id, 'ENROLLMENT_RESET');
+      
+      setSelectedOfficer({ ...selectedOfficer, ...resetData });
+      setIsResetDialogOpen(false);
+      setResetConfirmationName('');
+      toast({ title: "Enrollment Reset", description: `Biometric profiles for ${selectedOfficer.identity?.full_name} have been cleared.` });
+    } catch (error: any) {
+      toast({ variant: "destructive", title: "Reset Failed", description: error.message });
+    }
   };
 
   const copyToClipboard = (text: string) => {
@@ -921,7 +953,13 @@ export default function AdminDashboardPage() {
                         Re-Activate
                       </Button>
                     )}
-                    <Button variant="ghost" className="h-14 rounded-2xl font-black uppercase text-xs opacity-60">Reset Enrollment</Button>
+                    <Button 
+                      variant="ghost" 
+                      className="h-14 rounded-2xl font-black uppercase text-xs opacity-60 flex items-center gap-2"
+                      onClick={() => setIsResetDialogOpen(true)}
+                    >
+                      <RefreshCw className="w-3 h-3" /> Reset Enrollment
+                    </Button>
                   </div>
                 </div>
 
@@ -984,6 +1022,44 @@ export default function AdminDashboardPage() {
           onSuccess={handlePinSuccess}
         />
       )}
+
+      {/* Reset Enrollment Confirmation Dialog */}
+      <Dialog open={isResetDialogOpen} onOpenChange={setIsResetDialogOpen}>
+        <DialogContent className="max-w-md rounded-[2.5rem] p-10">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-black">Confirm Reset</DialogTitle>
+            <DialogDescription>
+              This action will permanently delete all biometric data and PIN credentials for this officer. They will need to re-enroll from scratch.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Type officer's full name to confirm</Label>
+              <Input 
+                placeholder={selectedOfficer?.identity?.full_name}
+                value={resetConfirmationName}
+                onChange={(e) => setResetConfirmationName(e.target.value)}
+                className="h-12 rounded-xl"
+              />
+            </div>
+            <Button 
+              variant="destructive" 
+              className="w-full h-14 rounded-2xl font-black uppercase text-xs"
+              disabled={resetConfirmationName !== selectedOfficer?.identity?.full_name}
+              onClick={handleResetEnrollment}
+            >
+              Confirm Permanent Reset
+            </Button>
+            <Button 
+              variant="ghost" 
+              className="w-full h-12 rounded-xl font-bold uppercase text-[10px]"
+              onClick={() => { setIsResetDialogOpen(false); setResetConfirmationName(''); }}
+            >
+              Cancel
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
