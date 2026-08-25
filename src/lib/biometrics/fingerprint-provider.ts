@@ -14,14 +14,8 @@ export interface EnrollmentResult {
   enrollmentId?: string;
   provider?: string;
   error?: string;
-  // WebAuthn specific fields for verification
-  publicKey?: string;
-  attestationObject?: string;
-  clientDataJSON?: string;
-  counter?: number;
-  transports?: string[];
-  deviceType?: string;
-  backedUp?: boolean;
+  // Metadata for the registry update
+  credential_id?: string;
 }
 
 export interface FingerprintProvider {
@@ -29,5 +23,5 @@ export interface FingerprintProvider {
   name: string;
   isAvailable(): Promise<boolean>;
   getCapabilities(): Promise<FingerprintProviderCapabilities>;
-  enroll(policeId: string): Promise<EnrollmentResult>;
+  enroll(policeId: string, adminId: string): Promise<EnrollmentResult>;
 }

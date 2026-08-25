@@ -10,9 +10,6 @@ export class USBScannerProvider implements FingerprintProvider {
   name = 'External USB Fingerprint Scanner';
 
   async isAvailable(): Promise<boolean> {
-    // In a real implementation, this would poll a local biometric agent or use WebUSB/WebHID
-    // For this prototype, we simulate availability if a specific flag is set or always return false
-    // unless hardware is detected via manufacturer SDK.
     return false; 
   }
 
@@ -24,8 +21,7 @@ export class USBScannerProvider implements FingerprintProvider {
     };
   }
 
-  async enroll(policeId: string): Promise<EnrollmentResult> {
-    // This would call the Manufacturer SDK Secure API
+  async enroll(policeId: string, adminId: string): Promise<EnrollmentResult> {
     return {
       success: false,
       error: "USB Scanner SDK initialization failed. Hardware not detected."

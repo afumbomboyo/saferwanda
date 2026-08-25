@@ -1,15 +1,11 @@
 
 /**
  * @fileOverview WebAuthn (Platform Authenticator) Fingerprint Provider
- * Captures the full registration response for technical verification storage.
+ * Coordinates the server-driven registration ceremony using SimpleWebAuthn.
  */
 
 import { FingerprintProvider, FingerprintProviderCapabilities, EnrollmentResult } from '../fingerprint-provider';
-
-// Static constant for RP ID to ensure cross-subdomain compatibility.
-// For production this is saferwanda.io. For development, we allow localhost.
-export const WEBAUTHN_RP_ID = typeof window !== 'undefined' ? 
-  (window.location.hostname === 'localhost' ? 'localhost' : 'saferwanda.io') : '';
+import { startRegistration } from '@simplewebauthn/browser';
 
 export class WebAuthnProvider implements FingerprintProvider {
   id = 'webauthn_platform';
@@ -17,8 +13,6 @@ export class WebAuthnProvider implements FingerprintProvider {
 
   async isAvailable(): Promise<boolean> {
     if (typeof window === 'undefined' || !window.PublicKeyCredential) return false;
-    
-    // Check if platform authenticator is available (Windows Hello, TouchID, Android Biometric)
     return PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
   }
 
@@ -31,71 +25,53 @@ export class WebAuthnProvider implements FingerprintProvider {
     };
   }
 
-  async enroll(policeId: string): Promise<EnrollmentResult> {
+  async enroll(policeId: string, adminId: string): Promise<EnrollmentResult> {
     try {
-      const challenge = new Uint8Array(32);
-      window.crypto.getRandomValues(challenge);
+      // 1. Get registration options from server
+      const optionsResponse = await fetch('/api/police/webauthn/register-options', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ policeId, adminId })
+      });
 
-      const userID = Uint8Array.from(policeId, c => c.charCodeAt(0));
+      const options = await optionsResponse.json();
+      if (!optionsResponse.ok) {
+        throw new Error(options.error || 'Unable to start enrollment ceremony');
+      }
 
-      const publicKeyCredentialCreationOptions: PublicKeyCredentialCreationOptions = {
-        challenge,
-        rp: {
-          name: "SafeRwanda Security",
-          id: WEBAUTHN_RP_ID,
-        },
-        user: {
-          id: userID,
-          name: `police-${policeId}`,
-          displayName: `Police Officer ${policeId}`,
-        },
-        pubKeyCredParams: [{ alg: -7, type: "public-key" }], // ES256
-        authenticatorSelection: {
-          authenticatorAttachment: "platform",
-          userVerification: "required",
-          residentKey: "required"
-        },
-        timeout: 60000,
-        attestation: "direct" // Ensure we get the attestation object
-      };
+      // 2. Start real WebAuthn hardware interaction
+      const attestationResponse = await startRegistration({
+        optionsJSON: options
+      });
 
-      const credential = await navigator.credentials.create({
-        publicKey: publicKeyCredentialCreationOptions
-      }) as PublicKeyCredential;
+      // 3. Send hardware response back to server for verification
+      const verifyResponse = await fetch('/api/police/webauthn/register-verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          policeId,
+          adminId,
+          response: attestationResponse
+        })
+      });
 
-      if (!credential) throw new Error("Enrollment cancelled or failed.");
+      const result = await verifyResponse.json();
+      if (!verifyResponse.ok || !result.verified) {
+        throw new Error(result.error || 'Biometric verification failed');
+      }
 
-      const response = credential.response as AuthenticatorAttestationResponse;
-      
-      // Helper to encode ArrayBuffer to Base64 for storage
-      const bufferToBase64 = (buffer: ArrayBuffer) => {
-        return btoa(String.fromCharCode(...new Uint8Array(buffer)));
-      };
-
-      // Extract real technical payloads from the authenticator response
-      const attestationObject = bufferToBase64(response.attestationObject);
-      const clientDataJSON = bufferToBase64(response.clientDataJSON);
-      
       return {
         success: true,
-        enrollmentId: credential.id,
-        provider: this.id,
-        // These are the raw responses that the backend would verify to extract the real public key.
-        // For the prototype, we store them as is.
-        attestationObject,
-        clientDataJSON,
-        // In a production verified flow, the public key is extracted from the attestationObject.
-        // We set it to the attestationObject string here to signify that we've captured the real key container.
-        publicKey: attestationObject, 
-        counter: 0,
-        transports: response.getTransports ? response.getTransports() : ['internal'],
-        deviceType: 'singleDevice',
-        backedUp: false
+        enrollmentId: result.credential_id,
+        provider: this.id
       };
     } catch (err: any) {
+      console.error('WebAuthn enrollment error:', err);
       return {
         success: false,
-        error: err.message || "Biometric enrollment failed."
+        error: err.name === 'NotAllowedError' 
+          ? 'Enrollment cancelled by user or timed out.' 
+          : (err.message || 'Fingerprint enrollment failed')
       };
     }
   }

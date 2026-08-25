@@ -64,7 +64,6 @@ import { FaceEnrollmentDialog } from '@/components/biometrics/FaceEnrollmentDial
 import { PinEnrollmentDialog } from '@/components/biometrics/PinEnrollmentDialog';
 import { EnrollmentResult as FingerprintResult } from '@/lib/biometrics/fingerprint-provider';
 import { FaceEnrollmentResult } from '@/lib/biometrics/face-provider';
-import { WEBAUTHN_RP_ID } from '@/lib/biometrics/providers/webauthn-provider';
 
 export default function AdminDashboardPage() {
   const router = useRouter();
@@ -280,65 +279,30 @@ export default function AdminDashboardPage() {
   const handleFingerprintSuccess = async (result: FingerprintResult) => {
     if (!db || !user || !selectedOfficer) return;
     
+    // The technical credential storage and profile update is handled by the API 
+    // called within the provider for production WebAuthn.
+    // Here we just refresh the local state to reflect the completion.
+    
     const officerRef = doc(db, 'police_officers', selectedOfficer.police_id);
-    
-    // 1. Prepare clean officer enrollment data
-    const updatedEnrollment = { 
-      ...selectedOfficer.enrollment,
-      fingerprint: {
-        enrolled: true,
-        provider: result.provider,
-        credential_id: result.enrollmentId,
-        enrolled_at: new Date().toISOString(),
-        enrolled_by: user.uid
+    const updatedSnap = await getDoc(officerRef);
+    if (updatedSnap.exists()) {
+      const updatedData = updatedSnap.data();
+      const isComplete = updatedData.enrollment?.fingerprint?.enrolled && 
+                       updatedData.enrollment?.face?.enrolled && 
+                       updatedData.enrollment?.pin?.configured;
+      
+      if (isComplete) {
+        await updateDoc(officerRef, {
+          'enrollment.completed': true,
+          status: updatedData.status === 'pending_enrollment' ? 'enrollment_ready' : updatedData.status,
+          updated_at: serverTimestamp()
+        });
       }
-    };
 
-    const isComplete = updatedEnrollment.fingerprint.enrolled && 
-                     updatedEnrollment.face.enrolled && 
-                     updatedEnrollment.pin.configured;
-    
-    updatedEnrollment.completed = isComplete;
-    
-    const updateData: any = {
-      enrollment: updatedEnrollment,
-      updated_at: serverTimestamp()
-    };
-    
-    if (isComplete && selectedOfficer.status === 'pending_enrollment') {
-      updateData.status = 'enrollment_ready';
+      setSelectedOfficer({ ...selectedOfficer, ...updatedData, enrollment: { ...updatedData.enrollment, completed: isComplete } });
+      createAuditLog(selectedOfficer.police_id, 'FINGERPRINT_ENROLLMENT_COMPLETED', { provider: result.provider });
+      toast({ title: "Fingerprint Verified", description: "Biometric enrollment successfully linked." });
     }
-    
-    // 2. Save detailed WebAuthn technical metadata separately if using platform biometrics
-    if (result.provider === 'webauthn_platform' && result.enrollmentId) {
-      const credRef = doc(db, 'webauthn_credentials', result.enrollmentId);
-      setDoc(credRef, {
-        police_id: selectedOfficer.police_id,
-        credential_id: result.enrollmentId,
-        public_key: result.publicKey,
-        attestation_object: result.attestationObject,
-        client_data_json: result.clientDataJSON,
-        counter: result.counter || 0,
-        transports: result.transports || ['internal'],
-        device_type: result.deviceType || 'singleDevice',
-        backed_up: result.backedUp || false,
-        rp_id: WEBAUTHN_RP_ID, // Use the shared strategic RP ID
-        created_at: new Date().toISOString(),
-        last_used_at: null
-      }).catch(err => {
-        console.error("Failed to store WebAuthn credentials", err);
-      });
-    }
-
-    // Update officer profile
-    updateDoc(officerRef, updateData);
-    createAuditLog(selectedOfficer.police_id, 'FINGERPRINT_ENROLLMENT_COMPLETED', { 
-      provider: result.provider,
-      credential_id: result.enrollmentId 
-    });
-    
-    setSelectedOfficer({ ...selectedOfficer, ...updateData });
-    toast({ title: "Fingerprint Verified", description: "Biometric enrollment successfully linked." });
   };
 
   const handleFaceSuccess = async (result: FaceEnrollmentResult) => {
@@ -685,7 +649,8 @@ export default function AdminDashboardPage() {
                           </TableCell>
                           <TableCell className="text-right pr-10">
                             <Button variant="ghost" size="icon"><Settings className="w-4 h-4 opacity-40 hover:opacity-100" /></Button>
-                          </TableRow>
+                          </TableCell>
+                        </TableRow>
                       ))}
                     </TableBody>
                   </Table>
@@ -1007,13 +972,14 @@ export default function AdminDashboardPage() {
       </Dialog>
 
       {/* Fingerprint Enrollment Dialog */}
-      {selectedOfficer && (
+      {selectedOfficer && user && (
         <FingerprintEnrollmentDialog
           isOpen={isFingerprintEnrollOpen}
           onOpenChange={setIsFingerprintEnrollOpen}
           policeId={selectedOfficer.police_id}
           serviceNumber={selectedOfficer.service_number}
           fullName={selectedOfficer.identity?.full_name}
+          adminId={user.uid}
           onSuccess={handleFingerprintSuccess}
         />
       )}

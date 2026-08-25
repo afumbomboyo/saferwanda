@@ -9,8 +9,7 @@ import {
   AlertCircle, 
   ShieldCheck, 
   MonitorSmartphone,
-  Usb,
-  Smartphone
+  Usb
 } from 'lucide-react';
 import { 
   Dialog, 
@@ -35,6 +34,7 @@ interface FingerprintEnrollmentDialogProps {
   policeId: string;
   serviceNumber: string;
   fullName: string;
+  adminId: string;
   onSuccess: (result: EnrollmentResult) => void;
 }
 
@@ -44,12 +44,12 @@ export function FingerprintEnrollmentDialog({
   policeId,
   serviceNumber,
   fullName,
+  adminId,
   onSuccess
 }: FingerprintEnrollmentDialogProps) {
   const [state, setState] = useState<EnrollmentState>('idle');
   const [error, setError] = useState<string | null>(null);
   const [availableProviders, setAvailableProviders] = useState<FingerprintProvider[]>([]);
-  const [selectedProvider, setSelectedProvider] = useState<FingerprintProvider | null>(null);
   const [isLoadingProviders, setIsLoadingProviders] = useState(true);
 
   useEffect(() => {
@@ -77,29 +77,26 @@ export function FingerprintEnrollmentDialog({
   const resetState = () => {
     setState('idle');
     setError(null);
-    setSelectedProvider(null);
   };
 
   const handleStartEnrollment = async (provider: FingerprintProvider) => {
-    setSelectedProvider(provider);
     setState('waiting');
     
-    // Simulate tactical delay for hardware activation
-    setTimeout(() => setState('scanning'), 800);
+    // Brief delay to signal transition
+    setTimeout(() => setState('scanning'), 500);
 
-    const result = await provider.enroll(policeId);
+    const result = await provider.enroll(policeId, adminId);
 
-    setState('processing');
-    
-    setTimeout(() => {
-      if (result.success) {
+    if (result.success) {
+      setState('processing');
+      setTimeout(() => {
         setState('success');
         onSuccess(result);
-      } else {
-        setState('failed');
-        setError(result.error || "Capture timed out or was rejected.");
-      }
-    }, 1500);
+      }, 800);
+    } else {
+      setState('failed');
+      setError(result.error || "Biometric interaction failed.");
+    }
   };
 
   return (
@@ -149,7 +146,7 @@ export function FingerprintEnrollmentDialog({
                           {p.id.includes('webauthn') ? <MonitorSmartphone className="w-6 h-6 opacity-40 group-hover:text-primary group-hover:opacity-100" /> : <Usb className="w-6 h-6 opacity-40" />}
                           <div className="text-left">
                             <p className="text-sm font-black">{p.name}</p>
-                            <p className="text-[10px] opacity-40 font-bold uppercase tracking-widest">Platform Authenticator</p>
+                            <p className="text-[10px] opacity-40 font-bold uppercase tracking-widest">Secure Hardware Ceremony</p>
                           </div>
                         </div>
                         <ShieldCheck className="w-5 h-5 text-primary opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -162,7 +159,7 @@ export function FingerprintEnrollmentDialog({
                     <div className="space-y-2">
                       <p className="text-sm font-bold text-destructive">No compatible devices detected.</p>
                       <p className="text-xs text-muted-foreground leading-relaxed">
-                        Connect a supported USB fingerprint scanner or use a device with Windows Hello/TouchID enabled.
+                        Connect a supported fingerprint scanner or use a device with platform biometrics (Windows Hello / TouchID).
                       </p>
                     </div>
                     <Button variant="outline" size="sm" onClick={detectProviders} className="rounded-xl h-10 px-6 font-bold uppercase text-[10px]">Retry Detection</Button>
@@ -190,13 +187,13 @@ export function FingerprintEnrollmentDialog({
                 </div>
                 <div className="text-center space-y-2">
                   <h4 className="text-lg font-black tracking-tight">
-                    {state === 'waiting' && "Initializing Hardware..."}
-                    {state === 'scanning' && "Capturing Fingerprint..."}
-                    {state === 'processing' && "Finalizing Secure Link..."}
+                    {state === 'waiting' && "Requesting Server Challenge..."}
+                    {state === 'scanning' && "Waiting for Biometric Interaction..."}
+                    {state === 'processing' && "Verifying Cryptographic Attestation..."}
                   </h4>
                   <p className="text-xs text-muted-foreground font-medium max-w-[280px]">
-                    {state === 'scanning' && "Please place the officer's finger on the scanner and hold still."}
-                    {state === 'processing' && "Validating biometric template and generating cryptographic node ID."}
+                    {state === 'scanning' && "Follow your computer's prompts to use your built-in fingerprint reader."}
+                    {state === 'processing' && "Saving real public key and signature counter to secure grid."}
                   </p>
                 </div>
               </div>
@@ -208,8 +205,8 @@ export function FingerprintEnrollmentDialog({
                   <CheckCircle2 className="w-12 h-12 text-rwanda-green" />
                 </div>
                 <div className="text-center space-y-2">
-                  <h4 className="text-2xl font-black">Enrollment Complete</h4>
-                  <p className="text-sm font-medium text-muted-foreground">Fingerprint securely linked to officer profile.</p>
+                  <h4 className="text-2xl font-black">Enrollment Verified</h4>
+                  <p className="text-sm font-medium text-muted-foreground">Actual public key stored in WebAuthn credentials.</p>
                 </div>
                 <Button onClick={() => onOpenChange(false)} className="bg-rwanda-green hover:bg-rwanda-green/90 h-12 px-10 rounded-xl font-black uppercase text-xs">Continue</Button>
               </div>
@@ -221,18 +218,18 @@ export function FingerprintEnrollmentDialog({
                   <AlertCircle className="w-10 h-10 text-destructive" />
                 </div>
                 <div className="text-center space-y-2 px-6">
-                  <h4 className="text-xl font-black">Capture Failed</h4>
+                  <h4 className="text-xl font-black">Verification Failed</h4>
                   <p className="text-sm font-medium text-destructive/80 leading-relaxed">{error}</p>
                 </div>
                 <div className="flex gap-4">
-                  <Button variant="outline" onClick={resetState} className="h-12 px-8 rounded-xl font-bold">Try Again</Button>
+                  <Button variant="outline" onClick={() => setState('idle')} className="h-12 px-8 rounded-xl font-bold">Try Again</Button>
                   <Button variant="ghost" onClick={() => onOpenChange(false)} className="h-12 px-8 rounded-xl font-bold">Cancel</Button>
                 </div>
               </div>
             )}
           </div>
 
-          <DialogFooter className={cn("pt-6 border-t border-border/50", state === 'success' && "hidden")}>
+          <DialogFooter className={cn("pt-6 border-t border-border/50", (state === 'success' || state === 'failed') && "hidden")}>
              <Button variant="ghost" onClick={() => onOpenChange(false)} disabled={state === 'processing'} className="rounded-xl font-bold h-12 px-8">
                Exit Enrollment
              </Button>
