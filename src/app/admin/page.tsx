@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
@@ -68,6 +69,7 @@ import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { FingerprintEnrollmentDialog } from '@/components/biometrics/FingerprintEnrollmentDialog';
 import { FaceEnrollmentDialog } from '@/components/biometrics/FaceEnrollmentDialog';
+import { PinEnrollmentDialog } from '@/components/biometrics/PinEnrollmentDialog';
 import { EnrollmentResult as FingerprintResult } from '@/lib/biometrics/fingerprint-provider';
 import { FaceEnrollmentResult } from '@/lib/biometrics/face-provider';
 
@@ -93,6 +95,7 @@ export default function AdminDashboardPage() {
   const [isOfficerDetailOpen, setIsOfficerDetailOpen] = useState(false);
   const [isFingerprintEnrollOpen, setIsFingerprintEnrollOpen] = useState(false);
   const [isFaceEnrollOpen, setIsFaceEnrollOpen] = useState(false);
+  const [isPinEnrollOpen, setIsPinEnrollOpen] = useState(false);
 
   // Form State for New Camera
   const [newCamera, setNewCamera] = useState({
@@ -354,41 +357,41 @@ export default function AdminDashboardPage() {
     toast({ title: "Facial Registry Linked", description: "Secure biometric sample stored successfully." });
   };
 
-  const handlePinEnrollment = async (officerId: string) => {
-    if (!db || !user) return;
-    const officerRef = doc(db, 'police_officers', officerId);
+  const handlePinSuccess = async (result: { configured: true; configuredAt: string }) => {
+    if (!db || !user || !selectedOfficer) return;
     
-    const officerDoc = await getDocs(query(collection(db, 'police_officers'), where('police_id', '==', officerId), limit(1)));
-    if (officerDoc.empty) return;
+    const officerRef = doc(db, 'police_officers', selectedOfficer.police_id);
+    const updatedEnrollment = { 
+      ...selectedOfficer.enrollment,
+      pin: {
+        configured: true,
+        configured_at: result.configuredAt,
+        configured_by: user.uid,
+        algorithm: 'argon2id'
+      }
+    };
+
+    const isComplete = updatedEnrollment.fingerprint.enrolled && 
+                     updatedEnrollment.face.enrolled && 
+                     updatedEnrollment.pin.configured;
     
-    const officerData = officerDoc.docs[0].data();
-    const newEnrollment = { ...officerData.enrollment };
-    
-    newEnrollment.pin.configured = true;
-    
-    const isComplete = newEnrollment.fingerprint.enrolled && 
-                     newEnrollment.face.enrolled && 
-                     newEnrollment.pin.configured;
-    
-    newEnrollment.completed = isComplete;
+    updatedEnrollment.completed = isComplete;
     
     const updateData: any = {
-      enrollment: newEnrollment,
+      enrollment: updatedEnrollment,
       updated_at: serverTimestamp()
     };
     
-    if (isComplete && officerData.status === 'pending_enrollment') {
+    if (isComplete && selectedOfficer.status === 'pending_enrollment') {
       updateData.status = 'enrollment_ready';
     }
     
     await updateDoc(officerRef, updateData);
-    await createAuditLog(officerId, 'PIN_ENROLLMENT_COMPLETED');
+    await createAuditLog(selectedOfficer.police_id, 'PIN_ENROLLMENT_COMPLETED');
     
-    if (selectedOfficer?.police_id === officerId) {
-      setSelectedOfficer({ ...selectedOfficer, ...updateData });
-    }
-    
-    toast({ title: "PIN Configured", description: "Security code has been set." });
+    setSelectedOfficer({ ...selectedOfficer, ...updateData });
+    setIsPinEnrollOpen(false);
+    toast({ title: "PIN Security Enabled", description: "Credential configured and hashed on server." });
   };
 
   const handleUpdateOfficerStatus = async (officerId: string, newStatus: string) => {
@@ -880,7 +883,7 @@ export default function AdminDashboardPage() {
                                 onClick={() => {
                                   if (step.id === 'fingerprint') setIsFingerprintEnrollOpen(true);
                                   else if (step.id === 'face') setIsFaceEnrollOpen(true);
-                                  else handlePinEnrollment(selectedOfficer.police_id);
+                                  else setIsPinEnrollOpen(true);
                                 }}
                               >
                                 Enroll Now
@@ -966,6 +969,19 @@ export default function AdminDashboardPage() {
           policeId={selectedOfficer.police_id}
           fullName={selectedOfficer.identity?.full_name}
           onSuccess={handleFaceSuccess}
+        />
+      )}
+
+      {/* PIN Enrollment Dialog */}
+      {selectedOfficer && user && (
+        <PinEnrollmentDialog
+          isOpen={isPinEnrollOpen}
+          onOpenChange={setIsPinEnrollOpen}
+          policeId={selectedOfficer.police_id}
+          fullName={selectedOfficer.identity?.full_name}
+          serviceNumber={selectedOfficer.service_number}
+          adminId={user.uid}
+          onSuccess={handlePinSuccess}
         />
       )}
     </div>
