@@ -151,7 +151,7 @@ export function FaceEnrollmentDialog({
                     playsInline 
                     muted 
                     className={cn(
-                      "w-full h-full object-cover transition-all duration-700",
+                      "w-full h-full object-cover transition-all duration-700 -scale-x-100",
                       state === 'capturing' && "brightness-110"
                     )}
                   />
