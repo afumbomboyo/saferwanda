@@ -64,6 +64,7 @@ import { FaceEnrollmentDialog } from '@/components/biometrics/FaceEnrollmentDial
 import { PinEnrollmentDialog } from '@/components/biometrics/PinEnrollmentDialog';
 import { EnrollmentResult as FingerprintResult } from '@/lib/biometrics/fingerprint-provider';
 import { FaceEnrollmentResult } from '@/lib/biometrics/face-provider';
+import { WEBAUTHN_RP_ID } from '@/lib/biometrics/providers/webauthn-provider';
 
 export default function AdminDashboardPage() {
   const router = useRouter();
@@ -315,11 +316,13 @@ export default function AdminDashboardPage() {
         police_id: selectedOfficer.police_id,
         credential_id: result.enrollmentId,
         public_key: result.publicKey,
+        attestation_object: result.attestationObject,
+        client_data_json: result.clientDataJSON,
         counter: result.counter || 0,
         transports: result.transports || ['internal'],
         device_type: result.deviceType || 'singleDevice',
         backed_up: result.backedUp || false,
-        rp_id: window.location.hostname,
+        rp_id: WEBAUTHN_RP_ID, // Use the shared strategic RP ID
         created_at: new Date().toISOString(),
         last_used_at: null
       }).catch(err => {
@@ -682,8 +685,7 @@ export default function AdminDashboardPage() {
                           </TableCell>
                           <TableCell className="text-right pr-10">
                             <Button variant="ghost" size="icon"><Settings className="w-4 h-4 opacity-40 hover:opacity-100" /></Button>
-                          </TableCell>
-                        </TableRow>
+                          </TableRow>
                       ))}
                     </TableBody>
                   </Table>

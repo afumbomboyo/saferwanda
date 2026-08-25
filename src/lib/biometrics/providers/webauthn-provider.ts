@@ -6,6 +6,11 @@
 
 import { FingerprintProvider, FingerprintProviderCapabilities, EnrollmentResult } from '../fingerprint-provider';
 
+// Static constant for RP ID to ensure cross-subdomain compatibility.
+// For production this is saferwanda.io. For development, we allow localhost.
+export const WEBAUTHN_RP_ID = typeof window !== 'undefined' ? 
+  (window.location.hostname === 'localhost' ? 'localhost' : 'saferwanda.io') : '';
+
 export class WebAuthnProvider implements FingerprintProvider {
   id = 'webauthn_platform';
   name = 'Laptop / Platform Biometric (Windows Hello, TouchID)';
@@ -37,7 +42,7 @@ export class WebAuthnProvider implements FingerprintProvider {
         challenge,
         rp: {
           name: "SafeRwanda Security",
-          id: window.location.hostname,
+          id: WEBAUTHN_RP_ID,
         },
         user: {
           id: userID,
@@ -51,7 +56,7 @@ export class WebAuthnProvider implements FingerprintProvider {
           residentKey: "required"
         },
         timeout: 60000,
-        attestation: "direct"
+        attestation: "direct" // Ensure we get the attestation object
       };
 
       const credential = await navigator.credentials.create({
@@ -60,18 +65,28 @@ export class WebAuthnProvider implements FingerprintProvider {
 
       if (!credential) throw new Error("Enrollment cancelled or failed.");
 
-      // In a production environment, you would use a library like @simplewebauthn/browser
-      // to parse these buffers and send them to the server for verification.
-      // Here we simulate the extraction of the required technical fields.
-      
       const response = credential.response as AuthenticatorAttestationResponse;
+      
+      // Helper to encode ArrayBuffer to Base64 for storage
+      const bufferToBase64 = (buffer: ArrayBuffer) => {
+        return btoa(String.fromCharCode(...new Uint8Array(buffer)));
+      };
+
+      // Extract real technical payloads from the authenticator response
+      const attestationObject = bufferToBase64(response.attestationObject);
+      const clientDataJSON = bufferToBase64(response.clientDataJSON);
       
       return {
         success: true,
         enrollmentId: credential.id,
         provider: this.id,
-        // Mock extraction of fields required for verification
-        publicKey: btoa('MOCK_PUBLIC_KEY_CONTENT_FROM_ATTESTATION'),
+        // These are the raw responses that the backend would verify to extract the real public key.
+        // For the prototype, we store them as is.
+        attestationObject,
+        clientDataJSON,
+        // In a production verified flow, the public key is extracted from the attestationObject.
+        // We set it to the attestationObject string here to signify that we've captured the real key container.
+        publicKey: attestationObject, 
         counter: 0,
         transports: response.getTransports ? response.getTransports() : ['internal'],
         deviceType: 'singleDevice',

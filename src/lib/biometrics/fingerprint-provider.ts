@@ -16,6 +16,8 @@ export interface EnrollmentResult {
   error?: string;
   // WebAuthn specific fields for verification
   publicKey?: string;
+  attestationObject?: string;
+  clientDataJSON?: string;
   counter?: number;
   transports?: string[];
   deviceType?: string;
