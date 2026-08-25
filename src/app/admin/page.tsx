@@ -759,6 +759,10 @@ export default function AdminDashboardPage() {
       {/* Officer Detail/Management Dialog */}
       <Dialog open={isOfficerDetailOpen} onOpenChange={setIsOfficerDetailOpen}>
         <DialogContent className="max-w-4xl rounded-[3rem] p-0 overflow-hidden">
+          <DialogHeader className="sr-only">
+            <DialogTitle>Officer Profile Management</DialogTitle>
+            <DialogDescription>Administrative overview and control for specific enforcement nodes.</DialogDescription>
+          </DialogHeader>
           {selectedOfficer && (
             <ScrollArea className="max-h-[90vh]">
               <div className="p-10 space-y-10">
