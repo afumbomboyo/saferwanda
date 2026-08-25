@@ -1,10 +1,9 @@
-
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
 import { useUser, useFirestore, useCollection, useDoc } from '@/firebase';
 import { useRouter } from 'next/navigation';
-import { collection, doc, query, orderBy, setDoc, updateDoc, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, doc, query, orderBy, setDoc, updateDoc, addDoc, serverTimestamp, getDoc } from 'firebase/firestore';
 import { 
   Users, 
   Shield, 
@@ -279,10 +278,8 @@ export default function AdminDashboardPage() {
   const handleFingerprintSuccess = async (result: FingerprintResult) => {
     if (!db || !user || !selectedOfficer) return;
     
-    // The technical credential storage and profile update is handled by the API 
-    // called within the provider for production WebAuthn.
-    // Here we just refresh the local state to reflect the completion.
-    
+    // The technical credential storage is handled by the API called within the provider.
+    // We fetch the updated officer state to check overall completion.
     const officerRef = doc(db, 'police_officers', selectedOfficer.police_id);
     const updatedSnap = await getDoc(officerRef);
     if (updatedSnap.exists()) {
