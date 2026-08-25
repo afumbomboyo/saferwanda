@@ -149,6 +149,24 @@
         "timestamp": { "type": "string", "format": "date-time" },
         "metadata": { "type": "object" }
       }
+    },
+    "WebAuthnCredential": {
+      "title": "WebAuthn Credential",
+      "description": "Technical metadata required to verify WebAuthn assertions for fingerprint authentication.",
+      "type": "object",
+      "properties": {
+        "police_id": { "type": "string" },
+        "credential_id": { "type": "string" },
+        "public_key": { "type": "string", "description": "Base64 encoded public key for verification." },
+        "counter": { "type": "number", "description": "Current signature counter for replay protection." },
+        "transports": { "type": "array", "items": { "type": "string" } },
+        "device_type": { "type": "string" },
+        "backed_up": { "type": "boolean" },
+        "rp_id": { "type": "string" },
+        "created_at": { "type": "string", "format": "date-time" },
+        "last_used_at": { "type": "string", "format": "date-time" }
+      },
+      "required": ["police_id", "credential_id", "public_key"]
     }
   },
   "auth": {
@@ -170,6 +188,10 @@
     "/police_audit_logs/{logId}": {
       "schema": "#/backend/entities/PoliceAuditLog",
       "description": "History of administrative actions on police officer records."
+    },
+    "/webauthn_credentials/{credentialId}": {
+      "schema": "#/backend/entities/WebAuthnCredential",
+      "description": "Stores secure technical biometric metadata separately from officer profiles."
     }
   }
 }

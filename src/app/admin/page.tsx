@@ -1,9 +1,10 @@
+
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
 import { useUser, useFirestore, useCollection, useDoc } from '@/firebase';
 import { useRouter } from 'next/navigation';
-import { collection, doc, query, orderBy, setDoc, updateDoc, addDoc, serverTimestamp, getDocs, limit, where } from 'firebase/firestore';
+import { collection, doc, query, orderBy, setDoc, updateDoc, addDoc, serverTimestamp } from 'firebase/firestore';
 import { 
   Users, 
   Shield, 
@@ -12,27 +13,19 @@ import {
   CheckCircle2, 
   Search, 
   ChevronRight,
-  Filter,
-  BarChart3,
-  AlertCircle,
-  Loader2,
-  Lock,
   Camera,
   Plus,
-  MapPin,
   Settings,
-  X,
   Link as LinkIcon,
-  Copy,
-  ExternalLink,
   ShieldAlert,
   Fingerprint,
   UserCheck,
   Key,
   BadgeAlert,
   History,
-  Eye,
-  RefreshCw
+  RefreshCw,
+  Loader2,
+  Lock
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -57,7 +50,6 @@ import {
   DialogTrigger 
 } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
 import { 
   Select, 
   SelectContent, 
@@ -231,9 +223,9 @@ export default function AdminDashboardPage() {
   };
 
   // Officer Handlers
-  const createAuditLog = async (officerId: string, action: string, metadata: any = {}) => {
+  const createAuditLog = (officerId: string, action: string, metadata: any = {}) => {
     if (!db || !user) return;
-    await addDoc(collection(db, 'police_audit_logs'), {
+    addDoc(collection(db, 'police_audit_logs'), {
       police_id: officerId,
       action,
       performed_by: user.uid,
@@ -267,7 +259,7 @@ export default function AdminDashboardPage() {
         updated_at: serverTimestamp()
       };
       await setDoc(doc(db, 'police_officers', policeId), officerData);
-      await createAuditLog(policeId, 'POLICE_CREATED');
+      createAuditLog(policeId, 'POLICE_CREATED');
       toast({ title: "Officer Enrolled", description: `${officerData.identity.full_name} is now in the registry.` });
       setIsOfficerDialogOpen(false);
       setNewOfficer({
@@ -288,6 +280,8 @@ export default function AdminDashboardPage() {
     if (!db || !user || !selectedOfficer) return;
     
     const officerRef = doc(db, 'police_officers', selectedOfficer.police_id);
+    
+    // 1. Prepare clean officer enrollment data
     const updatedEnrollment = { 
       ...selectedOfficer.enrollment,
       fingerprint: {
@@ -314,8 +308,31 @@ export default function AdminDashboardPage() {
       updateData.status = 'enrollment_ready';
     }
     
-    await updateDoc(officerRef, updateData);
-    await createAuditLog(selectedOfficer.police_id, 'FINGERPRINT_ENROLLMENT_COMPLETED', { provider: result.provider });
+    // 2. Save detailed WebAuthn technical metadata separately if using platform biometrics
+    if (result.provider === 'webauthn_platform' && result.enrollmentId) {
+      const credRef = doc(db, 'webauthn_credentials', result.enrollmentId);
+      setDoc(credRef, {
+        police_id: selectedOfficer.police_id,
+        credential_id: result.enrollmentId,
+        public_key: result.publicKey,
+        counter: result.counter || 0,
+        transports: result.transports || ['internal'],
+        device_type: result.deviceType || 'singleDevice',
+        backed_up: result.backedUp || false,
+        rp_id: window.location.hostname,
+        created_at: new Date().toISOString(),
+        last_used_at: null
+      }).catch(err => {
+        console.error("Failed to store WebAuthn credentials", err);
+      });
+    }
+
+    // Update officer profile
+    updateDoc(officerRef, updateData);
+    createAuditLog(selectedOfficer.police_id, 'FINGERPRINT_ENROLLMENT_COMPLETED', { 
+      provider: result.provider,
+      credential_id: result.enrollmentId 
+    });
     
     setSelectedOfficer({ ...selectedOfficer, ...updateData });
     toast({ title: "Fingerprint Verified", description: "Biometric enrollment successfully linked." });
@@ -352,8 +369,8 @@ export default function AdminDashboardPage() {
       updateData.status = 'enrollment_ready';
     }
     
-    await updateDoc(officerRef, updateData);
-    await createAuditLog(selectedOfficer.police_id, 'FACE_ENROLLMENT_COMPLETED', { provider: result.provider, liveness_verified: result.livenessVerified });
+    updateDoc(officerRef, updateData);
+    createAuditLog(selectedOfficer.police_id, 'FACE_ENROLLMENT_COMPLETED', { provider: result.provider, liveness_verified: result.livenessVerified });
     
     setSelectedOfficer({ ...selectedOfficer, ...updateData });
     toast({ title: "Facial Registry Linked", description: "Secure biometric sample stored successfully." });
@@ -388,8 +405,8 @@ export default function AdminDashboardPage() {
       updateData.status = 'enrollment_ready';
     }
     
-    await updateDoc(officerRef, updateData);
-    await createAuditLog(selectedOfficer.police_id, 'PIN_ENROLLMENT_COMPLETED');
+    updateDoc(officerRef, updateData);
+    createAuditLog(selectedOfficer.police_id, 'PIN_ENROLLMENT_COMPLETED');
     
     setSelectedOfficer({ ...selectedOfficer, ...updateData });
     setIsPinEnrollOpen(false);
@@ -398,11 +415,11 @@ export default function AdminDashboardPage() {
 
   const handleUpdateOfficerStatus = async (officerId: string, newStatus: string) => {
     if (!db) return;
-    await updateDoc(doc(db, 'police_officers', officerId), { 
+    updateDoc(doc(db, 'police_officers', officerId), { 
       status: newStatus,
       updated_at: serverTimestamp()
     });
-    await createAuditLog(officerId, `POLICE_STATUS_CHANGED`, { status: newStatus });
+    createAuditLog(officerId, `POLICE_STATUS_CHANGED`, { status: newStatus });
     
     if (selectedOfficer?.police_id === officerId) {
       setSelectedOfficer({ ...selectedOfficer, status: newStatus });
@@ -430,7 +447,7 @@ export default function AdminDashboardPage() {
       };
 
       await updateDoc(officerRef, resetData);
-      await createAuditLog(selectedOfficer.police_id, 'ENROLLMENT_RESET');
+      createAuditLog(selectedOfficer.police_id, 'ENROLLMENT_RESET');
       
       setSelectedOfficer({ ...selectedOfficer, ...resetData });
       setIsResetDialogOpen(false);
@@ -829,7 +846,7 @@ export default function AdminDashboardPage() {
 
       {/* Officer Detail/Management Dialog */}
       <Dialog open={isOfficerDetailOpen} onOpenChange={setIsOfficerDetailOpen}>
-        <DialogContent className="max-w-4xl rounded-[3rem] p-0 overflow-hidden">
+        <DialogContent className="max-w-4xl rounded-[3rem] p-0 overflow-hidden border-border/50 shadow-2xl">
           <DialogHeader className="sr-only">
             <DialogTitle>Officer Profile Management</DialogTitle>
             <DialogDescription>Administrative overview and control for specific enforcement nodes.</DialogDescription>

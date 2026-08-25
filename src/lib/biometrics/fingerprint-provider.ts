@@ -14,6 +14,12 @@ export interface EnrollmentResult {
   enrollmentId?: string;
   provider?: string;
   error?: string;
+  // WebAuthn specific fields for verification
+  publicKey?: string;
+  counter?: number;
+  transports?: string[];
+  deviceType?: string;
+  backedUp?: boolean;
 }
 
 export interface FingerprintProvider {
