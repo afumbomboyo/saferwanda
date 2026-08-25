@@ -1,3 +1,4 @@
+
 {
   "entities": {
     "UserProfile": {
@@ -115,7 +116,16 @@
         "enrollment": {
           "type": "object",
           "properties": {
-            "fingerprint": { "type": "object", "properties": { "enrolled": { "type": "boolean" } } },
+            "fingerprint": { 
+              "type": "object", 
+              "properties": { 
+                "enrolled": { "type": "boolean" },
+                "provider": { "type": "string" },
+                "credential_id": { "type": "string" },
+                "enrolled_at": { "type": "string", "format": "date-time" },
+                "enrolled_by": { "type": "string" }
+              } 
+            },
             "face": { "type": "object", "properties": { "enrolled": { "type": "boolean" } } },
             "pin": { "type": "object", "properties": { "configured": { "type": "boolean" } } },
             "completed": { "type": "boolean" },
