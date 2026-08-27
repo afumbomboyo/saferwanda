@@ -5,6 +5,8 @@ import {
 import { webauthnConfig } from '@/lib/webauthn/server';
 import { adminDb } from '@/lib/firebase-admin';
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(
   request: NextRequest
 ) {
