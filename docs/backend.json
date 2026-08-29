@@ -1,4 +1,3 @@
-
 {
   "entities": {
     "UserProfile": {
@@ -116,16 +115,6 @@
         "enrollment": {
           "type": "object",
           "properties": {
-            "fingerprint": { 
-              "type": "object", 
-              "properties": { 
-                "enrolled": { "type": "boolean" },
-                "provider": { "type": "string" },
-                "credential_id": { "type": "string" },
-                "enrolled_at": { "type": "string", "format": "date-time" },
-                "enrolled_by": { "type": "string" }
-              } 
-            },
             "face": { "type": "object", "properties": { "enrolled": { "type": "boolean" } } },
             "pin": { "type": "object", "properties": { "configured": { "type": "boolean" } } },
             "completed": { "type": "boolean" },
@@ -149,26 +138,6 @@
         "timestamp": { "type": "string", "format": "date-time" },
         "metadata": { "type": "object" }
       }
-    },
-    "WebAuthnCredential": {
-      "title": "WebAuthn Credential",
-      "description": "Technical metadata required to verify WebAuthn assertions for fingerprint authentication.",
-      "type": "object",
-      "properties": {
-        "police_id": { "type": "string" },
-        "credential_id": { "type": "string" },
-        "public_key": { "type": "string", "description": "Base64 encoded public key for verification." },
-        "attestation_object": { "type": "string", "description": "Raw attestation buffer from authenticator." },
-        "client_data_json": { "type": "string", "description": "Raw client data JSON buffer from browser." },
-        "counter": { "type": "number", "description": "Current signature counter for replay protection." },
-        "transports": { "type": "array", "items": { "type": "string" } },
-        "device_type": { "type": "string" },
-        "backed_up": { "type": "boolean" },
-        "rp_id": { "type": "string", "description": "The Relying Party ID used for this credential." },
-        "created_at": { "type": "string", "format": "date-time" },
-        "last_used_at": { "type": "string", "format": "date-time" }
-      },
-      "required": ["police_id", "credential_id", "public_key", "rp_id"]
     }
   },
   "auth": {
@@ -190,10 +159,6 @@
     "/police_audit_logs/{logId}": {
       "schema": "#/backend/entities/PoliceAuditLog",
       "description": "History of administrative actions on police officer records."
-    },
-    "/webauthn_credentials/{credentialId}": {
-      "schema": "#/backend/entities/WebAuthnCredential",
-      "description": "Stores secure technical biometric metadata separately from officer profiles."
     }
   }
 }

@@ -17,7 +17,6 @@ import {
   Settings,
   Link as LinkIcon,
   ShieldAlert,
-  Fingerprint,
   UserCheck,
   Key,
   BadgeAlert,
@@ -58,10 +57,8 @@ import {
 } from "@/components/ui/select";
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
-import { FingerprintEnrollmentDialog } from '@/components/biometrics/FingerprintEnrollmentDialog';
 import { FaceEnrollmentDialog } from '@/components/biometrics/FaceEnrollmentDialog';
 import { PinEnrollmentDialog } from '@/components/biometrics/PinEnrollmentDialog';
-import { EnrollmentResult as FingerprintResult } from '@/lib/biometrics/fingerprint-provider';
 import { FaceEnrollmentResult } from '@/lib/biometrics/face-provider';
 
 export default function AdminDashboardPage() {
@@ -84,7 +81,6 @@ export default function AdminDashboardPage() {
   const [isEnrollingOfficer, setIsEnrollingOfficer] = useState(false);
   const [selectedOfficer, setSelectedOfficer] = useState<any>(null);
   const [isOfficerDetailOpen, setIsOfficerDetailOpen] = useState(false);
-  const [isFingerprintEnrollOpen, setIsFingerprintEnrollOpen] = useState(false);
   const [isFaceEnrollOpen, setIsFaceEnrollOpen] = useState(false);
   const [isPinEnrollOpen, setIsPinEnrollOpen] = useState(false);
   const [isResetDialogOpen, setIsResetDialogOpen] = useState(false);
@@ -247,7 +243,6 @@ export default function AdminDashboardPage() {
         },
         status: 'pending_enrollment',
         enrollment: {
-          fingerprint: { enrolled: false },
           face: { enrolled: false },
           pin: { configured: false },
           completed: false,
@@ -275,33 +270,6 @@ export default function AdminDashboardPage() {
     }
   };
 
-  const handleFingerprintSuccess = async (result: FingerprintResult) => {
-    if (!db || !user || !selectedOfficer) return;
-    
-    // The technical credential storage is handled by the API called within the provider.
-    // We fetch the updated officer state to check overall completion.
-    const officerRef = doc(db, 'police_officers', selectedOfficer.police_id);
-    const updatedSnap = await getDoc(officerRef);
-    if (updatedSnap.exists()) {
-      const updatedData = updatedSnap.data();
-      const isComplete = updatedData.enrollment?.fingerprint?.enrolled && 
-                       updatedData.enrollment?.face?.enrolled && 
-                       updatedData.enrollment?.pin?.configured;
-      
-      if (isComplete) {
-        await updateDoc(officerRef, {
-          'enrollment.completed': true,
-          status: updatedData.status === 'pending_enrollment' ? 'enrollment_ready' : updatedData.status,
-          updated_at: serverTimestamp()
-        });
-      }
-
-      setSelectedOfficer({ ...selectedOfficer, ...updatedData, enrollment: { ...updatedData.enrollment, completed: isComplete } });
-      createAuditLog(selectedOfficer.police_id, 'FINGERPRINT_ENROLLMENT_COMPLETED', { provider: result.provider });
-      toast({ title: "Fingerprint Verified", description: "Biometric enrollment successfully linked." });
-    }
-  };
-
   const handleFaceSuccess = async (result: FaceEnrollmentResult) => {
     if (!db || !user || !selectedOfficer) return;
     
@@ -318,8 +286,7 @@ export default function AdminDashboardPage() {
       }
     };
 
-    const isComplete = updatedEnrollment.fingerprint.enrolled && 
-                     updatedEnrollment.face.enrolled && 
+    const isComplete = updatedEnrollment.face.enrolled && 
                      updatedEnrollment.pin.configured;
     
     updatedEnrollment.completed = isComplete;
@@ -333,7 +300,7 @@ export default function AdminDashboardPage() {
       updateData.status = 'enrollment_ready';
     }
     
-    updateDoc(officerRef, updateData);
+    await updateDoc(officerRef, updateData);
     createAuditLog(selectedOfficer.police_id, 'FACE_ENROLLMENT_COMPLETED', { provider: result.provider, liveness_verified: result.livenessVerified });
     
     setSelectedOfficer({ ...selectedOfficer, ...updateData });
@@ -354,8 +321,7 @@ export default function AdminDashboardPage() {
       }
     };
 
-    const isComplete = updatedEnrollment.fingerprint.enrolled && 
-                     updatedEnrollment.face.enrolled && 
+    const isComplete = updatedEnrollment.face.enrolled && 
                      updatedEnrollment.pin.configured;
     
     updatedEnrollment.completed = isComplete;
@@ -369,7 +335,7 @@ export default function AdminDashboardPage() {
       updateData.status = 'enrollment_ready';
     }
     
-    updateDoc(officerRef, updateData);
+    await updateDoc(officerRef, updateData);
     createAuditLog(selectedOfficer.police_id, 'PIN_ENROLLMENT_COMPLETED');
     
     setSelectedOfficer({ ...selectedOfficer, ...updateData });
@@ -399,7 +365,6 @@ export default function AdminDashboardPage() {
       const officerRef = doc(db, 'police_officers', selectedOfficer.police_id);
       const resetData = {
         enrollment: {
-          fingerprint: { enrolled: false },
           face: { enrolled: false },
           pin: { configured: false },
           completed: false,
@@ -416,7 +381,7 @@ export default function AdminDashboardPage() {
       setSelectedOfficer({ ...selectedOfficer, ...resetData });
       setIsResetDialogOpen(false);
       setResetConfirmationName('');
-      toast({ title: "Enrollment Reset", description: `Biometric profiles for ${selectedOfficer.identity?.full_name} have been cleared.` });
+      toast({ title: "Enrollment Reset", description: `Profiles for ${selectedOfficer.identity?.full_name} have been cleared.` });
     } catch (error: any) {
       toast({ variant: "destructive", title: "Reset Failed", description: error.message });
     }
@@ -772,12 +737,11 @@ export default function AdminDashboardPage() {
                           <TableCell className="text-center">
                             <div className="flex flex-col items-center gap-1">
                               <div className="flex gap-1">
-                                <Fingerprint className={cn("w-3 h-3", o.enrollment?.fingerprint?.enrolled ? "text-rwanda-green" : "text-muted-foreground/30")} />
                                 <UserCheck className={cn("w-3 h-3", o.enrollment?.face?.enrolled ? "text-rwanda-green" : "text-muted-foreground/30")} />
                                 <Key className={cn("w-3 h-3", o.enrollment?.pin?.configured ? "text-rwanda-green" : "text-muted-foreground/30")} />
                               </div>
                               <span className="text-[8px] font-black uppercase opacity-60">
-                                {[o.enrollment?.fingerprint?.enrolled, o.enrollment?.face?.enrolled, o.enrollment?.pin?.configured].filter(Boolean).length}/3 Complete
+                                {[o.enrollment?.face?.enrolled, o.enrollment?.pin?.configured].filter(Boolean).length}/2 Complete
                               </span>
                             </div>
                           </TableCell>
@@ -877,7 +841,6 @@ export default function AdminDashboardPage() {
                     <CardContent className="space-y-6">
                       <div className="space-y-4">
                         {[
-                          { id: 'fingerprint', label: 'Fingerprint', enrolled: selectedOfficer.enrollment?.fingerprint?.enrolled, icon: Fingerprint },
                           { id: 'face', label: 'Facial Recognition', enrolled: selectedOfficer.enrollment?.face?.enrolled, icon: UserCheck },
                           { id: 'pin', label: 'PIN Access', enrolled: selectedOfficer.enrollment?.pin?.configured, icon: Key }
                         ].map((step) => (
@@ -894,8 +857,7 @@ export default function AdminDashboardPage() {
                                 size="sm" 
                                 className="h-8 text-[9px] font-black uppercase" 
                                 onClick={() => {
-                                  if (step.id === 'fingerprint') setIsFingerprintEnrollOpen(true);
-                                  else if (step.id === 'face') setIsFaceEnrollOpen(true);
+                                  if (step.id === 'face') setIsFaceEnrollOpen(true);
                                   else setIsPinEnrollOpen(true);
                                 }}
                               >
@@ -907,7 +869,7 @@ export default function AdminDashboardPage() {
                       </div>
                       <div className="pt-4 border-t border-border flex justify-between items-center">
                         <span className="text-[10px] font-black uppercase opacity-60">Overall Progress</span>
-                        <span className="text-lg font-black">{[selectedOfficer.enrollment?.fingerprint?.enrolled, selectedOfficer.enrollment?.face?.enrolled, selectedOfficer.enrollment?.pin?.configured].filter(Boolean).length} / 3</span>
+                        <span className="text-lg font-black">{[selectedOfficer.enrollment?.face?.enrolled, selectedOfficer.enrollment?.pin?.configured].filter(Boolean).length} / 2</span>
                       </div>
                     </CardContent>
                   </Card>
@@ -968,19 +930,6 @@ export default function AdminDashboardPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Fingerprint Enrollment Dialog */}
-      {selectedOfficer && user && (
-        <FingerprintEnrollmentDialog
-          isOpen={isFingerprintEnrollOpen}
-          onOpenChange={setIsFingerprintEnrollOpen}
-          policeId={selectedOfficer.police_id}
-          serviceNumber={selectedOfficer.service_number}
-          fullName={selectedOfficer.identity?.full_name}
-          adminId={user.uid}
-          onSuccess={handleFingerprintSuccess}
-        />
-      )}
-
       {/* Face Enrollment Dialog */}
       {selectedOfficer && (
         <FaceEnrollmentDialog
@@ -1011,7 +960,7 @@ export default function AdminDashboardPage() {
           <DialogHeader>
             <DialogTitle className="text-2xl font-black">Confirm Reset</DialogTitle>
             <DialogDescription>
-              This action will permanently delete all biometric data and PIN credentials for this officer. They will need to re-enroll from scratch.
+              This action will permanently delete facial biometric data and PIN credentials for this officer. They will need to re-enroll from scratch.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
