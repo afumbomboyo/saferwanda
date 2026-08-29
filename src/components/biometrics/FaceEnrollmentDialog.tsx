@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
@@ -9,7 +10,12 @@ import {
   UserCheck,
   RefreshCcw,
   ShieldCheck,
-  Eye
+  Eye,
+  ChevronLeft,
+  ChevronRight,
+  ChevronUp,
+  ChevronDown,
+  User
 } from 'lucide-react';
 import { 
   Dialog, 
@@ -35,6 +41,14 @@ interface FaceEnrollmentDialogProps {
   fullName: string;
   onSuccess: (result: FaceEnrollmentResult) => void;
 }
+
+const POSE_INSTRUCTIONS = [
+  { label: 'Neutral', icon: User, text: 'Look directly at the camera' },
+  { label: 'Turn Left', icon: ChevronLeft, text: 'Slowly turn your head left' },
+  { label: 'Turn Right', icon: ChevronRight, text: 'Slowly turn your head right' },
+  { label: 'Look Up', icon: ChevronUp, text: 'Tilt your head upwards' },
+  { label: 'Look Down', icon: ChevronDown, text: 'Tilt your head downwards' }
+];
 
 export function FaceEnrollmentDialog({
   isOpen,
@@ -111,20 +125,21 @@ export function FaceEnrollmentDialog({
 
     if (result.success) {
       setState('verifying');
-      // Simulate cryptographic verification
       setTimeout(() => {
         setState('success');
         onSuccess(result);
-      }, 1000);
+      }, 1500);
     } else {
       setState('failed');
       setError(result.error || "Liveness verification failed.");
     }
   };
 
+  const currentPose = currentStep > 0 ? POSE_INSTRUCTIONS[currentStep - 1] : null;
+
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl rounded-[2.5rem] p-0 overflow-hidden border-border/50 shadow-2xl">
+      <DialogContent className="max-w-4xl rounded-[2.5rem] p-0 overflow-hidden border-border/50 shadow-2xl">
         <div className="relative">
           <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-primary via-accent to-rwanda-green z-50" />
           
@@ -135,15 +150,15 @@ export function FaceEnrollmentDialog({
                   <UserCheck className="w-6 h-6 text-primary" />
                 </div>
                 <div>
-                  <DialogTitle className="text-2xl font-black">Facial Enrollment</DialogTitle>
-                  <DialogDescription className="text-xs uppercase tracking-widest font-bold opacity-60">High-Fidelity Biometric Capture</DialogDescription>
+                  <DialogTitle className="text-2xl font-black">Biometric Facial Registry</DialogTitle>
+                  <DialogDescription className="text-xs uppercase tracking-widest font-bold opacity-60">Multi-Pose Liveness Protocol</DialogDescription>
                 </div>
               </div>
             </DialogHeader>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-start">
               {/* Camera Preview Side */}
-              <div className="relative aspect-square md:aspect-[3/4] bg-black rounded-[2rem] overflow-hidden border-4 border-secondary shadow-inner group">
+              <div className="relative aspect-square md:aspect-[4/5] bg-black rounded-[2.5rem] overflow-hidden border-4 border-secondary shadow-inner group">
                 {state !== 'failed' && (
                   <video 
                     ref={videoRef} 
@@ -159,52 +174,68 @@ export function FaceEnrollmentDialog({
                 
                 {/* Tactical Overlays */}
                 <div className="absolute inset-0 pointer-events-none">
-                  <div className="absolute inset-8 border border-white/20 rounded-full" />
-                  <div className="absolute inset-[30%] border-2 border-dashed border-primary/40 rounded-full animate-pulse-soft" />
+                  <div className="absolute inset-10 border border-white/20 rounded-full" />
+                  <div className="absolute inset-[25%] border-2 border-dashed border-primary/40 rounded-full animate-pulse-soft" />
                   
                   {/* Status Badges */}
-                  <div className="absolute top-6 left-1/2 -translate-x-1/2">
+                  <div className="absolute top-8 left-1/2 -translate-x-1/2">
                     <Badge className={cn(
-                      "font-black uppercase text-[8px] tracking-widest px-4 h-6 border-none",
+                      "font-black uppercase text-[9px] tracking-widest px-6 h-8 border-none shadow-xl",
                       state === 'detecting' ? "bg-rwanda-green text-white" : "bg-primary text-white"
                     )}>
-                      {state === 'detecting' ? "✓ Face Detected" : state.replace('_', ' ')}
+                      {state === 'detecting' ? "✓ Frame Ready" : state === 'capturing' ? `POSE: ${currentPose?.label.toUpperCase()}` : state.replace('_', ' ')}
                     </Badge>
                   </div>
                 </div>
 
                 {state === 'capturing' && (
-                  <div className="absolute inset-0 bg-primary/10 flex flex-col items-center justify-center backdrop-blur-[2px]">
-                    <div className="bg-background/90 p-6 rounded-3xl text-center space-y-3 shadow-2xl">
-                      <p className="text-xs font-black uppercase tracking-widest text-primary">Capturing Samples</p>
-                      <div className="text-4xl font-black">{currentStep} / 3</div>
-                      <Progress value={progress} className="h-2 w-32" />
+                  <div className="absolute inset-0 bg-primary/20 flex flex-col items-center justify-end p-12 backdrop-blur-[1px]">
+                    <div className="bg-background/95 p-8 rounded-[2rem] w-full text-center space-y-4 shadow-2xl animate-in slide-in-from-bottom-4">
+                      <div className="flex items-center justify-center gap-3">
+                        {currentPose && <currentPose.icon className="w-5 h-5 text-primary" />}
+                        <p className="text-sm font-black uppercase tracking-widest text-primary">{currentPose?.label}</p>
+                      </div>
+                      <p className="text-xs font-bold opacity-70">{currentPose?.text}</p>
+                      <div className="space-y-2">
+                        <div className="flex justify-between text-[10px] font-black uppercase opacity-40">
+                          <span>Progress</span>
+                          <span>{currentStep} / 5</span>
+                        </div>
+                        <Progress value={progress} className="h-2.5 rounded-full" />
+                      </div>
                     </div>
                   </div>
                 )}
               </div>
 
               {/* Guidance Side */}
-              <div className="space-y-6">
-                <div className="bg-secondary/30 rounded-3xl p-6 border border-border">
-                  <p className="text-[10px] font-black uppercase opacity-40 mb-1">Subject</p>
-                  <p className="text-xl font-black">{fullName}</p>
-                  <p className="text-xs font-mono font-bold text-primary mt-1">{policeId}</p>
+              <div className="space-y-8 pt-4">
+                <div className="bg-secondary/40 rounded-[2rem] p-8 border border-border space-y-2">
+                  <p className="text-[10px] font-black uppercase opacity-40 tracking-widest">Enrolling Officer</p>
+                  <p className="text-2xl font-black leading-none">{fullName}</p>
+                  <p className="text-xs font-mono font-bold text-primary opacity-60">{policeId}</p>
                 </div>
 
                 <div className="space-y-4">
-                  <h4 className="text-sm font-black uppercase tracking-widest opacity-60">Instructions</h4>
-                  <div className="space-y-3">
-                    {[
-                      { icon: Eye, text: "Position face inside the frame" },
-                      { icon: ShieldCheck, text: "Look directly at the camera" },
-                      { icon: RefreshCcw, text: "Keep face still during capture" }
-                    ].map((item, i) => (
-                      <div key={i} className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-xl bg-secondary flex items-center justify-center">
-                          <item.icon className="w-4 h-4 opacity-40" />
+                  <h4 className="text-sm font-black uppercase tracking-widest opacity-60 border-b border-border pb-2">Enrollment Instructions</h4>
+                  <div className="space-y-6">
+                    {POSE_INSTRUCTIONS.map((item, i) => (
+                      <div key={i} className={cn(
+                        "flex items-center gap-4 transition-all duration-300",
+                        currentStep === i + 1 ? "translate-x-2" : "opacity-40"
+                      )}>
+                        <div className={cn(
+                          "w-10 h-10 rounded-2xl flex items-center justify-center border-2 transition-colors",
+                          currentStep === i + 1 ? "bg-primary/10 border-primary text-primary" : "bg-secondary border-transparent"
+                        )}>
+                          <item.icon className="w-5 h-5" />
                         </div>
-                        <p className="text-xs font-bold leading-none">{item.text}</p>
+                        <div>
+                          <p className="text-xs font-black uppercase tracking-tight">{item.label}</p>
+                          <p className="text-[10px] font-medium leading-none mt-1">{item.text}</p>
+                        </div>
+                        {currentStep > i + 1 && <CheckCircle2 className="w-5 h-5 ml-auto text-rwanda-green" />}
+                        {currentStep === i + 1 && state === 'capturing' && <Loader2 className="w-4 h-4 ml-auto animate-spin text-primary" />}
                       </div>
                     ))}
                   </div>
@@ -212,38 +243,40 @@ export function FaceEnrollmentDialog({
 
                 {state === 'detecting' && (
                   <Button 
-                    className="w-full h-16 rounded-2xl bg-primary hover:bg-primary/90 font-black uppercase tracking-widest text-xs shadow-xl"
+                    className="w-full h-16 rounded-[1.5rem] bg-primary hover:bg-primary/90 font-black uppercase tracking-widest text-xs shadow-2xl active:scale-[0.98] transition-all"
                     onClick={handleStartCapture}
                   >
-                    Start Capture
+                    Initiate Pose Sequence
                   </Button>
                 )}
 
                 {state === 'success' && (
-                  <div className="bg-rwanda-green/10 border border-rwanda-green/20 rounded-3xl p-6 text-center space-y-4">
-                    <CheckCircle2 className="w-10 h-10 text-rwanda-green mx-auto" />
+                  <div className="bg-rwanda-green/10 border border-rwanda-green/20 rounded-[2rem] p-8 text-center space-y-6 animate-in zoom-in-95">
+                    <div className="w-20 h-20 rounded-full bg-rwanda-green/20 flex items-center justify-center mx-auto">
+                      <CheckCircle2 className="w-10 h-10 text-rwanda-green" />
+                    </div>
                     <div>
-                      <p className="text-lg font-black text-rwanda-green">Capture Complete</p>
-                      <p className="text-[10px] uppercase font-bold opacity-60">Liveness Verified</p>
+                      <p className="text-xl font-black text-rwanda-green">Sequence Complete</p>
+                      <p className="text-[10px] uppercase font-bold opacity-60 tracking-widest mt-1">Multi-Pose Verified</p>
                     </div>
                     <Button 
-                      className="w-full h-12 rounded-xl bg-rwanda-green hover:bg-rwanda-green/90"
+                      className="w-full h-14 rounded-2xl bg-rwanda-green hover:bg-rwanda-green/90 shadow-xl"
                       onClick={() => onOpenChange(false)}
                     >
-                      Continue
+                      Return to Registry
                     </Button>
                   </div>
                 )}
 
                 {state === 'failed' && (
-                  <div className="bg-destructive/5 border border-destructive/20 rounded-3xl p-6 space-y-4">
+                  <div className="bg-destructive/5 border border-destructive/20 rounded-[2rem] p-8 space-y-6">
                     <div className="flex items-center gap-3 text-destructive">
-                      <AlertCircle className="w-5 h-5" />
-                      <p className="text-xs font-black uppercase">Capture Error</p>
+                      <AlertCircle className="w-6 h-6" />
+                      <p className="text-sm font-black uppercase tracking-widest">Protocol Failure</p>
                     </div>
                     <p className="text-xs font-medium opacity-70 leading-relaxed">{error}</p>
-                    <Button variant="outline" className="w-full h-12 rounded-xl border-destructive text-destructive" onClick={startCamera}>
-                      Retry Capture
+                    <Button variant="outline" className="w-full h-14 rounded-2xl border-destructive text-destructive font-bold uppercase text-[10px]" onClick={startCamera}>
+                      Reset Protocol
                     </Button>
                   </div>
                 )}
