@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
@@ -280,6 +281,8 @@ export default function AdminDashboardPage() {
         enrolled: true,
         provider: result.provider,
         enrollment_id: result.enrollmentId,
+        template_id: result.templateId,
+        template_version: result.templateVersion,
         liveness_verified: result.livenessVerified,
         enrolled_at: new Date().toISOString(),
         enrolled_by: user.uid
@@ -301,7 +304,11 @@ export default function AdminDashboardPage() {
     }
     
     await updateDoc(officerRef, updateData);
-    createAuditLog(selectedOfficer.police_id, 'FACE_ENROLLMENT_COMPLETED', { provider: result.provider, liveness_verified: result.livenessVerified });
+    createAuditLog(selectedOfficer.police_id, 'FACE_ENROLLMENT_COMPLETED', { 
+      provider: result.provider, 
+      liveness_verified: result.livenessVerified,
+      template_id: result.templateId
+    });
     
     setSelectedOfficer({ ...selectedOfficer, ...updateData });
     toast({ title: "Facial Registry Linked", description: "Secure biometric sample stored successfully." });
