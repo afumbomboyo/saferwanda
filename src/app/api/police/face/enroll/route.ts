@@ -105,46 +105,72 @@ export async function POST(request: NextRequest) {
       .collection('police_face_liveness')
       .doc(livenessAuthorizationId.trim());
 
-    // Use a transaction to ensure atomic check-and-mark-used
+    // Use a transaction to atomically claim the liveness authorization.
+    // The authorization is marked as "processing", not "used", until
+    // biometric enrollment actually succeeds.
     const authResult = await adminDb.runTransaction(async (transaction) => {
       const livenessSnapshot = await transaction.get(livenessRef);
 
       if (!livenessSnapshot.exists) {
-        return { error: 'Liveness authorization was not found or has expired.' };
+        return {
+          error:
+            'Liveness authorization was not found or has expired.',
+        };
       }
 
       const livenessData = livenessSnapshot.data();
 
       if (!livenessData) {
-        return { error: 'Invalid liveness authorization data.' };
+        return {
+          error: 'Invalid liveness authorization data.',
+        };
       }
 
       if (livenessData.verified !== true) {
-        return { error: 'Liveness verification was not successful.' };
+        return {
+          error: 'Liveness verification was not successful.',
+        };
       }
 
       if (livenessData.used === true) {
-        return { error: 'This liveness authorization has already been used.' };
+        return {
+          error:
+            'This liveness authorization has already been used.',
+        };
+      }
+
+      if (livenessData.processing === true) {
+        return {
+          error:
+            'This liveness authorization is already being used by another enrollment request.',
+        };
       }
 
       if (livenessData.policeId !== normalizedPoliceId) {
-        return { error: 'Liveness authorization does not belong to this police officer.' };
+        return {
+          error:
+            'Liveness authorization does not belong to this police officer.',
+        };
       }
 
       if (
         !livenessData.expiresAt ||
         new Date(livenessData.expiresAt).getTime() <= Date.now()
       ) {
-        return { error: 'Liveness authorization has expired.' };
+        return {
+          error: 'Liveness authorization has expired.',
+        };
       }
 
-      // Mark as used within the transaction to prevent race conditions
-      transaction.update(livenessRef, { 
-        used: true, 
-        usedAt: new Date().toISOString() 
+      // Mark as processing within the transaction
+      transaction.update(livenessRef, {
+        processing: true,
+        processingStartedAt: new Date().toISOString(),
       });
 
-      return { success: true };
+      return {
+        success: true,
+      };
     });
 
     if (authResult.error) {
@@ -168,6 +194,12 @@ export async function POST(request: NextRequest) {
     const officerSnapshot = await officerRef.get();
 
     if (!officerSnapshot.exists) {
+      // Cleanup: release authorization
+      await livenessRef.update({
+        processing: false,
+        processingFailedAt: new Date().toISOString(),
+      });
+
       return NextResponse.json(
         {
           success: false,
@@ -187,6 +219,12 @@ export async function POST(request: NextRequest) {
       typeof enrollmentImage !== 'string' ||
       !enrollmentImage.startsWith('data:image/')
     ) {
+      // Cleanup: release authorization
+      await livenessRef.update({
+        processing: false,
+        processingFailedAt: new Date().toISOString(),
+      });
+
       return NextResponse.json(
         {
           success: false,
@@ -203,6 +241,12 @@ export async function POST(request: NextRequest) {
     const imageParts = enrollmentImage.split(',');
 
     if (imageParts.length !== 2) {
+      // Cleanup: release authorization
+      await livenessRef.update({
+        processing: false,
+        processingFailedAt: new Date().toISOString(),
+      });
+
       return NextResponse.json(
         {
           success: false,
@@ -215,6 +259,12 @@ export async function POST(request: NextRequest) {
     const imageBuffer = Buffer.from(imageParts[1], 'base64');
 
     if (imageBuffer.length === 0) {
+      // Cleanup: release authorization
+      await livenessRef.update({
+        processing: false,
+        processingFailedAt: new Date().toISOString(),
+      });
+
       return NextResponse.json(
         {
           success: false,
@@ -227,6 +277,12 @@ export async function POST(request: NextRequest) {
     const MAX_IMAGE_SIZE = 8 * 1024 * 1024;
 
     if (imageBuffer.length > MAX_IMAGE_SIZE) {
+      // Cleanup: release authorization
+      await livenessRef.update({
+        processing: false,
+        processingFailedAt: new Date().toISOString(),
+      });
+
       return NextResponse.json(
         {
           success: false,
@@ -299,6 +355,12 @@ export async function POST(request: NextRequest) {
         biometricResult
       );
 
+      // Cleanup: release authorization
+      await livenessRef.update({
+        processing: false,
+        processingFailedAt: new Date().toISOString(),
+      });
+
       return NextResponse.json(
         {
           success: false,
@@ -330,6 +392,12 @@ export async function POST(request: NextRequest) {
         biometricResult
       );
 
+      // Cleanup: release authorization
+      await livenessRef.update({
+        processing: false,
+        processingFailedAt: new Date().toISOString(),
+      });
+
       return NextResponse.json(
         {
           success: false,
@@ -360,7 +428,17 @@ export async function POST(request: NextRequest) {
     });
 
     // -----------------------------------------------------------------------
-    // 13. Return real enrollment result to browser
+    // 13. Mark authorization as used
+    // -----------------------------------------------------------------------
+
+    await livenessRef.update({
+      used: true,
+      processing: false,
+      usedAt: new Date().toISOString(),
+    });
+
+    // -----------------------------------------------------------------------
+    // 14. Return real enrollment result to browser
     // -----------------------------------------------------------------------
 
     return NextResponse.json({
