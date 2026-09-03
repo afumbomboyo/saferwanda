@@ -76,6 +76,9 @@ export async function POST(request: NextRequest) {
     // 4. Request a server-generated liveness challenge
     // -----------------------------------------------------------------------
 
+    const formData = new FormData();
+    formData.append('police_id', policeId);
+
     const biometricResponse = await fetch(
       `${BIOMETRIC_SERVICE_URL.replace(/\/$/, '')}/v1/face/challenge`,
       {
@@ -83,10 +86,9 @@ export async function POST(request: NextRequest) {
 
         headers: {
           Authorization: `Bearer ${BIOMETRIC_API_KEY}`,
-          'Content-Type': 'application/json'
         },
 
-        body: JSON.stringify({ police_id: policeId }),
+        body: formData,
 
         cache: 'no-store',
       }
