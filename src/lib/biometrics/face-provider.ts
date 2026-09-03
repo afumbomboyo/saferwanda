@@ -1,4 +1,3 @@
-
 /**
  * @fileOverview Facial Biometric Provider Abstraction
  */
@@ -20,6 +19,7 @@ export interface FaceProvider {
   enroll(
     policeId: string, 
     videoElement: HTMLVideoElement, 
-    onProgress: (step: number, total: number) => void
+    onProgress: (step: number, total: number) => void,
+    onLivenessInstruction?: (instruction: string) => void
   ): Promise<FaceEnrollmentResult>;
 }

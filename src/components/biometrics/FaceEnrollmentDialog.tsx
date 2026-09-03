@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
@@ -61,6 +60,10 @@ export function FaceEnrollmentDialog({
   const [error, setError] = useState<string | null>(null);
   const [progress, setProgress] = useState(0);
   const [currentStep, setCurrentStep] = useState(0);
+  const [totalSteps, setTotalSteps] = useState(5);
+  const [livenessInstruction, setLivenessInstruction] = useState<string | null>(null);
+  const [livenessActive, setLivenessActive] = useState(false);
+  
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const providerRef = useRef(new PlatformFaceProvider());
@@ -108,6 +111,9 @@ export function FaceEnrollmentDialog({
     setError(null);
     setProgress(0);
     setCurrentStep(0);
+    setTotalSteps(5);
+    setLivenessActive(false);
+    setLivenessInstruction(null);
   };
 
   const handleStartCapture = async () => {
@@ -119,7 +125,12 @@ export function FaceEnrollmentDialog({
       videoRef.current, 
       (step, total) => {
         setCurrentStep(step);
+        setTotalSteps(total);
         setProgress((step / total) * 100);
+      },
+      (instruction) => {
+        setLivenessInstruction(instruction || null);
+        setLivenessActive(!!instruction);
       }
     );
 
@@ -135,7 +146,9 @@ export function FaceEnrollmentDialog({
     }
   };
 
-  const currentPose = currentStep > 0 ? POSE_INSTRUCTIONS[currentStep - 1] : null;
+  const currentPose = !livenessActive && currentStep > 0 && currentStep <= POSE_INSTRUCTIONS.length 
+    ? POSE_INSTRUCTIONS[currentStep - 1] 
+    : null;
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -183,7 +196,7 @@ export function FaceEnrollmentDialog({
                       "font-black uppercase text-[9px] tracking-widest px-6 h-8 border-none shadow-xl",
                       state === 'detecting' ? "bg-rwanda-green text-white" : "bg-primary text-white"
                     )}>
-                      {state === 'detecting' ? "✓ Frame Ready" : state === 'capturing' ? `POSE: ${currentPose?.label.toUpperCase()}` : state.replace('_', ' ')}
+                      {state === 'detecting' ? "✓ Frame Ready" : state === 'capturing' ? (livenessActive ? "LIVENESS ACTIVE" : `POSE: ${currentPose?.label.toUpperCase() || 'STABILIZING'}`) : state.replace('_', ' ')}
                     </Badge>
                   </div>
                 </div>
@@ -191,15 +204,29 @@ export function FaceEnrollmentDialog({
                 {state === 'capturing' && (
                   <div className="absolute inset-0 bg-primary/20 flex flex-col items-center justify-end p-12 backdrop-blur-[1px]">
                     <div className="bg-background/95 p-8 rounded-[2rem] w-full text-center space-y-4 shadow-2xl animate-in slide-in-from-bottom-4">
-                      <div className="flex items-center justify-center gap-3">
-                        {currentPose && <currentPose.icon className="w-5 h-5 text-primary" />}
-                        <p className="text-sm font-black uppercase tracking-widest text-primary">{currentPose?.label}</p>
-                      </div>
-                      <p className="text-xs font-bold opacity-70">{currentPose?.text}</p>
+                      {livenessActive ? (
+                        <>
+                          <div className="flex items-center justify-center gap-3">
+                            <ShieldCheck className="w-5 h-5 text-primary" />
+                            <p className="text-sm font-black uppercase tracking-widest text-primary">Liveness Check</p>
+                          </div>
+                          <p className="text-lg font-black">{livenessInstruction}</p>
+                          <p className="text-[10px] font-bold opacity-60">Follow instructions while keeping face visible</p>
+                        </>
+                      ) : (
+                        <>
+                          <div className="flex items-center justify-center gap-3">
+                            {currentPose && <currentPose.icon className="w-5 h-5 text-primary" />}
+                            <p className="text-sm font-black uppercase tracking-widest text-primary">{currentPose?.label || 'Processing'}</p>
+                          </div>
+                          <p className="text-xs font-bold opacity-70">{currentPose?.text || 'Wait for next frame...'}</p>
+                        </>
+                      )}
+                      
                       <div className="space-y-2">
                         <div className="flex justify-between text-[10px] font-black uppercase opacity-40">
                           <span>Progress</span>
-                          <span>{currentStep} / 5</span>
+                          <span>{currentStep} / {totalSteps}</span>
                         </div>
                         <Progress value={progress} className="h-2.5 rounded-full" />
                       </div>
@@ -217,16 +244,32 @@ export function FaceEnrollmentDialog({
                 </div>
 
                 <div className="space-y-4">
-                  <h4 className="text-sm font-black uppercase tracking-widest opacity-60 border-b border-border pb-2">Enrollment Instructions</h4>
-                  <div className="space-y-6">
+                  {livenessActive && livenessInstruction && (
+                    <div className="mb-4 rounded-[1.5rem] border border-blue-500/30 bg-blue-500/10 p-6 text-center animate-in fade-in zoom-in-95">
+                      <p className="text-[10px] font-black uppercase tracking-widest text-blue-400 mb-2">
+                        Liveness Verification
+                      </p>
+                      <p className="text-xl font-black mb-1">
+                        {livenessInstruction}
+                      </p>
+                      <p className="text-[10px] font-medium opacity-60">
+                        Follow the instruction while keeping your face visible to the camera.
+                      </p>
+                    </div>
+                  )}
+
+                  <h4 className="text-sm font-black uppercase tracking-widest opacity-60 border-b border-border pb-2">
+                    {livenessActive ? 'Verification Step' : 'Enrollment Instructions'}
+                  </h4>
+                  <div className={cn("space-y-6 transition-opacity duration-300", livenessActive && "opacity-20 pointer-events-none")}>
                     {POSE_INSTRUCTIONS.map((item, i) => (
                       <div key={i} className={cn(
                         "flex items-center gap-4 transition-all duration-300",
-                        currentStep === i + 1 ? "translate-x-2" : "opacity-40"
+                        !livenessActive && currentStep === i + 1 ? "translate-x-2" : "opacity-40"
                       )}>
                         <div className={cn(
                           "w-10 h-10 rounded-2xl flex items-center justify-center border-2 transition-colors",
-                          currentStep === i + 1 ? "bg-primary/10 border-primary text-primary" : "bg-secondary border-transparent"
+                          !livenessActive && currentStep === i + 1 ? "bg-primary/10 border-primary text-primary" : "bg-secondary border-transparent"
                         )}>
                           <item.icon className="w-5 h-5" />
                         </div>
@@ -234,8 +277,8 @@ export function FaceEnrollmentDialog({
                           <p className="text-xs font-black uppercase tracking-tight">{item.label}</p>
                           <p className="text-[10px] font-medium leading-none mt-1">{item.text}</p>
                         </div>
-                        {currentStep > i + 1 && <CheckCircle2 className="w-5 h-5 ml-auto text-rwanda-green" />}
-                        {currentStep === i + 1 && state === 'capturing' && <Loader2 className="w-4 h-4 ml-auto animate-spin text-primary" />}
+                        {!livenessActive && currentStep > i + 1 && <CheckCircle2 className="w-5 h-5 ml-auto text-rwanda-green" />}
+                        {!livenessActive && currentStep === i + 1 && state === 'capturing' && <Loader2 className="w-4 h-4 ml-auto animate-spin text-primary" />}
                       </div>
                     ))}
                   </div>
@@ -246,7 +289,7 @@ export function FaceEnrollmentDialog({
                     className="w-full h-16 rounded-[1.5rem] bg-primary hover:bg-primary/90 font-black uppercase tracking-widest text-xs shadow-2xl active:scale-[0.98] transition-all"
                     onClick={handleStartCapture}
                   >
-                    Initiate Pose Sequence
+                    Initiate Multi-Factor Capture
                   </Button>
                 )}
 
@@ -256,8 +299,8 @@ export function FaceEnrollmentDialog({
                       <CheckCircle2 className="w-10 h-10 text-rwanda-green" />
                     </div>
                     <div>
-                      <p className="text-xl font-black text-rwanda-green">Sequence Complete</p>
-                      <p className="text-[10px] uppercase font-bold opacity-60 tracking-widest mt-1">Multi-Pose Verified</p>
+                      <p className="text-xl font-black text-rwanda-green">Protocol Complete</p>
+                      <p className="text-[10px] uppercase font-bold opacity-60 tracking-widest mt-1">Multi-Pose Template Verified</p>
                     </div>
                     <Button 
                       className="w-full h-14 rounded-2xl bg-rwanda-green hover:bg-rwanda-green/90 shadow-xl"

@@ -22,7 +22,7 @@ export class PlatformFaceProvider implements FaceProvider {
     'Look Down',
   ];
 
-  private static readonly LIVENESS_FRAME_COUNT = 8;
+  public static readonly LIVENESS_FRAME_COUNT = 8;
 
   async isAvailable(): Promise<boolean> {
     return !!(
@@ -34,7 +34,8 @@ export class PlatformFaceProvider implements FaceProvider {
   async enroll(
     policeId: string,
     videoElement: HTMLVideoElement,
-    onProgress: (step: number, total: number) => void
+    onProgress: (step: number, total: number) => void,
+    onLivenessInstruction?: (instruction: string) => void
   ): Promise<FaceEnrollmentResult> {
     try {
       if (!policeId?.trim()) {
@@ -92,6 +93,10 @@ export class PlatformFaceProvider implements FaceProvider {
 
       const challengeId = challengeResult.challengeId;
 
+      if (onLivenessInstruction && challengeResult.instruction) {
+        onLivenessInstruction(challengeResult.instruction);
+      }
+
       /*
        * ---------------------------------------------------------------
        * STEP 2 — Capture liveness frames
@@ -117,7 +122,16 @@ export class PlatformFaceProvider implements FaceProvider {
 
       const livenessFrames: Blob[] = [];
 
-      for (let i = 0; i < PlatformFaceProvider.LIVENESS_FRAME_COUNT; i++) {
+      onProgress(
+        0,
+        PlatformFaceProvider.LIVENESS_FRAME_COUNT
+      );
+
+      for (
+        let i = 0;
+        i < PlatformFaceProvider.LIVENESS_FRAME_COUNT;
+        i++
+      ) {
         /*
          * Give the camera time between frames so the captured sequence
          * represents actual movement rather than identical images.
@@ -216,6 +230,10 @@ export class PlatformFaceProvider implements FaceProvider {
             livenessResult?.error ||
             'Liveness verification failed. Please try again.'
         );
+      }
+
+      if (onLivenessInstruction) {
+        onLivenessInstruction('');
       }
 
       /*
