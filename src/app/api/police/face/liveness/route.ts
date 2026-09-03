@@ -95,6 +95,12 @@ export async function POST(request: NextRequest) {
 
     const biometricForm = new FormData();
 
+    // Forward the police_id to the VPS for context-aware analysis
+    biometricForm.append(
+      'police_id',
+      policeId
+    );
+
     biometricForm.append(
       'challenge_id',
       challengeId
