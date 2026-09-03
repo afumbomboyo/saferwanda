@@ -117,12 +117,7 @@ export class PlatformFaceProvider implements FaceProvider {
 
       const livenessFrames: Blob[] = [];
 
-      for (
-        let i = 0;
-        let i_val = 0;
-        i < PlatformFaceProvider.LIVENESS_FRAME_COUNT;
-        i++
-      ) {
+      for (let i = 0; i < PlatformFaceProvider.LIVENESS_FRAME_COUNT; i++) {
         /*
          * Give the camera time between frames so the captured sequence
          * represents actual movement rather than identical images.
