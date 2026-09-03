@@ -140,10 +140,19 @@ export async function POST(request: NextRequest) {
       }
 
       if (livenessData.processing === true) {
-        return {
-          error:
-            'This liveness authorization is already being used by another enrollment request.',
-        };
+        const processingStartedAt = livenessData.processingStartedAt
+          ? new Date(livenessData.processingStartedAt).getTime()
+          : 0;
+
+        const processingAge = Date.now() - processingStartedAt;
+
+        // Allow recovery if processing has been stuck for more than 5 minutes.
+        if (processingStartedAt && processingAge < 5 * 60 * 1000) {
+          return {
+            error:
+              'This liveness authorization is already being used by another enrollment request.',
+          };
+        }
       }
 
       if (livenessData.policeId !== normalizedPoliceId) {
