@@ -2,6 +2,7 @@ import 'server-only';
 
 import { cert, getApps, initializeApp, type App } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
+import { getAuth } from 'firebase-admin/auth';
 
 /**
  * Initializes the Firebase Admin SDK.
@@ -36,3 +37,4 @@ function getAdminApp(): App {
 const firebaseAdminApp = getAdminApp();
 
 export const adminDb = getFirestore(firebaseAdminApp);
+export const adminAuth = getAuth(firebaseAdminApp);
