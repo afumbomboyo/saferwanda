@@ -6,6 +6,7 @@ import { adminDb } from '@/lib/firebase-admin';
  * 
  * Forwards captured frames to the biometric VPS to verify
  * that the user completed the required movement challenge.
+ * On success, issues a short-lived authorization for enrollment.
  */
 
 export const dynamic = 'force-dynamic';
@@ -215,27 +216,48 @@ export async function POST(request: NextRequest) {
     }
 
     // -----------------------------------------------------------------------
-    // 8. Return actual liveness result
+    // 8. On success, issue short-lived enrollment authorization
     // -----------------------------------------------------------------------
 
+    if (biometricResult.liveness_verified === true) {
+      const livenessAuthorizationId = crypto.randomUUID();
+
+      await adminDb
+        .collection('police_face_liveness')
+        .doc(livenessAuthorizationId)
+        .set({
+          policeId: policeId,
+          challengeId,
+          verified: true,
+          createdAt: new Date().toISOString(),
+          expiresAt: new Date(
+            Date.now() + 5 * 60 * 1000 // 5 minute validity
+          ).toISOString(),
+          used: false,
+        });
+
+      return NextResponse.json({
+        success: true,
+        livenessVerified: true,
+        livenessAuthorizationId,
+        challengeId,
+        policeId: policeId,
+        framesReceived:
+          biometricResult.frames_received ?? frameCount,
+        validFrames:
+          biometricResult.valid_frames ?? 0,
+        movementScore:
+          biometricResult.movement_score ?? null,
+      });
+    }
+
+    // Handle case where service returned 200 but verified is false
     return NextResponse.json({
-      success:
-        biometricResult?.success === true,
-
-      livenessVerified:
-        biometricResult?.liveness_verified === true,
-
-      challenge:
-        biometricResult?.challenge,
-
-      framesReceived:
-        biometricResult?.frames_received ?? frameCount,
-
-      validFrames:
-        biometricResult?.valid_frames ?? 0,
-
-      movementScore:
-        biometricResult?.movement_score ?? null,
+      success: false,
+      livenessVerified: false,
+      error: 'Liveness verification was not successful.',
+      challenge: biometricResult.challenge,
+      movementScore: biometricResult.movement_score ?? null,
     });
 
   } catch (error) {

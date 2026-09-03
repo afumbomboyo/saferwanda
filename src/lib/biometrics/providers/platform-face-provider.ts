@@ -232,6 +232,12 @@ export class PlatformFaceProvider implements FaceProvider {
         );
       }
 
+      if (!livenessResult.livenessAuthorizationId) {
+        throw new Error(
+          'Liveness verification succeeded, but no enrollment authorization was issued.'
+        );
+      }
+
       if (onLivenessInstruction) {
         onLivenessInstruction('');
       }
@@ -280,7 +286,7 @@ export class PlatformFaceProvider implements FaceProvider {
 
       /*
        * ---------------------------------------------------------------
-       * STEP 5 — Submit biometric enrollment
+       * STEP 5 — Submit biometric enrollment with authorization
        * ---------------------------------------------------------------
        */
 
@@ -298,6 +304,8 @@ export class PlatformFaceProvider implements FaceProvider {
               pose.toLowerCase().replace(/\s+/g, '_')
             ),
             provider: this.id,
+            livenessAuthorizationId:
+              livenessResult.livenessAuthorizationId,
             timestamp: new Date().toISOString(),
           }),
         }

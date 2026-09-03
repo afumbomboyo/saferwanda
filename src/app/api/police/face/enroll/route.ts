@@ -49,6 +49,7 @@ export async function POST(request: NextRequest) {
       payload,
       poses,
       provider,
+      livenessAuthorizationId,
     } = body;
 
     // -----------------------------------------------------------------------
@@ -83,7 +84,81 @@ export async function POST(request: NextRequest) {
     }
 
     // -----------------------------------------------------------------------
-    // 4. Verify that the police officer exists
+    // 4. Validate liveness authorization
+    // -----------------------------------------------------------------------
+
+    if (
+      typeof livenessAuthorizationId !== 'string' ||
+      !livenessAuthorizationId.trim()
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          error:
+            'Successful liveness verification is required before enrollment.',
+        },
+        { status: 403 }
+      );
+    }
+
+    const livenessRef = adminDb
+      .collection('police_face_liveness')
+      .doc(livenessAuthorizationId.trim());
+
+    // Use a transaction to ensure atomic check-and-mark-used
+    const authResult = await adminDb.runTransaction(async (transaction) => {
+      const livenessSnapshot = await transaction.get(livenessRef);
+
+      if (!livenessSnapshot.exists) {
+        return { error: 'Liveness authorization was not found or has expired.' };
+      }
+
+      const livenessData = livenessSnapshot.data();
+
+      if (!livenessData) {
+        return { error: 'Invalid liveness authorization data.' };
+      }
+
+      if (livenessData.verified !== true) {
+        return { error: 'Liveness verification was not successful.' };
+      }
+
+      if (livenessData.used === true) {
+        return { error: 'This liveness authorization has already been used.' };
+      }
+
+      if (livenessData.policeId !== normalizedPoliceId) {
+        return { error: 'Liveness authorization does not belong to this police officer.' };
+      }
+
+      if (
+        !livenessData.expiresAt ||
+        new Date(livenessData.expiresAt).getTime() <= Date.now()
+      ) {
+        return { error: 'Liveness authorization has expired.' };
+      }
+
+      // Mark as used within the transaction to prevent race conditions
+      transaction.update(livenessRef, { 
+        used: true, 
+        usedAt: new Date().toISOString() 
+      });
+
+      return { success: true };
+    });
+
+    if (authResult.error) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: authResult.error,
+        },
+        { status: 403 }
+      );
+    }
+
+    // -----------------------------------------------------------------------
+    // 5. Verify that the police officer exists
     // -----------------------------------------------------------------------
 
     const officerRef = adminDb
@@ -103,21 +178,7 @@ export async function POST(request: NextRequest) {
     }
 
     // -----------------------------------------------------------------------
-    // 5. Select the enrollment image
-    //
-    // For the current PlatformFaceProvider, the captured payload contains:
-    //
-    // neutral
-    // turn_left
-    // turn_right
-    // look_up
-    // look_down
-    //
-    // For this first backend integration, use the neutral frame as the
-    // biometric enrollment image.
-    //
-    // Real liveness will be integrated into the capture flow in the next
-    // step.
+    // 6. Select the enrollment image
     // -----------------------------------------------------------------------
 
     const enrollmentImage = payload.neutral;
@@ -136,7 +197,7 @@ export async function POST(request: NextRequest) {
     }
 
     // -----------------------------------------------------------------------
-    // 6. Convert data URL → binary image
+    // 7. Convert data URL → binary image
     // -----------------------------------------------------------------------
 
     const imageParts = enrollmentImage.split(',');
@@ -163,7 +224,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Prevent unexpectedly large requests.
     const MAX_IMAGE_SIZE = 8 * 1024 * 1024;
 
     if (imageBuffer.length > MAX_IMAGE_SIZE) {
@@ -177,7 +237,7 @@ export async function POST(request: NextRequest) {
     }
 
     // -----------------------------------------------------------------------
-    // 7. Build multipart request for biometric VPS
+    // 8. Send image to biometric VPS
     // -----------------------------------------------------------------------
 
     const formData = new FormData();
@@ -197,10 +257,6 @@ export async function POST(request: NextRequest) {
       imageBlob,
       `${normalizedPoliceId}-enrollment.jpg`
     );
-
-    // -----------------------------------------------------------------------
-    // 8. Send image to biometric VPS
-    // -----------------------------------------------------------------------
 
     const biometricResponse = await fetch(
       `${BIOMETRIC_SERVICE_URL.replace(/\/$/, '')}/v1/face/enroll`,
@@ -285,10 +341,6 @@ export async function POST(request: NextRequest) {
 
     // -----------------------------------------------------------------------
     // 12. Store enrollment metadata in Firestore
-    //
-    // IMPORTANT:
-    // The face embedding/template itself remains on the biometric VPS.
-    // Firestore stores only enrollment metadata.
     // -----------------------------------------------------------------------
 
     await officerRef.update({
@@ -302,8 +354,7 @@ export async function POST(request: NextRequest) {
         enrolled_at:
           biometricResult.created_at ||
           new Date().toISOString(),
-        liveness_verified:
-          biometricResult.liveness_verified === true,
+        liveness_verified: true, // Known true because authorization check passed
         quality: biometricResult.quality || null,
       },
     });
@@ -328,8 +379,7 @@ export async function POST(request: NextRequest) {
         provider ||
         'insightface_buffalo_l',
 
-      livenessVerified:
-        biometricResult.liveness_verified === true,
+      livenessVerified: true,
 
       quality:
         biometricResult.quality || null,
