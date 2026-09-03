@@ -11,8 +11,6 @@ import { adminDb } from '@/lib/firebase-admin';
  * biometric VPS
  *   ↓
  * encrypted biometric template
- *
- * The biometric API key is NEVER exposed to the browser.
  */
 
 export const dynamic = 'force-dynamic';
@@ -84,7 +82,7 @@ export async function POST(request: NextRequest) {
     }
 
     // -----------------------------------------------------------------------
-    // 4. Validate liveness authorization
+    // 4. Validate liveness authorization ID format
     // -----------------------------------------------------------------------
 
     if (
@@ -100,6 +98,30 @@ export async function POST(request: NextRequest) {
         { status: 403 }
       );
     }
+
+    // -----------------------------------------------------------------------
+    // 5. Verify that the police officer exists BEFORE claiming auth
+    // -----------------------------------------------------------------------
+
+    const officerRef = adminDb
+      .collection('police_officers')
+      .doc(normalizedPoliceId);
+
+    const officerSnapshot = await officerRef.get();
+
+    if (!officerSnapshot.exists) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Police officer not found.',
+        },
+        { status: 404 }
+      );
+    }
+
+    // -----------------------------------------------------------------------
+    // 6. Claim the liveness authorization
+    // -----------------------------------------------------------------------
 
     const livenessRef = adminDb
       .collection('police_face_liveness')
@@ -193,33 +215,7 @@ export async function POST(request: NextRequest) {
     }
 
     // -----------------------------------------------------------------------
-    // 5. Verify that the police officer exists
-    // -----------------------------------------------------------------------
-
-    const officerRef = adminDb
-      .collection('police_officers')
-      .doc(normalizedPoliceId);
-
-    const officerSnapshot = await officerRef.get();
-
-    if (!officerSnapshot.exists) {
-      // Cleanup: release authorization
-      await livenessRef.update({
-        processing: false,
-        processingFailedAt: new Date().toISOString(),
-      });
-
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Police officer not found.',
-        },
-        { status: 404 }
-      );
-    }
-
-    // -----------------------------------------------------------------------
-    // 6. Select the enrollment image
+    // 7. Select the enrollment image
     // -----------------------------------------------------------------------
 
     const enrollmentImage = payload.neutral;
@@ -244,7 +240,7 @@ export async function POST(request: NextRequest) {
     }
 
     // -----------------------------------------------------------------------
-    // 7. Convert data URL → binary image
+    // 8. Convert data URL → binary image
     // -----------------------------------------------------------------------
 
     const imageParts = enrollmentImage.split(',');
@@ -302,7 +298,7 @@ export async function POST(request: NextRequest) {
     }
 
     // -----------------------------------------------------------------------
-    // 8. Send image to biometric VPS
+    // 9. Send image to biometric VPS with timeout protection
     // -----------------------------------------------------------------------
 
     const formData = new FormData();
@@ -323,23 +319,47 @@ export async function POST(request: NextRequest) {
       `${normalizedPoliceId}-enrollment.jpg`
     );
 
-    const biometricResponse = await fetch(
-      `${BIOMETRIC_SERVICE_URL.replace(/\/$/, '')}/v1/face/enroll`,
-      {
-        method: 'POST',
+    const biometricAbortController = new AbortController();
+    const biometricTimeout = setTimeout(() => {
+      biometricAbortController.abort();
+    }, 120000); // 120 second timeout for heavy face analysis
 
-        headers: {
-          Authorization: `Bearer ${BIOMETRIC_API_KEY}`,
+    let biometricResponse: Response;
+
+    try {
+      biometricResponse = await fetch(
+        `${BIOMETRIC_SERVICE_URL.replace(/\/$/, '')}/v1/face/enroll`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${BIOMETRIC_API_KEY}`,
+          },
+          body: formData,
+          cache: 'no-store',
+          signal: biometricAbortController.signal,
+        }
+      );
+    } catch (fetchErr: any) {
+      // Cleanup: release authorization
+      await livenessRef.update({
+        processing: false,
+        processingFailedAt: new Date().toISOString(),
+      });
+
+      const isTimeout = fetchErr.name === 'AbortError';
+      return NextResponse.json(
+        {
+          success: false,
+          error: isTimeout ? 'Biometric server timeout.' : 'Failed to connect to biometric service.',
         },
-
-        body: formData,
-
-        cache: 'no-store',
-      }
-    );
+        { status: isTimeout ? 504 : 502 }
+      );
+    } finally {
+      clearTimeout(biometricTimeout);
+    }
 
     // -----------------------------------------------------------------------
-    // 9. Read biometric server response
+    // 10. Read biometric server response
     // -----------------------------------------------------------------------
 
     let biometricResult: any;
@@ -354,7 +374,7 @@ export async function POST(request: NextRequest) {
     }
 
     // -----------------------------------------------------------------------
-    // 10. Forward biometric failure
+    // 11. Forward biometric failure
     // -----------------------------------------------------------------------
 
     if (!biometricResponse.ok) {
@@ -389,7 +409,7 @@ export async function POST(request: NextRequest) {
     }
 
     // -----------------------------------------------------------------------
-    // 11. Verify that the biometric service actually enrolled the face
+    // 12. Verify that the biometric service actually enrolled the face
     // -----------------------------------------------------------------------
 
     if (
@@ -417,7 +437,7 @@ export async function POST(request: NextRequest) {
     }
 
     // -----------------------------------------------------------------------
-    // 12. Store enrollment metadata in Firestore
+    // 13. Store enrollment metadata in Firestore
     // -----------------------------------------------------------------------
 
     await officerRef.update({
@@ -437,7 +457,7 @@ export async function POST(request: NextRequest) {
     });
 
     // -----------------------------------------------------------------------
-    // 13. Mark authorization as used
+    // 14. Mark authorization as used
     // -----------------------------------------------------------------------
 
     await livenessRef.update({
@@ -447,7 +467,7 @@ export async function POST(request: NextRequest) {
     });
 
     // -----------------------------------------------------------------------
-    // 14. Return real enrollment result to browser
+    // 15. Return real enrollment result to browser
     // -----------------------------------------------------------------------
 
     return NextResponse.json({

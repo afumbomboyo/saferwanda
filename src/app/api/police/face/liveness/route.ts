@@ -153,23 +153,41 @@ export async function POST(request: NextRequest) {
     }
 
     // -----------------------------------------------------------------------
-    // 5. Send frames to biometric VPS
+    // 5. Send frames to biometric VPS with timeout protection
     // -----------------------------------------------------------------------
 
-    const biometricResponse = await fetch(
-      `${BIOMETRIC_SERVICE_URL.replace(/\/$/, '')}/v1/face/liveness`,
-      {
-        method: 'POST',
+    const biometricAbortController = new AbortController();
+    const biometricTimeout = setTimeout(() => {
+      biometricAbortController.abort();
+    }, 120000); // 120 second timeout
 
-        headers: {
-          Authorization: `Bearer ${BIOMETRIC_API_KEY}`,
+    let biometricResponse: Response;
+
+    try {
+      biometricResponse = await fetch(
+        `${BIOMETRIC_SERVICE_URL.replace(/\/$/, '')}/v1/face/liveness`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${BIOMETRIC_API_KEY}`,
+          },
+          body: biometricForm,
+          cache: 'no-store',
+          signal: biometricAbortController.signal,
+        }
+      );
+    } catch (fetchErr: any) {
+      const isTimeout = fetchErr.name === 'AbortError';
+      return NextResponse.json(
+        {
+          success: false,
+          error: isTimeout ? 'Liveness service timeout.' : 'Failed to connect to liveness service.',
         },
-
-        body: biometricForm,
-
-        cache: 'no-store',
-      }
-    );
+        { status: isTimeout ? 504 : 502 }
+      );
+    } finally {
+      clearTimeout(biometricTimeout);
+    }
 
     // -----------------------------------------------------------------------
     // 6. Read biometric response
