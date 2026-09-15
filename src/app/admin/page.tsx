@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
-import { useUser, useFirestore, useCollection, useDoc } from '@/firebase';
+import { useUser, useFirestore, useCollection, useDoc, useAuth } from '@/firebase';
 import { useRouter } from 'next/navigation';
 import { collection, doc, query, orderBy, setDoc, updateDoc, addDoc, serverTimestamp } from 'firebase/firestore';
 import { 
@@ -66,6 +66,7 @@ export default function AdminDashboardPage() {
   const router = useRouter();
   const { toast } = useToast();
   const { user, loading: userLoading } = useUser();
+  const auth = useAuth();
   const db = useFirestore();
   const [searchTerm, setSearchTerm] = useState('');
   const [cameraSearchTerm, setCameraSearchTerm] = useState('');
@@ -85,7 +86,9 @@ export default function AdminDashboardPage() {
   const [isFaceEnrollOpen, setIsFaceEnrollOpen] = useState(false);
   const [isPinEnrollOpen, setIsPinEnrollOpen] = useState(false);
   const [isResetDialogOpen, setIsResetDialogOpen] = useState(false);
+  const [isResetPinDialogOpen, setIsResetPinDialogOpen] = useState(false);
   const [resetConfirmationName, setResetConfirmationName] = useState('');
+  const [resetPinConfirmationName, setResetPinConfirmationName] = useState('');
 
   // Form State for New Camera
   const [newCamera, setNewCamera] = useState({
@@ -196,7 +199,6 @@ export default function AdminDashboardPage() {
     try {
       const cameraRef = doc(db, 'cameras', newCamera.camera_id);
       await setDoc(cameraRef, newCamera);
-      // Integration check for internal systems
       toast({ title: "Registration Success", description: "Camera registered locally. Webhook generation simulated." });
       setGeneratedWebhook(`https://webhook.saferwanda.io/v1/capture/${newCamera.camera_id}`);
     } catch (error: any) {
@@ -302,40 +304,66 @@ export default function AdminDashboardPage() {
     toast({ title: "Facial Registry Linked", description: "Secure biometric sample stored successfully." });
   };
 
-  const handlePinSuccess = async (result: { configured: true; configuredAt: string }) => {
+  const handlePinSuccess = async (result: {
+    configured: true;
+    configuredAt: string;
+  }) => {
     if (!db || !user || !selectedOfficer) return;
-    
-    const officerRef = doc(db, 'police_officers', selectedOfficer.police_id);
-    const updatedEnrollment = { 
-      ...selectedOfficer.enrollment,
-      pin: {
-        configured: true,
-        configured_at: result.configuredAt,
-        configured_by: user.uid,
-        algorithm: 'argon2id'
-      }
-    };
 
-    const isComplete = updatedEnrollment.face.enrolled && 
-                     updatedEnrollment.pin.configured;
-    
-    updatedEnrollment.completed = isComplete;
-    
-    const updateData: any = {
-      enrollment: updatedEnrollment,
-      updated_at: serverTimestamp()
-    };
-    
-    if (isComplete && selectedOfficer.status === 'pending_enrollment') {
-      updateData.status = 'enrollment_ready';
+    try {
+      const updatedEnrollment = {
+        ...selectedOfficer.enrollment,
+        pin: {
+          ...selectedOfficer.enrollment?.pin,
+          configured: true,
+          configured_at: result.configuredAt,
+          configured_by: user.uid,
+          algorithm: 'argon2id',
+        },
+      };
+
+      const isComplete =
+        updatedEnrollment.face?.enrolled === true &&
+        updatedEnrollment.pin?.configured === true;
+
+      updatedEnrollment.completed = isComplete;
+
+      const updateData: any = {
+        'enrollment.completed': isComplete,
+        updated_at: serverTimestamp(),
+      };
+
+      if (isComplete && selectedOfficer.status === 'pending_enrollment') {
+        updateData.status = 'enrollment_ready';
+      }
+
+      await updateDoc(
+        doc(db, 'police_officers', selectedOfficer.police_id),
+        updateData
+      );
+
+      createAuditLog(selectedOfficer.police_id, 'PIN_ENROLLMENT_COMPLETED');
+
+      setSelectedOfficer({
+        ...selectedOfficer,
+        enrollment: updatedEnrollment,
+        status: updateData.status || selectedOfficer.status
+      });
+
+      setIsPinEnrollOpen(false);
+
+      toast({
+        title: 'PIN Security Enabled',
+        description: 'Credential configured and hashed securely on server.',
+      });
+    } catch (error: any) {
+      console.error('PIN enrollment UI update failed:', error);
+      toast({
+        variant: 'destructive',
+        title: 'PIN Enrollment Update Failed',
+        description: error?.message || 'The PIN was enrolled, but the officer status could not be updated.',
+      });
     }
-    
-    await updateDoc(officerRef, updateData);
-    createAuditLog(selectedOfficer.police_id, 'PIN_ENROLLMENT_COMPLETED');
-    
-    setSelectedOfficer({ ...selectedOfficer, ...updateData });
-    setIsPinEnrollOpen(false);
-    toast({ title: "PIN Security Enabled", description: "Credential configured and hashed on server." });
   };
 
   const handleUpdateOfficerStatus = async (officerId: string, newStatus: string) => {
@@ -377,6 +405,42 @@ export default function AdminDashboardPage() {
       setIsResetDialogOpen(false);
       setResetConfirmationName('');
       toast({ title: "Enrollment Reset", description: `Profiles for ${selectedOfficer.identity?.full_name} have been cleared.` });
+    } catch (error: any) {
+      toast({ variant: "destructive", title: "Reset Failed", description: error.message });
+    }
+  };
+
+  const handleResetPin = async () => {
+    if (!db || !selectedOfficer || !auth?.currentUser || resetPinConfirmationName !== selectedOfficer.identity?.full_name) return;
+
+    try {
+      const idToken = await auth.currentUser.getIdToken();
+      const response = await fetch(`/api/admin/police/${selectedOfficer.police_id}/pin/reset`, {
+        method: 'POST',
+        headers: { 
+          'Authorization': `Bearer ${idToken}`
+        }
+      });
+
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "Reset failed");
+
+      const updatedEnrollment = {
+        ...selectedOfficer.enrollment,
+        pin: { configured: false },
+        completed: false
+      };
+
+      setSelectedOfficer({
+        ...selectedOfficer,
+        enrollment: updatedEnrollment,
+        status: 'pending_enrollment'
+      });
+
+      createAuditLog(selectedOfficer.police_id, 'PIN_ENROLLMENT_RESET');
+      setIsResetPinDialogOpen(false);
+      setResetPinConfirmationName('');
+      toast({ title: "PIN Reset Success", description: `PIN credential cleared for ${selectedOfficer.identity?.full_name}.` });
     } catch (error: any) {
       toast({ variant: "destructive", title: "Reset Failed", description: error.message });
     }
@@ -892,6 +956,13 @@ export default function AdminDashboardPage() {
                     >
                       <RefreshCw className="w-3 h-3" /> Reset Profile
                     </Button>
+                    <Button 
+                      variant="ghost" 
+                      className="h-12 md:h-14 rounded-xl md:rounded-2xl font-black uppercase text-[10px] md:text-xs opacity-60 flex items-center gap-2 text-destructive hover:bg-destructive/10"
+                      onClick={() => setIsResetPinDialogOpen(true)}
+                    >
+                      <Key className="w-3 h-3" /> Reset PIN Only
+                    </Button>
                   </div>
                 </div>
 
@@ -971,6 +1042,44 @@ export default function AdminDashboardPage() {
               variant="ghost" 
               className="w-full h-10 rounded-xl font-bold uppercase text-[9px] md:text-[10px]"
               onClick={() => { setIsResetDialogOpen(false); setResetConfirmationName(''); }}
+            >
+              Cancel
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Reset PIN Confirmation Dialog */}
+      <Dialog open={isResetPinDialogOpen} onOpenChange={setIsResetPinDialogOpen}>
+        <DialogContent className="w-[95vw] sm:max-w-md rounded-[1.5rem] md:rounded-[2.5rem] p-6 md:p-10">
+          <DialogHeader>
+            <DialogTitle className="text-xl md:text-2xl font-black">Confirm PIN Reset</DialogTitle>
+            <DialogDescription className="text-xs md:text-sm mt-1">
+              Delete the secure PIN credential for this officer. Biometric data will be preserved.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Type officer's full name to confirm</Label>
+              <Input 
+                placeholder={selectedOfficer?.identity?.full_name}
+                value={resetPinConfirmationName}
+                onChange={(e) => setResetPinConfirmationName(e.target.value)}
+                className="h-12 rounded-xl text-sm"
+              />
+            </div>
+            <Button 
+              variant="destructive" 
+              className="w-full h-14 rounded-2xl font-black uppercase text-xs"
+              disabled={resetPinConfirmationName !== selectedOfficer?.identity?.full_name}
+              onClick={handleResetPin}
+            >
+              Confirm PIN Reset
+            </Button>
+            <Button 
+              variant="ghost" 
+              className="w-full h-10 rounded-xl font-bold uppercase text-[9px] md:text-[10px]"
+              onClick={() => { setIsResetPinDialogOpen(false); setResetPinConfirmationName(''); }}
             >
               Cancel
             </Button>
