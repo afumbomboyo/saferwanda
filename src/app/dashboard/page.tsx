@@ -782,25 +782,6 @@ function DashboardContent() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8 md:mb-12 animate-reveal">
-            {[
-              { label: 'Devices', value: profile?.deviceId ? '01' : '00', icon: Smartphone, color: 'text-primary' },
-              { label: 'Signal', value: '98%', icon: Wifi, color: 'text-rwanda-green' },
-              { label: 'Health', value: 'Secure', icon: Shield, color: 'text-sky-500' },
-              { label: 'Alerts', value: '0', icon: Bell, color: 'text-destructive' }
-            ].map((stat, i) => (
-              <Card key={i} className="bg-card/40 border-border rounded-2xl md:rounded-[2rem] shadow-xl overflow-hidden relative">
-                <CardContent className="p-5 md:p-8">
-                  <div className="flex items-center gap-2 mb-1 md:mb-2">
-                    <stat.icon className={cn("w-3 h-3 md:w-4 md:h-4", stat.color)} />
-                    <span className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-muted-foreground">{stat.label}</span>
-                  </div>
-                  <div className="text-xl md:text-3xl font-black tracking-tight">{stat.value}</div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full space-y-8 md:space-y-12">
             <TabsList className="grid grid-cols-2 h-auto p-1.5 bg-secondary/40 rounded-2xl md:rounded-[1.5rem] border border-border/50 shadow-xl">
               <TabsTrigger value="overview" className="rounded-xl py-3 data-[state=active]:bg-primary data-[state=active]:text-white font-bold text-xs md:text-sm">
