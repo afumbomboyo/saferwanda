@@ -1,9 +1,10 @@
+
 'use client';
 
-import { useEffect, useState, useRef, Suspense } from 'react';
-import { useUser, useFirestore, useAuth } from '@/firebase';
+import { useEffect, useState, useMemo, Suspense } from 'react';
+import { useUser, useFirestore, useAuth, useCollection } from '@/firebase';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, updateDoc, collection, query, where, orderBy, limit, getDocs, serverTimestamp } from 'firebase/firestore';
 import { 
   Shield, 
   Loader2, 
@@ -38,7 +39,11 @@ import {
   Cpu,
   ArrowRight,
   Globe,
-  Database
+  Database,
+  History,
+  Thermometer,
+  Droplets,
+  Search
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
@@ -69,10 +74,11 @@ import {
   SelectTrigger, 
   SelectValue 
 } from "@/components/ui/select";
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import { useToast } from '@/hooks/use-toast';
+import { format } from 'date-fns';
 
 // Device details for the shop
 const DEVICE_CATALOG: Record<string, any> = {
@@ -326,6 +332,10 @@ function DashboardContent() {
   const [alertEmail, setAlertEmail] = useState('');
   const [subType, setSubType] = useState('monthly');
 
+  // Device Verification State
+  const [verifyingDevice, setVerifyingDevice] = useState(false);
+  const [verifiedDeviceInfo, setVerifiedDeviceInfo] = useState<any>(null);
+
   // Checkout Form State
   const [checkoutData, setCheckoutData] = useState({
     fullName: '',
@@ -345,6 +355,20 @@ function DashboardContent() {
   const [isLocating, setIsLocating] = useState(false);
   const [locationError, setLocationError] = useState<string | null>(null);
   const [tempSelection, setTempSelection] = useState<'purchased' | 'leased' | null>(null);
+
+  // Real-time Data Subscription
+  const logsQuery = useMemo(() => {
+    if (!db || !profile?.deviceId) return null;
+    return query(
+      collection(db, 'device_logs'),
+      where('deviceName', '==', profile.deviceId),
+      orderBy('timestamp', 'desc'),
+      limit(50)
+    );
+  }, [db, profile?.deviceId]);
+
+  const { data: deviceLogs, loading: logsLoading } = useCollection(logsQuery);
+  const latestLog = deviceLogs?.[0];
 
   useEffect(() => {
     const tab = searchParams.get('tab');
@@ -397,6 +421,32 @@ function DashboardContent() {
     };
     fetchProfile();
   }, [user, userLoading, db, router]);
+
+  const handleVerifyDevice = async () => {
+    if (!db || !deviceIdInput.trim()) return;
+    setVerifyingDevice(true);
+    setVerifiedDeviceInfo(null);
+    try {
+      const q = query(
+        collection(db, 'device_logs'),
+        where('deviceName', '==', deviceIdInput.trim()),
+        orderBy('timestamp', 'desc'),
+        limit(1)
+      );
+      const snap = await getDocs(q);
+      if (!snap.empty) {
+        const info = snap.docs[0].data();
+        setVerifiedDeviceInfo(info);
+        toast({ title: "Node Validated", description: `Confirmed: ${info.deviceProfileName}` });
+      } else {
+        toast({ variant: "destructive", title: "Validation Failed", description: "This hardware ID is not found in the global registry." });
+      }
+    } catch (error: any) {
+      toast({ variant: "destructive", title: "Error", description: error.message });
+    } finally {
+      setVerifyingDevice(false);
+    }
+  };
 
   const updateProfileData = async (newData: any) => {
     if (!user || !db) return;
@@ -565,7 +615,7 @@ function DashboardContent() {
       <main className="flex-grow pt-24 md:pt-32 pb-24 relative z-10">
         <div className="container mx-auto px-4 max-w-7xl">
           
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8 md:mb-12 animate-fade-in">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8 md:mb-12 animate-reveal">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 md:w-16 md:h-16 rounded-[1.2rem] md:rounded-[2rem] bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center border border-primary/20 shadow-2xl">
                 <Shield className="w-6 h-6 md:w-8 md:h-8 text-white" />
@@ -601,7 +651,7 @@ function DashboardContent() {
                     <span className="text-xs md:text-sm">Connect Device</span>
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="w-[95vw] sm:max-w-[520px] p-0 border-border/50 bg-background shadow-2xl rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden">
+                <DialogContent className="w-[95vw] sm:max-w-[600px] p-0 border-border/50 bg-background shadow-2xl rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden">
                   <ScrollArea className="max-h-[90vh] w-full">
                     <div className="relative p-6 sm:p-10 pt-12">
                       <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-primary via-accent to-rwanda-green" />
@@ -613,35 +663,72 @@ function DashboardContent() {
                           <div>
                             <DialogTitle className="text-xl md:text-3xl font-black tracking-tight leading-none">Connect Device</DialogTitle>
                             <DialogDescription className="text-xs md:text-sm mt-2 opacity-70">
-                              Enter the details from your device to start receiving safety alerts.
+                              Verify your hardware node ID to start receiving safety alerts.
                             </DialogDescription>
                           </div>
                         </div>
                       </DialogHeader>
                       <div className="space-y-6">
-                        <div className="space-y-3">
-                          <Label htmlFor="deviceName" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Device Name</Label>
-                          <div className="relative">
-                            <Input 
-                              id="deviceName" 
-                              placeholder="e.g. Living Room Sensor" 
-                              value={deviceNameInput} 
-                              onChange={(e) => setDeviceNameInput(e.target.value)}
-                              className="h-14 md:h-16 rounded-2xl border-border bg-secondary/30 px-6 pl-12 text-sm"
-                            />
-                            <Tag className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50" />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="space-y-3">
+                            <Label htmlFor="deviceName" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Friendly Name</Label>
+                            <div className="relative">
+                              <Input 
+                                id="deviceName" 
+                                placeholder="e.g. Living Room Sensor" 
+                                value={deviceNameInput} 
+                                onChange={(e) => setDeviceNameInput(e.target.value)}
+                                className="h-12 rounded-xl border-border bg-secondary/30 px-6 pl-10 text-sm"
+                              />
+                              <Tag className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50" />
+                            </div>
+                          </div>
+                          <div className="space-y-3">
+                            <Label htmlFor="actualNodeId" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Hardware Node ID</Label>
+                            <div className="flex gap-2">
+                              <Input 
+                                id="actualNodeId" 
+                                placeholder="EM300-TH-868M" 
+                                value={deviceIdInput} 
+                                onChange={(e) => setDeviceIdInput(e.target.value)}
+                                className="h-12 rounded-xl border-border bg-secondary/30 font-mono px-4 text-sm"
+                              />
+                              <Button 
+                                variant="secondary" 
+                                size="icon" 
+                                className="h-12 w-12 rounded-xl shrink-0" 
+                                onClick={handleVerifyDevice}
+                                disabled={verifyingDevice || !deviceIdInput.trim()}
+                              >
+                                {verifyingDevice ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
+                              </Button>
+                            </div>
                           </div>
                         </div>
-                        <div className="space-y-3">
-                          <Label htmlFor="actualNodeId" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Device ID</Label>
-                          <Input 
-                            id="actualNodeId" 
-                            placeholder="SAFE-NODE-XXXX" 
-                            value={deviceIdInput} 
-                            onChange={(e) => setDeviceIdInput(e.target.value)}
-                            className="h-14 md:h-16 rounded-2xl border-border bg-secondary/30 font-mono px-6 text-sm"
-                          />
-                        </div>
+
+                        {verifiedDeviceInfo && (
+                          <Card className="bg-primary/5 border-primary/20 rounded-2xl p-6 space-y-4 animate-in zoom-in-95">
+                            <div className="flex items-start justify-between">
+                              <div>
+                                <Badge variant="outline" className="bg-primary text-white border-none text-[8px] font-black uppercase tracking-widest mb-2">VALID HARDWARE</Badge>
+                                <h4 className="text-xl font-black">{verifiedDeviceInfo.deviceProfileName}</h4>
+                                <p className="text-[10px] text-muted-foreground uppercase font-bold mt-1">App: {verifiedDeviceInfo.applicationName}</p>
+                              </div>
+                              <Cpu className="w-8 h-8 text-primary opacity-40" />
+                            </div>
+                            <div className="grid grid-cols-2 gap-4 pt-2 border-t border-primary/10">
+                              <div>
+                                <p className="text-[8px] font-black uppercase opacity-40">Latest Temperature</p>
+                                <p className="text-sm font-bold flex items-center gap-1"><Thermometer className="w-3 h-3 text-red-500" /> {verifiedDeviceInfo.temperature}°C</p>
+                              </div>
+                              <div>
+                                <p className="text-[8px] font-black uppercase opacity-40">Latest Humidity</p>
+                                <p className="text-sm font-bold flex items-center gap-1"><Droplets className="w-3 h-3 text-blue-500" /> {verifiedDeviceInfo.humidity}%</p>
+                              </div>
+                            </div>
+                          </Card>
+                        )}
+
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                           <div className="space-y-3">
                             <Label htmlFor="alertPhone" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Alert Phone Number</Label>
@@ -651,9 +738,9 @@ function DashboardContent() {
                                 placeholder="+250 7XX XXX XXX" 
                                 value={alertPhone} 
                                 onChange={(e) => setAlertPhone(e.target.value)}
-                                className="h-14 md:h-16 rounded-2xl border-border bg-secondary/30 px-6 pl-12 text-sm"
+                                className="h-12 rounded-xl border-border bg-secondary/30 px-6 pl-10 text-sm"
                               />
-                              <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50" />
+                              <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50" />
                             </div>
                           </div>
                           <div className="space-y-3">
@@ -665,9 +752,9 @@ function DashboardContent() {
                                 placeholder="you@email.com" 
                                 value={alertEmail} 
                                 onChange={(e) => setAlertEmail(e.target.value)}
-                                className="h-14 md:h-16 rounded-2xl border-border bg-secondary/30 px-6 pl-12 text-sm"
+                                className="h-12 rounded-xl border-border bg-secondary/30 px-6 pl-10 text-sm"
                               />
-                              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50" />
+                              <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50" />
                             </div>
                           </div>
                         </div>
@@ -675,15 +762,15 @@ function DashboardContent() {
                       <div className="mt-10">
                         <Button 
                           onClick={() => updateProfileData({ 
-                            deviceId: deviceIdInput, 
+                            deviceId: deviceIdInput.trim(), 
                             deviceName: deviceNameInput,
                             alertPhone, 
                             alertEmail 
                           })}
-                          className="w-full h-14 md:h-16 rounded-2xl bg-primary hover:bg-primary/90 font-black uppercase tracking-widest text-xs md:text-sm"
-                          disabled={updating || !deviceIdInput || !deviceNameInput || !alertPhone || !alertEmail}
+                          className="w-full h-14 md:h-16 rounded-2xl bg-primary hover:bg-primary/90 font-black uppercase tracking-widest text-xs md:text-sm shadow-xl"
+                          disabled={updating || !deviceIdInput || !deviceNameInput || !alertPhone || !alertEmail || !verifiedDeviceInfo}
                         >
-                          {updating ? <Loader2 className="w-5 h-5 animate-spin" /> : "Connect Device"}
+                          {updating ? <Loader2 className="w-5 h-5 animate-spin" /> : "Confirm Node Link"}
                         </Button>
                       </div>
                     </div>
@@ -704,27 +791,27 @@ function DashboardContent() {
             </TabsList>
 
             <TabsContent value="overview" className="space-y-8 md:space-y-12 animate-reveal outline-none">
-              {/* Stats & Next Step Row */}
+              {/* Stats Row */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <Card className="md:col-span-2 bg-card/40 border-border rounded-[2rem] md:rounded-[2.5rem] shadow-2xl shadow-black/5 overflow-hidden">
                   <CardHeader className="p-6 md:p-10 pb-4">
                     <CardTitle className="text-xl md:text-2xl font-black flex items-center gap-3">
                       <Activity className="w-5 h-5 md:w-6 md:h-6 text-primary" />
-                      Status
+                      Live Capability Stream
                     </CardTitle>
-                    <CardDescription className="text-xs md:text-sm">A live look at your security network.</CardDescription>
+                    <CardDescription className="text-xs md:text-sm">Strategic real-time telemetry from your hardware nodes.</CardDescription>
                   </CardHeader>
                   <CardContent className="p-6 md:p-10 pt-0">
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4 mt-6">
                       {[
-                        { label: 'Devices', val: profile?.deviceId ? '01' : '00', icon: Smartphone, color: 'text-primary' },
-                        { label: 'Signal', val: profile?.deviceId ? '98%' : '0%', icon: Wifi, color: 'text-rwanda-green' },
-                        { label: 'Health', val: profile?.deviceId ? 'Secure' : 'Inactive', icon: Shield, color: 'text-accent' },
-                        { label: 'Alerts', val: '0', icon: Bell, color: 'text-muted-foreground' }
+                        { label: 'Temp', val: latestLog ? `${latestLog.temperature}°C` : '00°C', icon: Thermometer, color: 'text-red-500' },
+                        { label: 'Humidity', val: latestLog ? `${latestLog.humidity}%` : '00%', icon: Droplets, color: 'text-blue-500' },
+                        { label: 'RSSI', val: latestLog ? `${latestLog.rssi} dBm` : '0 dBm', icon: Wifi, color: 'text-rwanda-green' },
+                        { label: 'SNR', val: latestLog ? `${latestLog.snr}` : '0.0', icon: Signal, color: 'text-primary' }
                       ].map((stat, i) => (
                         <div key={i} className="bg-secondary/20 p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] border border-border/50 text-center flex flex-col items-center justify-center group hover:bg-primary/5 transition-colors">
                           <stat.icon className={cn("w-5 h-5 md:w-6 md:h-6 mb-3 md:mb-4 opacity-40 group-hover:opacity-100 transition-opacity", stat.color)} />
-                          <div className="text-2xl md:text-4xl font-black leading-none">{stat.val}</div>
+                          <div className="text-xl md:text-3xl font-black leading-none">{stat.val}</div>
                           <div className="text-[7px] md:text-[8px] uppercase font-black tracking-[0.2em] text-muted-foreground mt-2 md:mt-3">{stat.label}</div>
                         </div>
                       ))}
@@ -741,61 +828,126 @@ function DashboardContent() {
                       <div className="w-8 h-8 md:w-10 md:h-10 rounded-xl bg-primary/10 flex items-center justify-center">
                         <Target className="w-4 h-4 md:w-5 md:h-5 text-primary" />
                       </div>
-                      <span className="text-lg md:text-xl font-black">Next Step</span>
+                      <span className="text-lg md:text-xl font-black">Next Action</span>
                     </div>
                   </CardHeader>
                   <CardContent className="p-6 md:p-10 pt-0 flex-grow flex flex-col justify-between relative z-10">
                     <p className="text-xs md:text-sm text-muted-foreground font-light leading-relaxed">
-                      {!profile?.purchaseStatus || profile?.purchaseStatus === 'none'
-                        ? "You haven't set up your devices yet. Go to 'My Services' to start the process."
-                        : !profile?.deviceId 
-                          ? "Your hardware is on the way. Once you get it, click 'Connect Device' to link it."
-                          : !profile?.subscriptionActive 
-                            ? "Your device is linked. Now pick a plan to start monitoring."
-                            : "Your device is active and we are monitoring it 24/7."}
+                      {!profile?.deviceId 
+                        ? "Your hardware node is pending connection. Validate your Device ID to start monitoring."
+                        : !profile?.subscriptionActive 
+                          ? "Telemetry linked. Pick a monitoring tier to activate 24/7 strategic alerts."
+                          : "Status: OPTIMAL. Central grid is monitoring your environment with zero downtime."}
                     </p>
                     <Button 
                       onClick={() => {
-                        if (!profile?.purchaseStatus || profile.purchaseStatus === 'none') setActiveTab('staging');
-                        else if (!profile?.deviceId) setIsRegisterOpen(true);
+                        if (!profile?.deviceId) setIsRegisterOpen(true);
                         else setIsSubscriptionOpen(true);
                       }}
                       className="w-full mt-8 md:mt-10 rounded-2xl h-14 md:h-16 font-black uppercase tracking-widest text-[10px] md:text-xs bg-primary shadow-xl shadow-primary/20"
                     >
-                      {(!profile?.purchaseStatus || profile.purchaseStatus === 'none') ? 'Go to My Services' : profile?.deviceId ? 'Activate Guard' : 'Sync Hardware Node'}
+                      {profile?.deviceId ? 'Scale Protection' : 'Link Hardware Node'}
                       <ArrowRight className="w-4 h-4 ml-2" />
                     </Button>
                   </CardContent>
                 </Card>
               </div>
 
+              {/* Hardware History / Backdating section */}
+              {profile?.deviceId && (
+                <div className="space-y-6 animate-reveal">
+                  <div className="flex items-center justify-between px-2">
+                    <div>
+                      <h3 className="text-2xl md:text-3xl font-black tracking-tight">Hardware History</h3>
+                      <p className="text-muted-foreground text-xs md:text-sm font-light mt-1">Audit log of previous node telemetry readings.</p>
+                    </div>
+                    <History className="w-6 h-6 text-primary opacity-20" />
+                  </div>
+                  
+                  <Card className="rounded-[2rem] border-border bg-card/40 overflow-hidden shadow-xl">
+                    <ScrollArea className="h-[400px] w-full">
+                      <div className="p-6 space-y-4">
+                        {deviceLogs && deviceLogs.length > 0 ? (
+                          deviceLogs.map((log: any, idx: number) => (
+                            <div key={idx} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 rounded-2xl bg-secondary/20 border border-border hover:border-primary/30 transition-all gap-4">
+                              <div className="flex items-center gap-4">
+                                <div className="w-10 h-10 rounded-xl bg-background border flex items-center justify-center shrink-0">
+                                  <Activity className="w-5 h-5 text-primary opacity-40" />
+                                </div>
+                                <div>
+                                  <p className="text-xs font-black uppercase tracking-widest text-primary">HEARTBEAT_ACK</p>
+                                  <p className="text-[10px] text-muted-foreground font-bold">{format(new Date(log.timestamp), 'MMM dd, yyyy • HH:mm:ss')}</p>
+                                </div>
+                              </div>
+                              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 w-full sm:w-auto">
+                                <div className="text-center sm:text-right">
+                                  <p className="text-[8px] font-black uppercase opacity-40">Temp</p>
+                                  <p className="text-xs font-bold">{log.temperature}°C</p>
+                                </div>
+                                <div className="text-center sm:text-right">
+                                  <p className="text-[8px] font-black uppercase opacity-40">Hum</p>
+                                  <p className="text-xs font-bold">{log.humidity}%</p>
+                                </div>
+                                <div className="text-center sm:text-right">
+                                  <p className="text-[8px] font-black uppercase opacity-40">RSSI</p>
+                                  <p className="text-xs font-bold">{log.rssi} dBm</p>
+                                </div>
+                                <div className="text-center sm:text-right">
+                                  <p className="text-[8px] font-black uppercase opacity-40">SNR</p>
+                                  <p className="text-xs font-bold">{log.snr}</p>
+                                </div>
+                              </div>
+                            </div>
+                          ))
+                        ) : (
+                          <div className="py-20 text-center space-y-4">
+                            <Activity className="w-12 h-12 text-muted-foreground opacity-20 mx-auto" />
+                            <p className="text-sm font-bold text-muted-foreground">No historical data recorded yet.</p>
+                          </div>
+                        )}
+                      </div>
+                      <ScrollBar orientation="vertical" />
+                    </ScrollArea>
+                  </Card>
+                </div>
+              )}
+
               {/* My Devices Section */}
               <div className="space-y-6 md:space-y-8">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between px-2 gap-4">
                   <div>
-                    <h3 className="text-2xl md:text-3xl font-black tracking-tight">My Devices</h3>
-                    <p className="text-muted-foreground text-xs md:text-sm font-light mt-1">All gadgets linked to your account.</p>
+                    <h3 className="text-2xl md:text-3xl font-black tracking-tight">Active Nodes</h3>
+                    <p className="text-muted-foreground text-xs md:text-sm font-light mt-1">Strategic overview of your deployed hardware.</p>
                   </div>
                   <Button variant="outline" className="w-full sm:w-auto rounded-xl border-dashed border-primary/40 text-primary font-bold h-12" onClick={() => setIsRegisterOpen(true)}>
-                    <Plus className="w-4 h-4 mr-2" /> Add Device
+                    <Plus className="w-4 h-4 mr-2" /> Add Node
                   </Button>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {profile?.deviceId ? (
+                  {profile?.deviceId && latestLog ? (
                     <Card className="rounded-[2rem] md:rounded-[2.5rem] border-border bg-card/60 shadow-xl overflow-hidden group hover:border-primary transition-all">
-                      <div className="h-40 md:h-48 bg-secondary/30 relative flex items-center justify-center">
+                      <div className="h-40 md:h-48 bg-secondary/30 relative flex items-center justify-center p-8">
                         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/5 via-transparent to-transparent" />
-                        <Smartphone className="w-16 h-16 md:w-20 md:h-20 text-primary opacity-20 group-hover:scale-110 transition-transform" />
+                        <div className="relative z-10 w-full h-full rounded-2xl bg-background/50 border border-border backdrop-blur-sm p-4 font-mono text-[8px] text-primary space-y-1">
+                          <p>IDENT_ID: {profile.deviceId}</p>
+                          <p>PROFILE: {latestLog.deviceProfileName}</p>
+                          <p>GATEWAY: {latestLog.gatewayId}</p>
+                          <p>APP: {latestLog.applicationName}</p>
+                          <div className="h-px bg-primary/20 w-full my-2" />
+                          <p>ALT: {latestLog.location?.altitude}m</p>
+                          <p>LAT: {latestLog.location?.latitude}</p>
+                          <p>LON: {latestLog.location?.longitude}</p>
+                        </div>
                         <div className="absolute top-4 md:top-6 right-4 md:right-6">
-                          <Badge className="bg-rwanda-green border-none text-[7px] md:text-[8px] font-black tracking-widest uppercase">ACTIVE</Badge>
+                          <Badge className="bg-rwanda-green border-none text-[7px] md:text-[8px] font-black tracking-widest uppercase">NODE_UP</Badge>
                         </div>
                       </div>
                       <CardContent className="p-8 md:p-10 space-y-4 md:space-y-6">
                         <div className="flex justify-between items-start">
                           <div>
                             <h4 className="text-xl md:text-2xl font-black">{profile.deviceName || 'Unnamed Node'}</h4>
-                            <p className="text-[10px] md:text-xs font-mono font-bold text-primary opacity-60 mt-1">{profile.deviceId}</p>
+                            <p className="text-[10px] md:text-xs font-bold text-muted-foreground uppercase opacity-60 mt-1">{latestLog.deviceProfileName}</p>
                           </div>
                           <div className="w-10 h-10 md:w-12 md:h-12 rounded-2xl bg-primary/10 flex items-center justify-center">
                             <Signal className="w-5 h-5 md:w-6 md:h-6 text-primary" />
@@ -804,17 +956,17 @@ function DashboardContent() {
                         
                         <div className="grid grid-cols-2 gap-3 md:gap-4">
                           <div className="bg-background/40 p-3 md:p-4 rounded-2xl border border-border text-center sm:text-left">
-                            <p className="text-[7px] md:text-[8px] font-black uppercase text-muted-foreground mb-1">Health</p>
+                            <p className="text-[7px] md:text-[8px] font-black uppercase text-muted-foreground mb-1">Status</p>
                             <div className="flex items-center justify-center sm:justify-start gap-1.5 md:gap-2">
                               <CheckCircle2 className="w-3 h-3 text-rwanda-green" />
-                              <span className="text-[10px] md:text-xs font-bold">Excellent</span>
+                              <span className="text-[10px] md:text-xs font-bold">Encrypted</span>
                             </div>
                           </div>
                           <div className="bg-background/40 p-3 md:p-4 rounded-2xl border border-border text-center sm:text-left">
-                            <p className="text-[7px] md:text-[8px] font-black uppercase text-muted-foreground mb-1">Signal</p>
+                            <p className="text-[7px] md:text-[8px] font-black uppercase text-muted-foreground mb-1">Link</p>
                             <div className="flex items-center justify-center sm:justify-start gap-1.5 md:gap-2">
                               <Wifi className="w-3 h-3 text-primary" />
-                              <span className="text-[10px] md:text-xs font-bold">98% Link</span>
+                              <span className="text-[10px] md:text-xs font-bold">{latestLog.rssi} dBm</span>
                             </div>
                           </div>
                         </div>
@@ -822,11 +974,11 @@ function DashboardContent() {
                         <div className="pt-4 border-t border-border flex justify-between items-center text-[8px] md:text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
                           <div className="flex items-center gap-1.5">
                             <Globe className="w-3 h-3 md:w-3.5 md:h-3.5 opacity-40" />
-                            Connected
+                            LoRaWAN Native
                           </div>
                           <div className="flex items-center gap-1.5">
                             <Database className="w-3 h-3 md:w-3.5 md:h-3.5 opacity-40" />
-                            Syncing
+                            Port: {latestLog.fPort}
                           </div>
                         </div>
                       </CardContent>
@@ -836,17 +988,16 @@ function DashboardContent() {
                       <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl md:rounded-3xl bg-secondary flex items-center justify-center mb-6">
                         <Cpu className="w-8 h-8 md:w-10 md:h-10 text-muted-foreground opacity-20" />
                       </div>
-                      <h4 className="text-xl md:text-2xl font-black mb-2">No Devices Found</h4>
+                      <h4 className="text-xl md:text-2xl font-black mb-2">No Active Nodes</h4>
                       <p className="text-xs md:text-sm text-muted-foreground max-w-sm mb-8 font-light leading-relaxed">
-                        Your gadgets will show up here after you link them. Click the button below to add your first device.
+                        Link your hardware sensor or tracker to start receiving live capability streams on your control panel.
                       </p>
                       <Button onClick={() => setIsRegisterOpen(true)} className="rounded-2xl h-12 md:h-14 px-8 md:px-10 font-black bg-primary text-xs md:text-sm">
-                        Add My First Device
+                        Verify New Node
                       </Button>
                     </div>
                   )}
 
-                  {/* Add Slot Placeholder (Mobile version is smaller) */}
                   {profile?.deviceId && (
                     <button 
                       onClick={() => setIsRegisterOpen(true)}
@@ -855,8 +1006,8 @@ function DashboardContent() {
                       <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-secondary flex items-center justify-center mb-4 group-hover:bg-primary/10 transition-colors">
                         <Plus className="w-5 h-5 md:w-6 md:h-6 text-muted-foreground group-hover:text-primary transition-colors" />
                       </div>
-                      <p className="font-bold text-xs md:text-sm">Add Device</p>
-                      <p className="text-[7px] md:text-[8px] uppercase font-black tracking-widest text-muted-foreground mt-1 opacity-60">Add Another</p>
+                      <p className="font-bold text-xs md:text-sm">Verify Another</p>
+                      <p className="text-[7px] md:text-[8px] uppercase font-black tracking-widest text-muted-foreground mt-1 opacity-60">Add Deployment</p>
                     </button>
                   )}
                 </div>
