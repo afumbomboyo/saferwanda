@@ -659,7 +659,7 @@ function DashboardContent() {
                       <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-primary via-accent to-rwanda-green" />
                       <DialogHeader className="mb-8">
                         <div className="flex items-center gap-4">
-                          <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center">
+                          <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-primary/10 flex items-center justify-center">
                             <Smartphone className="w-6 h-6 md:w-7 md:h-7 text-primary" />
                           </div>
                           <div>
@@ -782,7 +782,6 @@ function DashboardContent() {
             </div>
           </div>
 
-          {/* Vocabulary Header Stats Row */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8 md:mb-12 animate-reveal">
             {[
               { label: 'Devices', value: profile?.deviceId ? '01' : '00', icon: Smartphone, color: 'text-primary' },
@@ -813,7 +812,6 @@ function DashboardContent() {
             </TabsList>
 
             <TabsContent value="overview" className="space-y-8 md:space-y-12 animate-reveal outline-none">
-              {/* Stats Row */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <Card className="md:col-span-2 bg-card/40 border-border rounded-[2rem] md:rounded-[2.5rem] shadow-2xl shadow-black/5 overflow-hidden">
                   <CardHeader className="p-6 md:p-10 pb-4">
@@ -826,10 +824,10 @@ function DashboardContent() {
                   <CardContent className="p-6 md:p-10 pt-0">
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4 mt-6">
                       {[
-                        { label: 'Temp', val: latestLog ? `${latestLog.temperature}°C` : '00°C', icon: Thermometer, color: 'text-red-500' },
-                        { label: 'Humidity', val: latestLog ? `${latestLog.humidity}%` : '00%', icon: Droplets, color: 'text-blue-500' },
-                        { label: 'RSSI', val: latestLog ? `${latestLog.rssi} dBm` : '0 dBm', icon: Wifi, color: 'text-rwanda-green' },
-                        { label: 'SNR', val: latestLog ? `${latestLog.snr}` : '0.0', icon: Signal, color: 'text-primary' }
+                        { label: 'Devices', val: profile?.deviceId ? '01' : '00', icon: Smartphone, color: 'text-primary' },
+                        { label: 'Signal', val: '98%', icon: Wifi, color: 'text-rwanda-green' },
+                        { label: 'Health', val: 'Secure', icon: Shield, color: 'text-sky-500' },
+                        { label: 'Alerts', val: '0', icon: Bell, color: 'text-destructive' }
                       ].map((stat, i) => (
                         <div key={i} className="bg-secondary/20 p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] border border-border/50 text-center flex flex-col items-center justify-center group hover:bg-primary/5 transition-colors">
                           <div className="text-xl md:text-3xl font-black leading-none">{stat.val}</div>
@@ -874,7 +872,6 @@ function DashboardContent() {
                 </Card>
               </div>
 
-              {/* My Devices Section */}
               <div className="space-y-6 md:space-y-8">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between px-2 gap-4">
                   <div>
@@ -1153,7 +1150,6 @@ function DashboardContent() {
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 max-w-6xl mx-auto px-4">
-                    {/* Buy Option */}
                     <Card className="rounded-[2.5rem] md:rounded-[3.5rem] overflow-hidden border-2 md:border-4 border-border bg-card/60 transition-all shadow-2xl">
                       <div 
                         className="relative h-[350px] md:h-[500px] w-full cursor-pointer group" 
@@ -1278,7 +1274,6 @@ function DashboardContent() {
                       </CardContent>
                     </Card>
 
-                    {/* Lease Option */}
                     <Card className="rounded-[2.5rem] md:rounded-[3.5rem] overflow-hidden border-2 md:border-4 border-border bg-card/60 transition-all shadow-2xl">
                       <div 
                         className="relative h-[350px] md:h-[500px] w-full cursor-pointer group" 
@@ -1663,7 +1658,6 @@ function DashboardContent() {
             </TabsContent>
           </Tabs>
 
-          {/* Subscription Popup Dialog */}
           <Dialog open={isSubscriptionOpen} onOpenChange={setIsSubscriptionOpen}>
             <DialogContent className="w-[95vw] sm:max-w-[800px] p-0 overflow-hidden border-border/50 bg-background shadow-2xl rounded-[2rem] md:rounded-[3rem]">
               <ScrollArea className="max-h-[90vh] w-full">
@@ -1726,7 +1720,6 @@ function DashboardContent() {
             </DialogContent>
           </Dialog>
 
-          {/* Device Detail Information Portal Dialog */}
           <Dialog open={isDetailOpen} onOpenChange={setIsDetailOpen}>
             <DialogContent className="w-[95vw] sm:max-w-4xl p-0 overflow-hidden border-border/50 bg-background shadow-2xl rounded-[2rem] md:rounded-[3rem]">
               <ScrollArea className="max-h-[90vh] w-full">
@@ -1780,7 +1773,7 @@ function DashboardContent() {
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                         {[
                           { label: 'Temp', val: `${displayLog?.temperature || '0'}°C`, icon: Thermometer },
-                          { label: 'Humidity', val: `${displayLog?.humidity || '0'}%`, icon: Droplets },
+                          { label: 'Hum', val: `${displayLog?.humidity || '0'}%`, icon: Droplets },
                           { label: 'RSSI', val: `${displayLog?.rssi || '0'} dBm`, icon: Wifi },
                           { label: 'SNR', val: displayLog?.snr || '0.0', icon: Zap }
                         ].map((s, i) => (
@@ -1839,7 +1832,6 @@ function DashboardContent() {
             </DialogContent>
           </Dialog>
 
-          {/* Full-screen Image Preview Dialog */}
           <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
             <DialogContent className="max-w-[100vw] w-screen h-screen p-0 m-0 border-none bg-black/95 rounded-none flex items-center justify-center [&>button]:text-white [&>button]:bg-white/10 [&>button]:backdrop-blur-md [&>button]:hover:bg-white/20 [&>button]:transition-all [&>button]:rounded-full [&>button]:p-3 [&>button]:border [&>button]:border-white/20 [&>button]:right-6 [&>button]:top-6 [&>button_svg]:size-6">
               <div className="sr-only">
